@@ -1,3 +1,4 @@
+import { useSignup } from '../../hooks/auth/useSignup';
 import FormAuth from '../../ui/authentication/FormAuth';
 import { useForm } from 'react-hook-form';
 
@@ -36,30 +37,38 @@ const forms = [
   },
 ];
 
-const SignUpPage = () => {
+const SignUpForm = () => {
+  const { signup, isLoading } = useSignup();
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
+    reset,
   } = useForm();
 
+  const onSubmit = ({ username, email, password }) => {
+    signup(
+      { username, email, password },
+      { onSuccess: reset },
+    );
+  };
+
   return (
-    <div className="flex h-screen items-center justify-center bg-gradient-135 from-[#f5f7fa] to-[#c3cfe2]">
-      <FormAuth
-        authType="signup"
-        onSubmit={handleSubmit((data) => console.log(data))}
-      >
-        <FormAuth.Title>SignUp</FormAuth.Title>
-        <FormAuth.Inputs
-          forms={forms}
-          register={register}
-          errors={errors}
-          watch={watch}
-        />
-      </FormAuth>
-    </div>
+    <FormAuth
+      authType="signup"
+      onSubmit={handleSubmit(onSubmit)}
+      isLoading={isLoading}
+    >
+      <FormAuth.Title>SignUp</FormAuth.Title>
+      <FormAuth.Inputs
+        forms={forms}
+        register={register}
+        errors={errors}
+        watch={watch}
+      />
+    </FormAuth>
   );
 };
 
-export default SignUpPage;
+export default SignUpForm;

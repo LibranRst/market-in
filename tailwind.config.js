@@ -9,6 +9,21 @@ export default {
       height: {
         screen: '100dvh',
       },
+      minHeight: {
+        screen: '100dvh',
+      },
+      maxHeight: {
+        screen: '100dvh',
+      },
+      width: {
+        screen: '100dvw',
+      },
+      maxWidth: {
+        screen: '100dvw',
+      },
+      minWidth: {
+        screen: '100dvw',
+      },
       keyframes: {
         'valid-slide-up': {
           '0%': {
@@ -23,6 +38,9 @@ export default {
       },
       animation: {
         'valid-slide-up': 'valid-slide-up 0.1s ease',
+      },
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif'],
       },
     },
   },

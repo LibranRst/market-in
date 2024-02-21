@@ -1,11 +1,23 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { IoArrowBack } from 'react-icons/io5';
+import Spinner from '../loading/Spinner';
+// import { IoHomeOutline } from 'react-icons/io5';
 
-const FormAuth = ({ children, onSubmit, authType = 'login' }) => {
+const FormAuth = ({ children, onSubmit, authType = 'login', isLoading }) => {
+  const navigate = useNavigate();
+  
   return (
     <form
-      className="flex w-full max-w-[400px] flex-col gap-5 rounded-xl bg-white px-5 py-7 text-sm drop-shadow-lg"
+      className="relative flex w-full max-w-[400px] flex-col gap-5 rounded-xl bg-white px-5 py-7 text-sm drop-shadow-lg"
       onSubmit={onSubmit}
     >
+      <button
+        onClick={() => navigate(-1)}
+        type='button'
+        className="absolute rounded-lg p-2 transition-colors hover:bg-gray-200"
+      >
+        <IoArrowBack size={20} />
+      </button>
       {children}
       {authType === 'login' && (
         <Link
@@ -19,30 +31,11 @@ const FormAuth = ({ children, onSubmit, authType = 'login' }) => {
         type="submit"
         className="w-[200px] self-center rounded-full bg-black px-5 py-3 text-white transition-colors hover:bg-gray-600"
       >
-        {authType === 'login' ? 'Login' : 'SignUp'}
+        {authType === 'login' && 'Login'}
+        {authType === 'signup' && 'SignUp'}
+        {authType === 'forgot-password' && 'Send'}
+        {isLoading && <Spinner />}
       </button>
-      {authType === 'signup' && (
-        <p className="text-center text-sm">
-          Already have an account?{' '}
-          <Link
-            to="/login"
-            className="cursor-pointer font-semibold hover:underline"
-          >
-            Login
-          </Link>
-        </p>
-      )}
-      {authType === 'login' && (
-        <p className="text-center text-sm">
-          Don't have an account?{' '}
-          <Link
-            to="/signup"
-            className="cursor-pointer font-semibold hover:underline"
-          >
-            SignUp
-          </Link>
-        </p>
-      )}
     </form>
   );
 };
@@ -66,7 +59,7 @@ const Inputs = ({ forms, register, errors, watch }) => {
             className={`peer rounded-xl ${errors[form.name] && 'bg-red-50'} bg-gray-100 px-5 pb-2 pt-4 focus:outline-none`}
           />
           {errors[form.name] && (
-            <span className="animate-valid-slide-up absolute -bottom-4 left-5 text-xs text-red-500">
+            <span className="absolute -bottom-4 left-5 animate-valid-slide-up text-xs text-red-500">
               {errors[form.name].message}
             </span>
           )}
