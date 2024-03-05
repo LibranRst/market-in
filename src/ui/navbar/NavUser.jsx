@@ -27,7 +27,13 @@ const NavUser = ({ user }) => {
         to="/profile"
         className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1 text-sm font-[500] transition-colors hover:bg-gray-100"
       >
-        <img src="default-user.jpg" alt="user" className="w-8 rounded-full" />
+        <div className="h-8 w-8 overflow-hidden rounded-full">
+          <img
+            src={user?.user_metadata?.avatar || 'default-user.jpg'}
+            alt="user"
+            className="h-full w-full object-cover"
+          />
+        </div>
         <p>{user?.user_metadata?.username}</p>
       </Link>
     </>
