@@ -2,35 +2,60 @@ import { FaStar } from 'react-icons/fa';
 import { MdAddShoppingCart } from 'react-icons/md';
 import { FaShop } from 'react-icons/fa6';
 
+import { Button } from '@/components/ui/button';
+
 import { Link } from 'react-router-dom';
+
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const ProductCard = ({ imgSrc, name, price, rating, children }) => {
   return (
-    <div className="overflow-hidden rounded-md bg-white">
-      <Link to="/profile">
-        <img
-          src={imgSrc}
-          alt="Card 1 image"
-          className="h-[200px] w-full cursor-pointer object-cover "
-        />
-      </Link>
-      <div className="relative flex h-[140px] flex-col gap-[2px] p-2">
-        <Link
-          className="line-clamp-2 cursor-pointer overflow-hidden text-ellipsis "
-          to="/profile"
-        >
-          {name}
+    <div className="overflow-hidden rounded-xl bg-white">
+      <TooltipProvider>
+        <Link to="/profile">
+          <img
+            src={imgSrc}
+            alt="Card 1 image"
+            className="h-[200px] w-full cursor-pointer object-cover "
+          />
         </Link>
-        <p className="text-lg font-semibold mb-1">{price}</p>
-        {children}
-        <div className="flex items-center gap-1">
-          <FaStar size={15} className="text-yellow-400" />
-          <span className="text-sm">{rating}</span>
-        </div>
-        <button className="absolute bottom-2 right-2 flex items-center rounded-md border border-black bg-white p-2 text-black transition-colors hover:bg-black hover:text-white">
+        <div className="relative flex h-[140px] flex-col gap-[2px] p-2">
+          <Tooltip>
+            <TooltipTrigger className="text-left">
+              <Link
+                className="line-clamp-2 cursor-pointer overflow-hidden text-ellipsis"
+                to="/profile"
+              >
+                {name}
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{name}</p>
+            </TooltipContent>
+          </Tooltip>
+          <p className="mb-1 text-lg font-semibold">{price}</p>
+          {children}
+          <div className="flex items-center gap-1">
+            <FaStar size={15} className="text-yellow-400" />
+            <span className="text-sm">{rating}</span>
+          </div>
+          {/* <button className="absolute bottom-2 right-2 flex items-center rounded-md border border-black bg-white p-2 text-black transition-colors hover:bg-black hover:text-white">
           <MdAddShoppingCart />
-        </button>
-      </div>
+        </button> */}
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute bottom-2 right-2"
+          >
+            <MdAddShoppingCart />
+          </Button>
+        </div>
+      </TooltipProvider>
     </div>
   );
 };

@@ -7,7 +7,7 @@ const NavAuth = ({ isLoading }) => {
     <>
       <div className="flex items-center gap-1">
         {isLoading ? (
-          <Spinner padding={2} />
+          <Spinner padding={2} className="h-4 w-4" />
         ) : (
           <button className="rounded-lg p-2 transition-colors hover:bg-gray-200">
             <FiShoppingCart size={20} />
@@ -16,7 +16,7 @@ const NavAuth = ({ isLoading }) => {
       </div>
       <div className="h-[20px] rounded-lg bg-gray-200 p-[1px]" />
       {isLoading ? (
-        <Spinner padding={2} />
+        <Spinner padding={2} className="h-4 w-4" />
       ) : (
         <Link
           to="/signin"

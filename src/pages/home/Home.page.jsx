@@ -3,6 +3,7 @@ import Spinner from '../../ui/loading/Spinner';
 import ProductCard from '../../ui/product/ProductCard';
 import { formatCurrency } from '../../utils/helpers';
 
+
 const HomePage = () => {
   const { products, isLoading } = useProducts();
 
@@ -10,7 +11,7 @@ const HomePage = () => {
     <div className="mt-5 flex w-full gap-5">
       <div className="flex w-[20%] flex-col gap-2">
         <h2 className="font-medium">Filter</h2>
-        <div className="rounded-md bg-white p-2">
+        <div className="rounded-xl bg-white p-2">
           <h2>Category</h2>
         </div>
       </div>
@@ -18,7 +19,7 @@ const HomePage = () => {
         <h2 className="font-medium">Product</h2>
         <div className="grid grid-cols-4 gap-5">
           {isLoading ? (
-            <Spinner />
+            <Spinner className='w-10 h-10' />
           ) : (
             products?.map((product) => (
               <ProductCard

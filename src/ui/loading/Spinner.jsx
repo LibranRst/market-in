@@ -1,9 +1,14 @@
-const Spinner = ({ padding }) => {
+import { cn } from '@/lib/utils';
+
+const Spinner = ({ padding, className }) => {
   return (
     <div className={`inline-block p-${padding}`}>
       <svg
         aria-hidden="true"
-        className={`ml-1 inline h-4 w-4 animate-spin fill-blue-600 text-white`}
+        className={cn(
+          'inline animate-spin fill-blue-600 text-white',
+          className,
+        )}
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

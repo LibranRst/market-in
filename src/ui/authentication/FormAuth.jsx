@@ -34,7 +34,7 @@ const FormAuth = ({ children, onSubmit, authType = 'login', isLoading }) => {
         {authType === 'login' && 'Login'}
         {authType === 'signup' && 'SignUp'}
         {authType === 'forgot-password' && 'Send'}
-        {isLoading && <Spinner />}
+        {isLoading && <Spinner className='w-4 h-4 ml-1' />}
       </button>
     </form>
   );

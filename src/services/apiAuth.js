@@ -88,11 +88,24 @@ export const updateCurrentUser = async ({
 
   // 2. Upload the avatar image
   const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
-  // check if image is valid
+  //  2.1 check if image is valid
   if (!validImageTypes.includes(avatar.type))
     throw new Error('Invalid image type');
 
   const fileName = `avatar-${data.user.id}-${Math.random()}`;
+
+  //  2.2 Delete previous avatar by checking if it exists
+  const { data: avatarList } = await supabase.storage.from('avatars').list();
+  const existingAvatar = avatarList.find((item) =>
+    item.name.includes(data?.user?.id),
+  );
+  
+  if (existingAvatar) {
+    const { error: deleteError } = await supabase.storage
+      .from('avatars')
+      .remove([existingAvatar.name]);
+    if (deleteError) throw new Error(deleteError.message);
+  }
 
   const { error: storageError } = await supabase.storage
     .from('avatars')
