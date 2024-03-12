@@ -15,7 +15,7 @@ import {
 
 const ProductCard = ({ imgSrc, name, price, rating, children }) => {
   return (
-    <div className="overflow-hidden rounded-xl bg-white">
+    <div className="overflow-hidden rounded-xl border-[1px] bg-card">
       <TooltipProvider>
         <Link to="/profile">
           <img

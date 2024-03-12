@@ -1,6 +1,8 @@
 import { FiShoppingCart } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import Spinner from '../loading/Spinner';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 const NavAuth = ({ isLoading }) => {
   return (
@@ -9,7 +11,7 @@ const NavAuth = ({ isLoading }) => {
         {isLoading ? (
           <Spinner padding={2} className="h-4 w-4" />
         ) : (
-          <button className="rounded-lg p-2 transition-colors hover:bg-gray-200">
+          <button className="rounded-lg p-2 text-popover-foreground transition-colors hover:bg-accent">
             <FiShoppingCart size={20} />
           </button>
         )}
@@ -20,7 +22,10 @@ const NavAuth = ({ isLoading }) => {
       ) : (
         <Link
           to="/signin"
-          className="rounded-full border border-transparent bg-black px-4 py-1 text-white transition-all hover:border-black hover:bg-white hover:text-black"
+          className={cn(
+            buttonVariants({ size: 'sm' }),
+            'border-[1px] border-popover-foreground bg-popover-foreground hover:bg-popover hover:text-popover-foreground',
+          )}
         >
           SignIn
         </Link>

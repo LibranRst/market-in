@@ -6,7 +6,7 @@ const NavSearch = () => {
       <input
         type="text"
         placeholder="Search"
-        className="w-full rounded-xl bg-gray-100 px-3 py-1 outline-none"
+        className="w-full rounded-lg bg-accent px-3 py-1 outline-none"
       />
       <button className="absolute right-2">
         <GoSearch size={20} />

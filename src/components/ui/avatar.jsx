@@ -1,8 +1,8 @@
 import { cva } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
-import Spinner from '@/ui/loading/Spinner';
 import { getInitials } from '@/utils/helpers';
+import Spinner from './loading/Spinner';
 
 const avatarVariants = cva('overflow-hidden rounded-full relative', {
   variants: {

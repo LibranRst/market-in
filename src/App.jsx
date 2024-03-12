@@ -1,16 +1,20 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Toaster } from 'react-hot-toast';
 
-import Layout from './ui/layout/Layout';
+import Layout from './components/ui/layout/Layout';
 // import ProtectedRoute from './ui/authentication/ProtectedRoute';
-import AuthPage from './pages/auth/Auth.page';
 import HomePage from './pages/home/Home.page';
 import ProfilePage from './pages/profile/profile.page';
-import ProtectedRoute from './ui/authentication/ProtectedRoute';
+import ProtectedRoute from './components/ui/authentication/ProtectedRoute';
 import ForgotPassword from './pages/auth/ForgotPassword.page';
 import ResetPassword from './pages/auth/ResetPassword.page';
+import { ThemeProvider } from './components/theme-provider';
+
+import { Toaster } from '@/components/ui/toaster';
+import SignInPage from './pages/auth/Signin.page';
+import SignUpPage from './pages/auth/Signup.page';
+import SettingsPage from './pages/settings/settings.page';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,7 +37,11 @@ const safeRoutes = [
   },
   {
     path: '/signin',
-    element: <AuthPage />,
+    element: <SignInPage />,
+  },
+  {
+    path: '/signup',
+    element: <SignUpPage />,
   },
   {
     path: '/forgot-password',
@@ -56,7 +64,11 @@ const protectedRoutes = [
       {
         path: '/profile',
         element: <ProfilePage />,
-      }
+      },
+      {
+        path: '/settings',
+        element: <SettingsPage />,
+      },
     ],
   },
 ];
@@ -64,11 +76,13 @@ const protectedRoutes = [
 const router = createBrowserRouter([...safeRoutes, ...protectedRoutes]);
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <RouterProvider router={router} />
-      <Toaster />
-    </QueryClientProvider>
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+      <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools initialIsOpen={false} />
+        <RouterProvider router={router} />
+        <Toaster />
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 

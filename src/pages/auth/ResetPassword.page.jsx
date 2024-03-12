@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import FormAuth from '../../ui/authentication/FormAuth';
+import FormAuth from '../../components/ui/authentication/FormAuth';
 import { useResetPassword } from '../../hooks/auth/useResetPassword';
 import { useUser } from '../../hooks/auth/useUser';
 import { Navigate } from 'react-router-dom';
@@ -31,8 +31,12 @@ const ResetPassword = () => {
     reset,
   } = useForm();
 
-  if(!isAuthenticated && !isLoadingUser) {
+  if(isAuthenticated && !isLoadingUser) {
     return <Navigate to='/' />
+  }
+
+  if (isLoadingUser) {
+    return <div>Loading..</div>;
   }
 
   const onSubmit = ({ password }) => {
@@ -40,7 +44,7 @@ const ResetPassword = () => {
     resetPassword({ password }, { onSuccess: reset });
   };
   return (
-    <div className="flex h-screen flex-col items-center justify-center gap-5 bg-gradient-135 from-[#f5f7fa] to-[#c3cfe2]">
+    <div className="flex h-screen flex-col items-center justify-center gap-5 bg-background-gradient">
       <FormAuth
         authType="forgot-password"
         onSubmit={handleSubmit(onSubmit)}

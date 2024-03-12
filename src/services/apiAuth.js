@@ -70,18 +70,18 @@ export const changePassword = async ({ password }) => {
 };
 
 export const updateCurrentUser = async ({
-  password,
+  email,
   username,
+  password,
   avatar,
   bio,
 }) => {
   // 1. Update Password OR username
-  let updateData;
-  if (password) updateData = { password };
-  if (username) updateData = { data: { username } };
-  if (bio) updateData = { data: { bio } };
+  let updateData = {};
+  if (email || username || bio) updateData = { ...updateData, email, data: { username, bio } };
+  if (password) updateData = { ...updateData, password };
 
-  const { data, error } = await supabase.auth.updateUser(updateData);
+  const { data, error } = await supabase.auth.updateUser(updateData, {emailRedirectTo: 'http://localhost:5173/settings' });
 
   if (error) throw new Error(error.message);
   if (!avatar) return data;
@@ -90,7 +90,7 @@ export const updateCurrentUser = async ({
   const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
   //  2.1 check if image is valid
   if (!validImageTypes.includes(avatar.type))
-    throw new Error('Invalid image type');
+    throw new Error('Invalid image type, must be JPEG, PNG or GIF');
 
   const fileName = `avatar-${data.user.id}-${Math.random()}`;
 
@@ -99,7 +99,7 @@ export const updateCurrentUser = async ({
   const existingAvatar = avatarList.find((item) =>
     item.name.includes(data?.user?.id),
   );
-  
+
   if (existingAvatar) {
     const { error: deleteError } = await supabase.storage
       .from('avatars')

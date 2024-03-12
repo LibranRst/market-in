@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { signup as signupApi } from '../../services/apiAuth';
 import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { signup as signupApi } from '../../services/apiAuth';
+import { useToast } from '../use-toast';
 
 export const useSignup = () => {
+  const { toast } = useToast();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -11,12 +12,16 @@ export const useSignup = () => {
     mutationFn: signupApi,
     onSuccess: (user) => {
       queryClient.setQueryData(['user'], user.user);
-      toast.success('Signed Up');
+      toast({
+        title: 'Signed Up',
+      });
       navigate('/', { replace: true });
     },
     onError: (err) => {
-      toast.error(err.message, {
-        duration: 1500,
+      toast({
+        title: 'Error',
+        description: err.message,
+        variant: 'destructive',
       });
     },
   });

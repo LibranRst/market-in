@@ -7,13 +7,17 @@
 //   -webkit-background-clip: text;
 //   -webkit-text-fill-color: transparent;
 
+import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
 
-const NavTitle = ({ children }) => {
+const NavTitle = ({ children, className }) => {
   return (
     <Link
       to="/"
-      className="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-2xl font-semibold tracking-wide text-transparent"
+      className={cn(
+        'bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-2xl font-semibold tracking-wide text-transparent',
+        className,
+      )}
     >
       {children}
     </Link>

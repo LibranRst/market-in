@@ -1,15 +1,25 @@
 import { useMutation } from '@tanstack/react-query';
 import { forgotPassword as forgotPasswordApi } from '../../services/apiAuth';
-import toast from 'react-hot-toast';
+import { useToast } from '../use-toast';
 
 export const useForgotPassword = () => {
+  const { toast } = useToast();
+
   const { mutate: forgotPassword, isPending: isLoading } = useMutation({
     mutationFn: forgotPasswordApi,
     onSuccess: () => {
-      toast.success('Check your email to reset password');
+      toast({
+        title: 'Check your email',
+        description:
+          'We have sent you an email with instructions on how to reset your password.',
+      });
     },
     onError: (err) => {
-      toast.error(err.message);
+      toast({
+        title: 'Error',
+        description: err.message,
+        variant: 'destructive',
+      });
     },
   });
 

@@ -31,6 +31,10 @@ module.exports = {
           DEFAULT: 'hsl(var(--secondary))',
           foreground: 'hsl(var(--secondary-foreground))',
         },
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
+        },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
@@ -54,6 +58,7 @@ module.exports = {
       },
       backgroundImage: {
         'gradient-135': 'linear-gradient(135deg, var(--tw-gradient-stops))',
+        'background-gradient': 'linear-gradient(var(--background-gradient))',
       },
       height: {
         screen: '100dvh',
@@ -121,14 +126,14 @@ module.exports = {
         'accordion-up': 'accordion-up 0.2s ease-out',
         'valid-slide-up': 'valid-slide-up 0.1s ease',
         fade: 'fade 0.2s ease',
-        'slide-top': 'slide-top 0.3s ease',
+        'slide-top': 'slide-top 0.5s ease',
       },
       fontFamily: {
         poppins: ['Poppins', 'sans-serif'],
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [require('tailwindcss-animate'), require('autoprefixer')],
 };
 
 // /** @type {import('tailwindcss').Config} */

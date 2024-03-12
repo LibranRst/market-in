@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import FormAuth from '../../ui/authentication/FormAuth';
+import FormAuth from '../../components/ui/authentication/FormAuth';
 import { useLogin } from '../../hooks/auth/useLogin';
 
 const forms = [
@@ -29,7 +29,7 @@ const forms = [
   },
 ];
 
-const LogInForm = () => {
+const SignInForm = () => {
   const { login, isLoading } = useLogin();
   const {
     register,
@@ -58,4 +58,4 @@ const LogInForm = () => {
   );
 };
 
-export default LogInForm;
+export default SignInForm;

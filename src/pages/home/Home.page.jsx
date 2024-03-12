@@ -1,6 +1,6 @@
 import { useProducts } from '../../hooks/products/useProducts';
-import Spinner from '../../ui/loading/Spinner';
-import ProductCard from '../../ui/product/ProductCard';
+import Spinner from '../../components/ui/loading/Spinner';
+import ProductCard from '../../components/ui/product/ProductCard';
 import { formatCurrency } from '../../utils/helpers';
 
 
@@ -11,7 +11,7 @@ const HomePage = () => {
     <div className="mt-5 flex w-full gap-5">
       <div className="flex w-[20%] flex-col gap-2">
         <h2 className="font-medium">Filter</h2>
-        <div className="rounded-xl bg-white p-2">
+        <div className="rounded-xl bg-card border p-2">
           <h2>Category</h2>
         </div>
       </div>
