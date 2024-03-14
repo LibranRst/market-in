@@ -1,17 +1,16 @@
 import DynamicBreadcrumb from '@/components/ui/dynamic-breadcrumb';
 
-import { Card } from '@/components/ui/card';
 import CenteredContainer from '@/components/ui/layout/centered-container';
-import SettingsForm from './settings.form';
+import UpdateUserDataForm from './updateuserdata-form';
+import UpdatePasswordForm from './updatepassword-form';
 
 const SettingsPage = () => {
   return (
-    <CenteredContainer className="items-center justify-center gap-4">
-      <div className="flex w-full max-w-[600px] flex-col gap-2">
+    <CenteredContainer className="h-auto items-center gap-4 pb-10">
+      <div className="flex w-full max-w-[600px] flex-col gap-5">
         <DynamicBreadcrumb />
-        <Card>
-          <SettingsForm />
-        </Card>
+        <UpdateUserDataForm />
+        <UpdatePasswordForm />
       </div>
     </CenteredContainer>
   );

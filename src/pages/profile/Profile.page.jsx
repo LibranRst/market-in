@@ -9,36 +9,15 @@ import { useUser } from '../../hooks/auth/useUser';
 
 import DynamicBreadcrumb from '@/components/ui/dynamic-breadcrumb';
 import CenteredContainer from '@/components/ui/layout/centered-container';
+import { useUserProducts } from '@/hooks/products/useProducts';
+import AddProductDialog from '../../components/ui/profile/addproduct-dialog';
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Form, FormInput } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
-
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Label } from '@/components/ui/label';
+// import { Form, FormInput } from '@/components/ui/form';
 
 const ProfilePage = () => {
   const { updateUser, isUpdating } = useUpdateUser();
   const { user, isLoading } = useUser();
-  const methods = useForm({
-    defaultValues: {
-      price: 0,
-    },
-  });
+  // const { products, isLoading: isProductsLoading } = useUserProducts();
 
   const [avatar, setAvatar] = useState(null);
   // console.log(avatar);
@@ -48,10 +27,6 @@ const ProfilePage = () => {
       updateUser({ avatar }, { onSuccess: () => setAvatar(null) });
     }
   }, [avatar, updateUser]);
-
-  const onSubmit = (data) => {
-    console.log(data);
-  };
 
   return (
     <CenteredContainer className="gap-4">
@@ -95,87 +70,7 @@ const ProfilePage = () => {
       <div className="flex h-full flex-col gap-3 overflow-hidden rounded-md border bg-card p-4">
         <div className="flex justify-between">
           <h1 className="text-lg font-semibold">My Products</h1>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="sm">Add Product</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
-              <Form methods={methods} onSubmit={onSubmit}>
-                <DialogHeader>
-                  <DialogTitle>Product</DialogTitle>
-                  <DialogDescription>
-                    Add a new product to your shop.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <FormInput
-                    name={'name'}
-                    labelPosition="left"
-                    label={'Name'}
-                    placeholder="Name of your product..."
-                    validation={{ required: 'Name of the product is required' }}
-                  />
-                  <FormInput
-                    inputType="textarea"
-                    name="description"
-                    label="Description"
-                    type="text"
-                    className="min-h-[100px]"
-                    labelPosition="left"
-                    placeholder="Description of your product..."
-                    validation={{
-                      required: 'Description of the product is required',
-                    }}
-                  />
-                  <FormInput
-                    name="price"
-                    label="Price"
-                    type="text"
-                    labelPosition="left"
-                    setValue
-                    onChange={(e) =>
-                      methods.setValue(
-                        'price',
-                        isNaN(Number(e.target.value))
-                          ? methods.getValues().price
-                          : Number(e.target.value),
-                      )
-                    }
-                    placeholder="$0"
-                    validation={{
-                      required: 'Price of the product is required',
-                    }}
-                  />
-                  <div className="flex flex-col">
-                    <div className="grid grid-cols-5 gap-4">
-                      <Label htmlFor="category" className="m-2 text-right">
-                        Category
-                      </Label>
-                      <Select
-                        name="category"
-                        id="category"
-                        onValueChange={(value) =>
-                          methods
-                            .register('category')
-                            .onChange({ target: { name: 'category', value } })
-                        }
-                      >
-                        <SelectTrigger className="col-span- w-[200px]">
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="electronic">Electronic</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button type="submit">Save changes</Button>
-                </DialogFooter>
-              </Form>
-            </DialogContent>
-          </Dialog>
+          <AddProductDialog />
         </div>
         <hr />
         <div className="h-full overflow-auto">

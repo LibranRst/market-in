@@ -1,4 +1,4 @@
-import NavTitle from "../navbar/NavTitle";
+import NavTitle from "../navbar/nav-title";
 
 const FormContainer = ({ children }) => {
   return (

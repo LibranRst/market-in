@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import FormAuth from '../../components/ui/authentication/FormAuth';
+import FormAuth from '../../components/ui/authentication/form-auth';
 import { useResetPassword } from '../../hooks/auth/useResetPassword';
 import { useUser } from '../../hooks/auth/useUser';
 import { Navigate } from 'react-router-dom';

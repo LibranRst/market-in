@@ -15,7 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useUpdateUser } from '@/hooks/auth/useUpdateUser';
 import { useUser } from '@/hooks/auth/useUser';
 import { useForm } from 'react-hook-form';
-import Spinner from '@/components/ui/loading/Spinner';
+import Spinner from '@/components/ui/loading/spinner';
 import CenteredContainer from '@/components/ui/layout/centered-container';
 
 const SettingsPage = () => {

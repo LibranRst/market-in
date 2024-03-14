@@ -2,11 +2,11 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import Layout from './components/ui/layout/Layout';
+import Layout from './components/ui/layout/layout';
 // import ProtectedRoute from './ui/authentication/ProtectedRoute';
-import HomePage from './pages/home/Home.page';
+import HomePage from './pages/home/home.page';
 import ProfilePage from './pages/profile/profile.page';
-import ProtectedRoute from './components/ui/authentication/ProtectedRoute';
+import ProtectedRoute from './components/ui/authentication/protected-route';
 import ForgotPassword from './pages/auth/ForgotPassword.page';
 import ResetPassword from './pages/auth/ResetPassword.page';
 import { ThemeProvider } from './components/theme-provider';

@@ -1,6 +1,6 @@
 import { Link, Navigate } from 'react-router-dom';
 import { useUser } from '../../hooks/auth/useUser';
-import FormContainer from '@/components/ui/authentication/FormContainer';
+import FormContainer from '@/components/ui/authentication/form-auth_container';
 import SignInForm from './SignIn.form';
 
 const SignInPage = () => {

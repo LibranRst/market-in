@@ -1,8 +1,7 @@
 import { useProducts } from '../../hooks/products/useProducts';
-import Spinner from '../../components/ui/loading/Spinner';
-import ProductCard from '../../components/ui/product/ProductCard';
+import Spinner from '../../components/ui/loading/spinner';
+import ProductCard from '../../components/ui/product/product-card';
 import { formatCurrency } from '../../utils/helpers';
-
 
 const HomePage = () => {
   const { products, isLoading } = useProducts();
@@ -11,7 +10,7 @@ const HomePage = () => {
     <div className="mt-5 flex w-full gap-5">
       <div className="flex w-[20%] flex-col gap-2">
         <h2 className="font-medium">Filter</h2>
-        <div className="rounded-xl bg-card border p-2">
+        <div className="rounded-xl border bg-card p-2">
           <h2>Category</h2>
         </div>
       </div>
@@ -19,7 +18,7 @@ const HomePage = () => {
         <h2 className="font-medium">Product</h2>
         <div className="grid grid-cols-4 gap-5">
           {isLoading ? (
-            <Spinner className='w-10 h-10' />
+            <Spinner className="h-10 w-10" />
           ) : (
             products?.map((product) => (
               <ProductCard
@@ -27,10 +26,9 @@ const HomePage = () => {
                 imgSrc={product.product_image}
                 name={product.name}
                 price={formatCurrency(product.price)}
-                rating={product.rating.toFixed(1)}
               >
                 <ProductCard.Seller sellerLink="/profile">
-                  Hyuzin
+                  {product.profiles.username}
                 </ProductCard.Seller>
               </ProductCard>
             ))

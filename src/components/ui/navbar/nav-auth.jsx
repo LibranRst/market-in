@@ -1,6 +1,6 @@
 import { FiShoppingCart } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
-import Spinner from '../loading/Spinner';
+import Spinner from '../loading/spinner';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 

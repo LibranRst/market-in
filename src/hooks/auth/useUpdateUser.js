@@ -9,6 +9,7 @@ export const useUpdateUser = () => {
   const { mutate: updateUser, isPending: isUpdating } = useMutation({
     mutationFn: updateCurrentUser,
     onSuccess: ({ user }) => {
+      console.log(user)
       if (user?.new_email) {
         toast({
           title: 'Account updated',

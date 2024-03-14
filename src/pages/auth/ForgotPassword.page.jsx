@@ -1,6 +1,6 @@
 import { useUser } from '@/hooks/auth/useUser';
 import { useForm } from 'react-hook-form';
-import FormAuth from '../../components/ui/authentication/FormAuth';
+import FormAuth from '../../components/ui/authentication/form-auth';
 import { useForgotPassword } from '../../hooks/auth/useForgotPassword';
 import { Navigate } from 'react-router-dom';
 

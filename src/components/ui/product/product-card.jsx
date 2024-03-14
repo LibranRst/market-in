@@ -13,7 +13,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-const ProductCard = ({ imgSrc, name, price, rating, children }) => {
+const ProductCard = ({ imgSrc, name, price, rating = 0, children }) => {
   return (
     <div className="overflow-hidden rounded-xl border-[1px] bg-card">
       <TooltipProvider>

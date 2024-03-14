@@ -1,5 +1,5 @@
 import { useSignup } from '../../hooks/auth/useSignup';
-import FormAuth from '../../components/ui/authentication/FormAuth';
+import FormAuth from '../../components/ui/authentication/form-auth';
 import { useForm } from 'react-hook-form';
 
 const forms = [

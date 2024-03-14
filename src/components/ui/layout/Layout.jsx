@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import Navbar from '../navbar/Navbar';
+import Navbar from '../navbar/navbar';
 
 // background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 // bg-gradient-135 from-[#f5f7fa] to-[#c3cfe2]

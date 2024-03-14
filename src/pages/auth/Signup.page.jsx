@@ -1,7 +1,7 @@
 import { Link, Navigate } from 'react-router-dom';
 import { useUser } from '../../hooks/auth/useUser';
 import SignUpForm from './SignUp.form';
-import FormContainer from '@/components/ui/authentication/FormContainer';
+import FormContainer from '@/components/ui/authentication/form-auth_container';
 
 const SignUpPage = () => {
   const { isAuthenticated, isLoading } = useUser();
