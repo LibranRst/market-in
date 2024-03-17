@@ -6,20 +6,20 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-import Layout from './components/ui/layout/layout';
+import Layout from '@/components/ui/layout/layout';
 // import ProtectedRoute from './ui/authentication/ProtectedRoute';
-import HomePage from './pages/home/home.page';
-import ProfilePage from './pages/profile/profile.page';
-import ProtectedRoute from './components/ui/authentication/protected-route';
-import ForgotPassword from './pages/auth/ForgotPassword.page';
-import ResetPassword from './pages/auth/ResetPassword.page';
-import { ThemeProvider } from './components/theme-provider';
+import HomePage from '@/pages/home/home.page';
+import ProfilePage from '@/pages/profile/profile.page';
+import ProtectedRoute from '@/components/ui/authentication/protected-route';
+import ForgotPassword from '@/pages/auth/ForgotPassword.page';
+import ResetPassword from '@/pages/auth/ResetPassword.page';
+import { ThemeProvider } from '@/components/theme-provider';
 
 import { Toaster } from '@/components/ui/toaster';
-import SignInPage from './pages/auth/Signin.page';
-import SignUpPage from './pages/auth/Signup.page';
-import SettingsPage from './pages/settings/settings.page';
-import ProductPage from './pages/product/product.page';
+import SignInPage from '@/pages/auth/Signin.page';
+import SignUpPage from '@/pages/auth/Signup.page';
+import SettingsPage from '@/pages/settings/settings.page';
+import ProductPage from '@/pages/product/product.page';
 
 const queryClient = new QueryClient({
   defaultOptions: {
