@@ -6,7 +6,6 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
-
 // import ProtectedRoute from './ui/authentication/ProtectedRoute';
 import ForgotPassword from './pages/auth/ForgotPassword.page';
 import ResetPassword from './pages/auth/ResetPassword.page';
@@ -14,7 +13,6 @@ import HomePage from './pages/home/Home.page';
 import ProfilePage from './pages/profile/Profile.page';
 import ProtectedRoute from './components/ui/authentication/Protected-route';
 import { ThemeProvider } from './components/Theme-provider';
-
 
 import SignInPage from './pages/auth/Signin.page';
 import SignUpPage from './pages/auth/Signup.page';
@@ -39,6 +37,10 @@ const safeRoutes = [
         path: '/',
         index: true,
         element: <HomePage />,
+      },
+      {
+        path: '/product/:id',
+        element: <ProductPage />,
       },
     ],
   },
@@ -83,10 +85,6 @@ const protectedRoutes = [
       {
         path: '/product',
         element: <Navigate to="/" />,
-      },
-      {
-        path: '/product/:id',
-        element: <ProductPage />,
       },
     ],
   },
