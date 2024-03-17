@@ -8,11 +8,11 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 
 // import ProtectedRoute from './ui/authentication/ProtectedRoute';
+import ForgotPassword from './pages/auth/ForgotPassword.page';
+import ResetPassword from './pages/auth/ResetPassword.page';
 import HomePage from './pages/home/home.page';
 import ProfilePage from './pages/profile/profile.page';
 import ProtectedRoute from './components/ui/authentication/protected-route';
-import ForgotPassword from './pages/auth/ForgotPassword.page';
-import ResetPassword from './pages/auth/ResetPassword.page';
 import { ThemeProvider } from './components/theme-provider';
 
 import { Toaster } from '@/components/ui/toaster';
