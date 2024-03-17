@@ -1,8 +1,8 @@
-import DynamicBreadcrumb from '@/components/ui/Dynamic-breadcrumb';
 
-import CenteredContainer from '@/components/ui/layout/Centered-container';
 import UpdateUserDataForm from './Updateuserdata-form';
 import UpdatePasswordForm from './Updatepassword-form';
+import CenteredContainer from '../../components/ui/layout/Centered-container';
+import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
 
 const SettingsPage = () => {
   return (

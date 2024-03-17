@@ -1,12 +1,21 @@
-import Avatar from '@/components/ui/Avatar';
-
 import { Link } from 'react-router-dom';
 import {
   IoPersonOutline,
   IoLogOutOutline,
   IoSettingsOutline,
 } from 'react-icons/io5';
-
+import { Button } from '../Button';
+import { useLogout } from '../../../hooks/auth/useLogout';
+import { useTheme } from '../../Theme-provider';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../Dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,20 +29,8 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@/components/ui/Dropdown-menu';
-
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/Dialog';
-import { Button } from '../Button';
-import { useLogout } from '@/hooks/auth/useLogout';
-import { useTheme } from '@/components/Theme-provider';
+} from '../Dropdown-menu';
+import Avatar from '../Avatar';
 
 const UserDropdown = ({ user }) => {
   const { logout } = useLogout();

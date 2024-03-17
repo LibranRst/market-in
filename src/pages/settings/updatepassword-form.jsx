@@ -1,4 +1,5 @@
-import { Button } from '@/components/ui/Button';
+import { useForm } from 'react-hook-form';
+import { useUpdateUser } from '../../hooks/auth/useUpdateUser';
 import {
   Card,
   CardContent,
@@ -6,13 +7,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/Card';
-import FormRowVertical from '@/components/ui/Formrow-vertical';
-import { Input } from '@/components/ui/Input';
-// import { Form, FormInput } from '@/components/ui/form';
-import Spinner from '@/components/ui/loading/Spinner';
-import { useUpdateUser } from '@/hooks/auth/useUpdateUser';
-import { useForm } from 'react-hook-form';
+} from '../../components/ui/Card';
+import { Input } from '../../components/ui/Input';
+import FormRowVertical from '../../components/ui/Formrow-vertical';
+import { Button } from '../../components/ui/Button';
+import Spinner from '../../components/ui/loading/Spinner';
 
 const UpdatePasswordForm = () => {
   const { updateUser, isUpdating } = useUpdateUser();

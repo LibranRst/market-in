@@ -1,8 +1,8 @@
-import { useUser } from '@/hooks/auth/useUser';
 import { useForm } from 'react-hook-form';
 import FormAuth from '../../components/ui/authentication/Form-auth';
 import { useForgotPassword } from '../../hooks/auth/useForgotPassword';
 import { Navigate } from 'react-router-dom';
+import { useUser } from '../../hooks/auth/useUser';
 
 const forms = [
   {

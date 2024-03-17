@@ -1,4 +1,9 @@
-import { Button } from '@/components/ui/Button';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import useImagePreview from '../../../hooks/use-imagepreview';
+import Spinner from '../loading/Spinner';
+import { useCategories } from '../../../hooks/categories/useCategories';
+import { useAddProduct } from '../../../hooks/products/useAddProduct';
 import {
   Dialog,
   DialogContent,
@@ -7,18 +12,12 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/Dialog';
-import CategorySelect from '@/components/ui/profile/Categories-select';
-
-import FormRow from '@/components/ui/Formrow';
-import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/Textarea';
-import { useCategories } from '@/hooks/categories/useCategories';
-import { useAddProduct } from '@/hooks/products/useAddProduct';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import useImagePreview from '../../../hooks/use-imagepreview';
-import Spinner from '../loading/Spinner';
+} from '../Dialog';
+import { Button } from '../Button';
+import FormRow from '../Formrow';
+import { Input } from '../Input';
+import { Textarea } from '../Textarea';
+import CategorySelect from './Categories-select';
 
 const AddProductDialog = () => {
   const { categories } = useCategories();
@@ -176,7 +175,7 @@ const AddProductDialog = () => {
             </FormRow>
           </div>
           <DialogFooter>
-            <Button type="submit" className='flex flex-row gap-1 items-center'>
+            <Button type="submit" className="flex flex-row items-center gap-1">
               Save changes {isAdding && <Spinner className={'h-4 w-4'} />}
             </Button>
           </DialogFooter>

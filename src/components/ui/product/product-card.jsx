@@ -2,20 +2,12 @@ import { FaStar } from 'react-icons/fa';
 import { MdAddShoppingCart } from 'react-icons/md';
 import { FaShop } from 'react-icons/fa6';
 
-import { Button } from '@/components/ui/Button';
-
 import { Link } from 'react-router-dom';
-
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/Tooltip';
-
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../Tooltip';
+import { Button } from '../Button';
 const ProductCard = ({ imgSrc, name, price, rating = 0, children, id }) => {
   return (
-    <div className="overflow-hidden rounded-xl border-[1px] drop-shadow-sm bg-card">
+    <div className="overflow-hidden rounded-xl border-[1px] bg-card drop-shadow-sm">
       <TooltipProvider>
         <Link to={`/product/${id}`}>
           <img

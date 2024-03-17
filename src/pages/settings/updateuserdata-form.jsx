@@ -1,4 +1,6 @@
-import { Button } from '@/components/ui/Button';
+import { useForm } from 'react-hook-form';
+import { useUser } from '../../hooks/auth/useUser';
+import { useUpdateUser } from '../../hooks/auth/useUpdateUser';
 import {
   Card,
   CardContent,
@@ -6,15 +8,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/Card';
-import FormRowVertical from '@/components/ui/Formrow-vertical';
-import { Input } from '@/components/ui/Input';
-// import { Form, FormInput } from '@/components/ui/form';
-import Spinner from '@/components/ui/loading/Spinner';
-import { Textarea } from '@/components/ui/Textarea';
-import { useUpdateUser } from '@/hooks/auth/useUpdateUser';
-import { useUser } from '@/hooks/auth/useUser';
-import { useForm } from 'react-hook-form';
+} from '../../components/ui/Card';
+import FormRowVertical from '../../components/ui/Formrow-vertical';
+import { Input } from '../../components/ui/Input';
+import { Textarea } from '../../components/ui/Textarea';
+import { Button } from '../../components/ui/Button';
+import Spinner from '../../components/ui/loading/Spinner';
 
 const UpdateUserDataForm = () => {
   const { user, isLoading } = useUser();

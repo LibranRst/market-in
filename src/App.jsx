@@ -6,20 +6,22 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
+
 // import ProtectedRoute from './ui/authentication/ProtectedRoute';
-import Layout from '@/components/ui/layout/Layout';
 import ForgotPassword from './pages/auth/ForgotPassword.page';
 import ResetPassword from './pages/auth/ResetPassword.page';
 import HomePage from './pages/home/Home.page';
 import ProfilePage from './pages/profile/Profile.page';
-import ProtectedRoute from '@/components/ui/authentication/Protected-route';
-import { ThemeProvider } from '@/components/Theme-provider';
+import ProtectedRoute from './components/ui/authentication/Protected-route';
+import { ThemeProvider } from './components/Theme-provider';
 
-import { Toaster } from '@/components/ui/Toaster';
+
 import SignInPage from './pages/auth/Signin.page';
 import SignUpPage from './pages/auth/Signup.page';
-import SettingsPage from './pages/settings/settings.page-v1';
-import ProductPage from './pages/product/product.page';
+import SettingsPage from './pages/settings/Settings.page';
+import ProductPage from './pages/product/Product.page';
+import Layout from './components/ui/layout/Layout';
+import { Toaster } from './components/ui/Toaster';
 
 const queryClient = new QueryClient({
   defaultOptions: {

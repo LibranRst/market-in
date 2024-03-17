@@ -7,8 +7,8 @@
 //   -webkit-background-clip: text;
 //   -webkit-text-fill-color: transparent;
 
-import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
+import { cn } from '../../../lib/utils';
 
 const NavTitle = ({ children, className }) => {
   return (

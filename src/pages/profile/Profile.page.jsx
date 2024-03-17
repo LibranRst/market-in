@@ -3,17 +3,18 @@ import { useUpdateUser } from '../../hooks/auth/useUpdateUser';
 // import Modal from '../../ui/modals/Modal';
 // import { FaTrash } from 'react-icons/fa';
 // import Confirmation from '../../ui/modals/Confimation';
-import Avatar from '@/components/ui/Avatar';
-import { Button } from '@/components/ui/Button';
+
 import { useUser } from '../../hooks/auth/useUser';
 
-import DynamicBreadcrumb from '@/components/ui/Dynamic-breadcrumb';
-import CenteredContainer from '@/components/ui/layout/Centered-container';
-import { useUserProducts } from '@/hooks/products/useProducts';
 import Spinner from '../../components/ui/loading/Spinner';
 import AddProductDialog from '../../components/ui/profile/Addproduct-dialog';
 import ProductUserCard from '../../components/ui/product/Profile-productcard';
 import { Separator } from '../../components/ui/Separator';
+import { useUserProducts } from '../../hooks/products/useProducts';
+import CenteredContainer from '../../components/ui/layout/Centered-container';
+import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
+import Avatar from '../../components/ui/Avatar';
+import { Button } from '../../components/ui/Button';
 
 // import { Form, FormInput } from '@/components/ui/form';
 
@@ -64,7 +65,7 @@ const ProfilePage = () => {
               <h1 className="text-lg font-bold">Rp. 1.000.000.000</h1>
               <h2 className="text-sm font-normal">my Balance</h2>
             </div>
-            <Separator className="h-10" orientation='vertical' />
+            <Separator className="h-10" orientation="vertical" />
             <Button size="sm">Top Up</Button>
           </div>
         </div>

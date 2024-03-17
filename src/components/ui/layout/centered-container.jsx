@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn } from "../../../lib/utils";
 
 const CenteredContainer = ({ children, className, ...props }) => {
   return (

@@ -1,5 +1,5 @@
-import DynamicBreadcrumb from '@/components/ui/Dynamic-breadcrumb';
 import { Button } from '../../components/ui/Button';
+import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
 import { Separator } from '../../components/ui/Separator';
 import { useProduct } from '../../hooks/products/useProduct';
 import { formatCurrency } from '../../utils/helpers';
