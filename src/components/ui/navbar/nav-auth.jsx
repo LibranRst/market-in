@@ -1,7 +1,7 @@
 import { FiShoppingCart } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
-import Spinner from '../loading/spinner';
-import { buttonVariants } from '@/components/ui/button';
+import Spinner from '../loading/Spinner';
+import { buttonVariants } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 
 const NavAuth = ({ isLoading }) => {

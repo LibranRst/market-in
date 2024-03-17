@@ -1,5 +1,5 @@
 import { cloneElement } from 'react';
-import { Label } from './label';
+import { Label } from './Label';
 
 const FormRowVertical = ({ label, children, error, htmlFor }) => {
   return (

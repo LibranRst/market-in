@@ -1,7 +1,7 @@
-import { Label } from '@/components/ui/label';
+import { Label } from '@/components/ui/Label';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
-import PopoverCustom from '../popover-custom';
+import PopoverCustom from '../Popover-custom';
 
 const CategorySelect = ({ categories, control }) => {
   const [previewCategories, setPreviewCategories] = useState([]);

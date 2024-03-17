@@ -1,6 +1,6 @@
-import DynamicBreadcrumb from '@/components/ui/dynamic-breadcrumb';
+import DynamicBreadcrumb from '@/components/ui/Dynamic-breadcrumb';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import {
   Card,
   CardContent,
@@ -8,15 +8,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
+} from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
+import { Textarea } from '@/components/ui/Textarea';
 import { useUpdateUser } from '@/hooks/auth/useUpdateUser';
 import { useUser } from '@/hooks/auth/useUser';
 import { useForm } from 'react-hook-form';
-import Spinner from '@/components/ui/loading/spinner';
-import CenteredContainer from '@/components/ui/layout/centered-container';
+import Spinner from '@/components/ui/loading/Spinner';
+import CenteredContainer from '@/components/ui/layout/Centered-container';
 
 const SettingsPage = () => {
   const { user, isLoading } = useUser();

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { IoArrowBack } from 'react-icons/io5';
-import Spinner from '../loading/spinner';
-import { Button } from '../button';
+import Spinner from '../loading/Spinner';
+import { Button } from '../Button';
 // import { IoHomeOutline } from 'react-icons/io5';
 
 const FormAuth = ({ children, onSubmit, authType = 'login', isLoading }) => {

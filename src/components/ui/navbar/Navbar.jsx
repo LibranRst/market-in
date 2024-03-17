@@ -1,6 +1,6 @@
-import NavMenu from './nav-menu';
-import NavSearch from './nav-search';
-import NavTitle from './nav-title';
+import NavMenu from './Nav-menu';
+import NavSearch from './Nav-search';
+import NavTitle from './Nav-title';
 
 const Navbar = () => {
   return (

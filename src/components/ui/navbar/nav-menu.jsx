@@ -1,6 +1,6 @@
 import { useUser } from '../../../hooks/auth/useUser';
-import NavAuth from './nav-auth';
-import NavUser from './nav-user';
+import NavAuth from './Nav-auth';
+import NavUser from './Nav-user';
 
 const NavMenu = () => {
   const { user, isAuthenticated, isLoading } = useUser();

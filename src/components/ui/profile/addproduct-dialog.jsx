@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import {
   Dialog,
   DialogContent,
@@ -7,18 +7,18 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import CategorySelect from '@/components/ui/profile/categories-select';
+} from '@/components/ui/Dialog';
+import CategorySelect from '@/components/ui/profile/Categories-select';
 
-import FormRow from '@/components/ui/formrow';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import FormRow from '@/components/ui/Formrow';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
 import { useCategories } from '@/hooks/categories/useCategories';
 import { useAddProduct } from '@/hooks/products/useAddProduct';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useImagePreview from '../../../hooks/use-imagepreview';
-import Spinner from '../loading/spinner';
+import Spinner from '../loading/Spinner';
 
 const AddProductDialog = () => {
   const { categories } = useCategories();

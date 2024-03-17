@@ -2,7 +2,7 @@ import { FaStar } from 'react-icons/fa';
 import { MdAddShoppingCart } from 'react-icons/md';
 import { FaShop } from 'react-icons/fa6';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 import { Link } from 'react-router-dom';
 
@@ -11,7 +11,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from '@/components/ui/Tooltip';
 
 const ProductCard = ({ imgSrc, name, price, rating = 0, children, id }) => {
   return (

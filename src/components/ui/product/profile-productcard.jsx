@@ -1,15 +1,15 @@
 import { TrashIcon } from '@radix-ui/react-icons';
 import { MdModeEditOutline } from 'react-icons/md';
-import { Button } from '@/components/ui/button';
-import { Separator } from '../separator';
+import { Button } from '@/components/ui/Button';
+import { Separator } from '../Separator';
 import { useDeleteProduct } from '../../../hooks/products/useDeleteProduct';
 import { formatCurrency } from '../../../utils/helpers';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import Spinner from '../loading/spinner';
+} from '@/components/ui/Popover';
+import Spinner from '../loading/Spinner';
 import { useState } from 'react';
 
 const ProfileProductCard = ({ product }) => {

@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import {
   Card,
   CardContent,
@@ -6,11 +6,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import FormRowVertical from '@/components/ui/formrow-vertical';
-import { Input } from '@/components/ui/input';
+} from '@/components/ui/Card';
+import FormRowVertical from '@/components/ui/Formrow-vertical';
+import { Input } from '@/components/ui/Input';
 // import { Form, FormInput } from '@/components/ui/form';
-import Spinner from '@/components/ui/loading/spinner';
+import Spinner from '@/components/ui/loading/Spinner';
 import { useUpdateUser } from '@/hooks/auth/useUpdateUser';
 import { useForm } from 'react-hook-form';
 

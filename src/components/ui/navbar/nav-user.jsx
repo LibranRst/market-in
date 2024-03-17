@@ -1,6 +1,6 @@
 import { FiShoppingCart } from 'react-icons/fi';
 import { GrNotification } from 'react-icons/gr';
-import UserDropdown from './user-dropdown';
+import UserDropdown from './User-dropdown';
 
 const NavUser = ({ user }) => {
   return (

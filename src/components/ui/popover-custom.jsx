@@ -1,6 +1,6 @@
 import { CaretSortIcon } from '@radix-ui/react-icons';
-import { Popover, PopoverContent, PopoverTrigger } from './popover';
-import { Separator } from './separator';
+import { Popover, PopoverContent, PopoverTrigger } from './Popover';
+import { Separator } from './Separator';
 
 const PopoverCustom = ({ children, title, description }) => {
   return (

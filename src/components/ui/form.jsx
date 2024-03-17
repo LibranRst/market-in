@@ -1,7 +1,7 @@
 import { FormProvider, useFormContext } from 'react-hook-form';
-import { Input } from './input';
-import { Label } from './label';
-import { Textarea } from './textarea';
+import { Input } from './Input';
+import { Label } from './Label';
+import { Textarea } from './Textarea';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 

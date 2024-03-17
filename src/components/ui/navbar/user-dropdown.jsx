@@ -1,4 +1,4 @@
-import Avatar from '@/components/ui/avatar';
+import Avatar from '@/components/ui/Avatar';
 
 import { Link } from 'react-router-dom';
 import {
@@ -20,7 +20,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/components/ui/Dropdown-menu';
 
 import {
   Dialog,
@@ -30,10 +30,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
-import { Button } from '../button';
+} from '@/components/ui/Dialog';
+import { Button } from '../Button';
 import { useLogout } from '@/hooks/auth/useLogout';
-import { useTheme } from '@/components/theme-provider';
+import { useTheme } from '@/components/Theme-provider';
 
 const UserDropdown = ({ user }) => {
   const { logout } = useLogout();

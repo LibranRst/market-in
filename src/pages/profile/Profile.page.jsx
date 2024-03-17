@@ -3,17 +3,17 @@ import { useUpdateUser } from '../../hooks/auth/useUpdateUser';
 // import Modal from '../../ui/modals/Modal';
 // import { FaTrash } from 'react-icons/fa';
 // import Confirmation from '../../ui/modals/Confimation';
-import Avatar from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import Avatar from '@/components/ui/Avatar';
+import { Button } from '@/components/ui/Button';
 import { useUser } from '../../hooks/auth/useUser';
 
-import DynamicBreadcrumb from '@/components/ui/dynamic-breadcrumb';
-import CenteredContainer from '@/components/ui/layout/centered-container';
+import DynamicBreadcrumb from '@/components/ui/Dynamic-breadcrumb';
+import CenteredContainer from '@/components/ui/layout/Centered-container';
 import { useUserProducts } from '@/hooks/products/useProducts';
-import Spinner from '../../components/ui/loading/spinner';
-import AddProductDialog from '../../components/ui/profile/addproduct-dialog';
-import ProductUserCard from '../../components/ui/product/profile-productcard';
-import { Separator } from '../../components/ui/separator';
+import Spinner from '../../components/ui/loading/Spinner';
+import AddProductDialog from '../../components/ui/profile/Addproduct-dialog';
+import ProductUserCard from '../../components/ui/product/Profile-productcard';
+import { Separator } from '../../components/ui/Separator';
 
 // import { Form, FormInput } from '@/components/ui/form';
 
