@@ -21,6 +21,8 @@ import ProductPage from './pages/product/Product.page';
 import Layout from './components/ui/layout/Layout';
 import { Toaster } from './components/ui/Toaster';
 
+// using netflify
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
