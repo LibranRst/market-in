@@ -11,7 +11,7 @@ const HomePage = () => {
       <div className="flex w-[20%] flex-col gap-2">
         <h2 className="font-medium">Filter</h2>
         <div className="rounded-xl border bg-card p-2">
-          <h2>Category</h2>
+          <h2>Categories</h2>
         </div>
       </div>
       <div className="flex w-[80%] flex-col gap-2">
