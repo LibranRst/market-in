@@ -8,7 +8,7 @@ const forms = [
     name: 'username',
     type: 'text',
     validation: {
-      required: 'username is required',
+      required: 'Username is required',
     },
   },
   {
@@ -16,7 +16,7 @@ const forms = [
     name: 'email',
     type: 'email',
     validation: {
-      required: 'email is required',
+      required: 'Email is required',
       pattern: {
         value: /\S+@\S+\.\S+/,
         message: 'Please provide a valid email address',
@@ -28,7 +28,7 @@ const forms = [
     name: 'password',
     type: 'password',
     validation: {
-      required: 'password is required',
+      required: 'Password is required',
       minLength: {
         value: 8,
         message: 'Password needs a minimum of 8 characters',
