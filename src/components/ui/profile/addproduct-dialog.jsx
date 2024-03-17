@@ -18,10 +18,11 @@ import { useAddProduct } from '@/hooks/products/useAddProduct';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import useImagePreview from '../../../hooks/use-imagepreview';
+import Spinner from '../loading/spinner';
 
 const AddProductDialog = () => {
   const { categories } = useCategories();
-  const { addProduct } = useAddProduct();
+  const { addProduct, isAdding } = useAddProduct();
 
   const [open, setOpen] = useState(false);
   const {
@@ -35,13 +36,14 @@ const AddProductDialog = () => {
   } = useForm({
     defaultValues: {
       price: 0,
+      stock: 1,
     },
   });
 
   const imageData = watch('image');
-  const [imagePreview] = useImagePreview(imageData);
+  const [imagePreview, setImagePreview] = useImagePreview(imageData);
 
-  const onSubmit = ({ name, description, price, categories, image }) => {
+  const onSubmit = ({ name, description, price, categories, image, stock }) => {
     if (!image || !name || !description || !price) return;
     const selectedCategories = categories
       ? Object.entries(categories)
@@ -55,6 +57,7 @@ const AddProductDialog = () => {
         name,
         description,
         price,
+        stock,
         categories: selectedCategories,
         imageFile,
       },
@@ -62,6 +65,7 @@ const AddProductDialog = () => {
         onSuccess: () => {
           reset();
           setOpen(false);
+          setImagePreview(null);
         },
       },
     );
@@ -105,7 +109,7 @@ const AddProductDialog = () => {
             <FormRow label="Price" error={errors.price} htmlFor="price">
               <Input
                 id="price"
-                type="text"
+                type="number"
                 placeholder="Price of your product..."
                 {...register('price', {
                   required: 'Price of the product is required.',
@@ -114,7 +118,30 @@ const AddProductDialog = () => {
                   onChange: (e) =>
                     setValue(
                       'price',
-                      e.target.value === '' ? 0 : parseFloat(e.target.value),
+                      isNaN(e.target.valueAsNumber)
+                        ? 0
+                        : e.target.valueAsNumber,
+                    ),
+                })}
+              />
+            </FormRow>
+            <FormRow label="Stock" error={errors?.stock} htmlFor={'stock'}>
+              <Input
+                id="stock"
+                type="number"
+                {...register('stock', {
+                  required: 'Stock of the product is required.',
+                  min: {
+                    value: 1,
+                    message: 'Products must have at least 1 stock.',
+                  },
+                  valueAsNumber: true,
+                  onChange: (e) =>
+                    setValue(
+                      'stock',
+                      isNaN(e.target.valueAsNumber)
+                        ? 0
+                        : e.target.valueAsNumber,
                     ),
                 })}
               />
@@ -123,7 +150,7 @@ const AddProductDialog = () => {
             <FormRow label="Image" error={errors?.image}>
               <label
                 htmlFor="image"
-                className={`relative block h-[300px] w-[300px] cursor-pointer rounded-md border-2 border-dashed bg-transparent transition-colors hover:bg-accent-foreground/20 ${errors?.image ? 'border-destructive' : 'border-border'}`}
+                className={`relative block h-[200px] w-[200px] cursor-pointer rounded-md border-2 border-dashed bg-transparent transition-colors hover:bg-accent-foreground/20 ${errors?.image ? 'border-destructive' : 'border-border'}`}
               >
                 <div className="flex h-full w-full items-center justify-center">
                   {imagePreview ? (
@@ -149,7 +176,9 @@ const AddProductDialog = () => {
             </FormRow>
           </div>
           <DialogFooter>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit" className='flex flex-row gap-1 items-center'>
+              Save changes {isAdding && <Spinner className={'h-4 w-4'} />}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

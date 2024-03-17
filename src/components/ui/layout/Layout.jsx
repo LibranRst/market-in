@@ -6,9 +6,9 @@ import Navbar from '../navbar/navbar';
 
 const Layout = () => {
   return (
-    <div className="min-h-screen bg-background-gradient">
+    <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="mx-auto mt-2 w-full max-w-[1200px]">
+      <div className="mx-auto mt-5 w-full max-w-[1200px]">
         <Outlet />
       </div>
     </div>

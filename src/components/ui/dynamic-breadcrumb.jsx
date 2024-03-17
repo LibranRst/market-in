@@ -9,7 +9,7 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 
-const DynamicBreadcrumb = () => {
+const DynamicBreadcrumb = ({ pageName = '' }) => {
   const location = useLocation();
   const pathSegments = location.pathname
     .split('/')
@@ -27,7 +27,7 @@ const DynamicBreadcrumb = () => {
             <BreadcrumbItem>
               {index === pathSegments.length - 1 ? (
                 <BreadcrumbPage className="first-letter:uppercase">
-                  {segment}
+                  {pageName ? pageName : segment}
                 </BreadcrumbPage>
               ) : (
                 <BreadcrumbLink

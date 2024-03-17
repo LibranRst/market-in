@@ -13,11 +13,11 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-const ProductCard = ({ imgSrc, name, price, rating = 0, children }) => {
+const ProductCard = ({ imgSrc, name, price, rating = 0, children, id }) => {
   return (
-    <div className="overflow-hidden rounded-xl border-[1px] bg-card">
+    <div className="overflow-hidden rounded-xl border-[1px] drop-shadow-sm bg-card">
       <TooltipProvider>
-        <Link to="/profile">
+        <Link to={`/product/${id}`}>
           <img
             src={imgSrc}
             alt="Card 1 image"
@@ -29,7 +29,7 @@ const ProductCard = ({ imgSrc, name, price, rating = 0, children }) => {
             <TooltipTrigger className="text-left">
               <Link
                 className="line-clamp-2 cursor-pointer overflow-hidden text-ellipsis"
-                to="/profile"
+                to={`/product/${id}`}
               >
                 {name}
               </Link>

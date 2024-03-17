@@ -10,17 +10,19 @@ import { useUser } from '../../hooks/auth/useUser';
 import DynamicBreadcrumb from '@/components/ui/dynamic-breadcrumb';
 import CenteredContainer from '@/components/ui/layout/centered-container';
 import { useUserProducts } from '@/hooks/products/useProducts';
+import Spinner from '../../components/ui/loading/spinner';
 import AddProductDialog from '../../components/ui/profile/addproduct-dialog';
+import ProductUserCard from '../../components/ui/product/profile-productcard';
+import { Separator } from '../../components/ui/separator';
 
 // import { Form, FormInput } from '@/components/ui/form';
 
 const ProfilePage = () => {
   const { updateUser, isUpdating } = useUpdateUser();
   const { user, isLoading } = useUser();
-  // const { products, isLoading: isProductsLoading } = useUserProducts();
+  const { products, isLoading: isProductsLoading } = useUserProducts();
 
-  const [avatar, setAvatar] = useState(null);
-  // console.log(avatar);
+  const [avatar, setAvatar] = useState(null); // console.log(avatar);
 
   useEffect(() => {
     if (avatar) {
@@ -62,7 +64,7 @@ const ProfilePage = () => {
               <h1 className="text-lg font-bold">Rp. 1.000.000.000</h1>
               <h2 className="text-sm font-normal">my Balance</h2>
             </div>
-            <div className="h-10 w-[1px] bg-accent" />
+            <Separator className="h-10" orientation='vertical' />
             <Button size="sm">Top Up</Button>
           </div>
         </div>
@@ -73,8 +75,16 @@ const ProfilePage = () => {
           <AddProductDialog />
         </div>
         <hr />
-        <div className="h-full overflow-auto">
-          There is no product on your shop yet.
+        <div className="relative grid grid-cols-2 gap-2 overflow-auto">
+          {isProductsLoading ? (
+            <Spinner className="h-10 w-10" />
+          ) : products.length > 0 ? (
+            products?.map((product) => (
+              <ProductUserCard product={product} key={product.id} />
+            ))
+          ) : (
+            <p>There is no product on your shop yet.</p>
+          )}
         </div>
       </div>
     </CenteredContainer>

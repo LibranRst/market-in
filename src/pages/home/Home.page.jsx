@@ -7,7 +7,7 @@ const HomePage = () => {
   const { products, isLoading } = useProducts();
 
   return (
-    <div className="mt-5 flex w-full gap-5">
+    <div className="flex w-full gap-5">
       <div className="flex w-[20%] flex-col gap-2">
         <h2 className="font-medium">Filter</h2>
         <div className="rounded-xl border bg-card p-2">
@@ -26,6 +26,7 @@ const HomePage = () => {
                 imgSrc={product.product_image}
                 name={product.name}
                 price={formatCurrency(product.price)}
+                id={product.id}
               >
                 <ProductCard.Seller sellerLink="/profile">
                   {product.profiles.username}

@@ -8,11 +8,12 @@ export const useAddProduct = () => {
   const { user } = useUser();
 
   const { mutate: addProduct, isPending: isAdding } = useMutation({
-    mutationFn: ({ name, description, price, categories, imageFile }) =>
+    mutationFn: ({ name, description, price, categories, imageFile, stock }) =>
       addProductApi({
         name,
         description,
         price,
+        stock,
         categories,
         imageFile,
         user_id: user?.id,

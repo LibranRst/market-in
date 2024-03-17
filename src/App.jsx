@@ -1,4 +1,8 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import {
+  Navigate,
+  RouterProvider,
+  createBrowserRouter,
+} from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
@@ -15,6 +19,7 @@ import { Toaster } from '@/components/ui/toaster';
 import SignInPage from './pages/auth/Signin.page';
 import SignUpPage from './pages/auth/Signup.page';
 import SettingsPage from './pages/settings/settings.page';
+import ProductPage from './pages/product/product.page';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -68,6 +73,18 @@ const protectedRoutes = [
       {
         path: '/settings',
         element: <SettingsPage />,
+      },
+      {
+        path: '/profile/:id',
+        element: <ProfilePage />,
+      },
+      {
+        path: '/product',
+        element: <Navigate to="/" />,
+      },
+      {
+        path: '/product/:id',
+        element: <ProductPage />,
       },
     ],
   },
