@@ -3,7 +3,7 @@ import supabase, { SUPABASE_URL } from './supabase';
 export const getProducts = async () => {
   const { data, error } = await supabase
     .from('products')
-    .select('*, profiles(*), categories(id, name, description)');
+    .select('*, profiles(*), categories(id, name, description)')
 
   if (error) {
     throw new Error(error.message);
@@ -43,6 +43,9 @@ export const addProduct = async ({
   imageFile: productImage,
   user_id,
 }) => {
+  if (categories.length > 2)
+    throw new Error('You can only add up to 2 categories');
+
   const productName = name.split(' ').join('_');
   const fileName = `product-${productName.toLowerCase()}-${Math.random()}`;
 

@@ -19,7 +19,7 @@ const DynamicBreadcrumb = ({ pageName = '' }) => {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbItem href="/">Home</BreadcrumbItem>
+          <BreadcrumbLink href="/">Home</BreadcrumbLink>
         </BreadcrumbItem>
         {pathSegments.map((segment, index) => (
           <React.Fragment key={index}>
