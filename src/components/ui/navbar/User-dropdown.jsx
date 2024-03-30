@@ -31,23 +31,19 @@ import {
   DropdownMenuTrigger,
 } from '../Dropdown-menu';
 import Avatar from '../Avatar';
+import Spinner from '../loading/Spinner';
 
 const UserDropdown = ({ user }) => {
-  const { logout } = useLogout();
+  const { logout, isLoading } = useLogout();
   const { theme, setTheme } = useTheme();
   return (
     <Dialog>
       <DropdownMenu>
         <DropdownMenuTrigger className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm font-[500] outline-none transition-colors hover:bg-accent">
           <Avatar type="user">
-            <Avatar.Image
-              src={user?.user_metadata?.avatar}
-              name={user?.user_metadata?.username}
-            />
+            <Avatar.Image src={user?.imageUrl} name={user?.name} />
           </Avatar>
-          <p className="w-36 truncate text-left">
-            {user?.user_metadata?.username}
-          </p>
+          <p className="w-36 truncate text-left">{user?.username}</p>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-[12.5rem]">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
@@ -102,8 +98,8 @@ const UserDropdown = ({ user }) => {
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button size="sm" onClick={logout}>
-            Yes, i'm sure
+          <Button size="sm" onClick={logout} disabled={isLoading}>
+            Yes, i'm sure {isLoading && <Spinner className="ml-1 h-4 w-4" />}
           </Button>
         </DialogFooter>
       </DialogContent>

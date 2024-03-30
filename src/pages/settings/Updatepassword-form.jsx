@@ -21,13 +21,20 @@ const UpdatePasswordForm = () => {
     handleSubmit,
     formState: { errors },
     getValues,
+    reset,
   } = useForm();
 
-  const onSubmit = ({ password }) => {
-    if (password === '') {
+  const onSubmit = ({ newPassword, oldPassword }) => {
+    if (newPassword === '') {
       return;
     }
-    updateUser({ password });
+    updateUser(
+      { password: newPassword, oldPassword },
+      {
+        onSuccess: () =>
+          reset({ oldPassword: '', newPassword: '', confirmPassword: '' }),
+      },
+    );
   };
 
   return (
@@ -40,18 +47,39 @@ const UpdatePasswordForm = () => {
         <CardContent>
           <div className="grid gap-4">
             <FormRowVertical
-              label="Password"
-              htmlFor={'password'}
-              error={errors.password}
+              label="Old Password"
+              htmlFor={'oldPassword'}
+              error={errors.oldPassword}
             >
               <Input
-                id="password"
+                id="oldPassword"
+                type="password"
                 disabled={isUpdating}
-                placeholder="input your password here..."
+                placeholder="input your old password here..."
                 className={`focus-visible:ring-0 ${
-                  errors.password && 'border-destructive'
+                  errors.oldPassword && 'border-destructive'
                 }`}
-                {...register('password', { required: 'Password is required' })}
+                {...register('oldPassword', {
+                  required: 'OldPassword is required',
+                })}
+              />
+            </FormRowVertical>
+            <FormRowVertical
+              label="New Password"
+              htmlFor={'newPassword'}
+              error={errors.newPassword}
+            >
+              <Input
+                id="newPassword"
+                type="password"
+                disabled={isUpdating}
+                placeholder="input your new password here..."
+                className={`focus-visible:ring-0 ${
+                  errors.newPassword && 'border-destructive'
+                }`}
+                {...register('newPassword', {
+                  required: 'New password is required',
+                })}
               />
             </FormRowVertical>
             <FormRowVertical
@@ -61,6 +89,7 @@ const UpdatePasswordForm = () => {
             >
               <Input
                 id="confirmPassword"
+                type="password"
                 disabled={isUpdating}
                 placeholder="confirm your password here..."
                 className={`focus-visible:ring-0 ${
@@ -68,14 +97,15 @@ const UpdatePasswordForm = () => {
                 }`}
                 {...register('confirmPassword', {
                   validate: (value) =>
-                    getValues().password === value || 'Passwords do not match',
+                    getValues().newPassword === value ||
+                    'Passwords do not match',
                 })}
               />
             </FormRowVertical>
           </div>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button>
+          <Button disabled={isUpdating}>
             Update {isUpdating && <Spinner className={'ml-1 h-4 w-4'} />}
           </Button>
         </CardFooter>

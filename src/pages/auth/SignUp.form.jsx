@@ -1,8 +1,17 @@
-import { useSignup } from '../../hooks/auth/useSignup';
-import FormAuth from '../../components/ui/authentication/Form-auth';
 import { useForm } from 'react-hook-form';
+import FormAuth from '../../components/ui/authentication/Form-auth';
+import { useLogin } from '../../hooks/auth/useLogin';
+import { useSignup } from '../../hooks/auth/useSignup';
 
 const forms = [
+  {
+    label: 'Name',
+    name: 'name',
+    type: 'text',
+    validation: {
+      required: 'Name is required',
+    },
+  },
   {
     label: 'Username',
     name: 'username',
@@ -38,27 +47,41 @@ const forms = [
 ];
 
 const SignUpForm = () => {
-  const { signup, isLoading } = useSignup();
+  // const { toast } = useToast();
+
+  const { signup, isLoading: isCreatingUser } = useSignup();
+  const { login, isLoading: isSigningIn } = useLogin();
+  // const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
+
   const {
-    register,
     handleSubmit,
+    register,
     formState: { errors },
     watch,
     reset,
   } = useForm();
 
-  const onSubmit = ({ username, email, password }) => {
-    signup(
-      { username, email, password },
-      { onSuccess: reset },
-    );
-  };
+  // const navigate = useNavigate();
 
+  const onSubmit = async (values) => {
+    try {
+      await signup(values);
+      await login(
+        {
+          email: values.email,
+          password: values.password,
+        },
+        { onSuccess: reset },
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <FormAuth
       authType="signup"
       onSubmit={handleSubmit(onSubmit)}
-      isLoading={isLoading}
+      isLoading={isCreatingUser || isSigningIn}
     >
       <FormAuth.Title>SignUp</FormAuth.Title>
       <FormAuth.Inputs

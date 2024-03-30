@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { login as loginApi } from '../../services/apiAuth';
 import { useToast } from '../use-toast';
 export const useLogin = () => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { mutate: login, isPending: isLoading } = useMutation({
+  const { mutateAsync: login, isPending: isLoading } = useMutation({
     mutationFn: ({ email, password }) => loginApi({ email, password }),
-    onSuccess: (user) => {
-      queryClient.setQueryData(['user'], user.user);
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] });
       toast({
         title: 'Logged in',
       });

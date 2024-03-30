@@ -8,7 +8,7 @@ const NavMenu = () => {
   return (
     <div className="flex items-center gap-5">
       {isAuthenticated ? (
-        <NavUser user={user} />
+        <NavUser user={user} isLoading={isLoading} />
       ) : (
         <NavAuth isLoading={isLoading} />
       )}

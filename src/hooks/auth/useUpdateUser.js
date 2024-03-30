@@ -8,22 +8,22 @@ export const useUpdateUser = () => {
 
   const { mutate: updateUser, isPending: isUpdating } = useMutation({
     mutationFn: updateCurrentUser,
-    onSuccess: ({ user }) => {
-      console.log(user)
-      if (user?.new_email) {
+    onSuccess: (user) => {
+      console.log(user);
+      toast({
+        title: 'Account updated',
+        description: 'Your account has been updated.',
+      });
+
+      if (user?.passwordUpdate) {
         toast({
-          title: 'Account updated',
-          description:
-            'Your email has been updated. Please check your new email for verification.',
+          title: 'Password updated',
+          description: 'Your password has been updated.',
         });
-      } else {
-        toast({
-          title: 'Account updated',
-          description: 'Your account has been updated.',
-        });
+        return;
       }
 
-      queryClient.setQueryData(['user'], user);
+      queryClient.invalidateQueries({ queryKey: ['user'] });
     },
     onError: (err) =>
       toast({

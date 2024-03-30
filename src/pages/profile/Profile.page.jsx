@@ -15,6 +15,7 @@ import CenteredContainer from '../../components/ui/layout/Centered-container';
 import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
 import Avatar from '../../components/ui/Avatar';
 import { Button } from '../../components/ui/Button';
+import { formatCurrency } from '../../utils/helpers';
 
 // import { Form, FormInput } from '@/components/ui/form';
 
@@ -27,9 +28,12 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (avatar) {
-      updateUser({ avatar }, { onSuccess: () => setAvatar(null) });
+      updateUser(
+        { avatar, id: user?.$id },
+        { onSuccess: () => setAvatar(null) },
+      );
     }
-  }, [avatar, updateUser]);
+  }, [avatar, updateUser, user?.$id]);
 
   return (
     <CenteredContainer className="gap-4">
@@ -41,28 +45,22 @@ const ProfilePage = () => {
           className="h-[5rem] w-[5rem] rounded-md"
           onChange={(e) => setAvatar(e.target.files[0])}
         >
-          <Avatar.Image
-            src={user?.user_metadata?.avatar}
-            name={user?.user_metadata?.username}
-            textSize="3xl"
-          />
+          <Avatar.Image src={user?.imageUrl} name={user?.name} textSize="3xl" />
           {isUpdating && <Avatar.Loading />}
           {isLoading && <Avatar.Loading />}
         </Avatar>
         <div className="flex w-[calc(100%-5rem)] items-center justify-between rounded-md border bg-card px-6">
           <div className="flex flex-col">
-            <h2 className="text-lg font-semibold">
-              {user?.user_metadata?.username}
-            </h2>
+            <h2 className="text-lg font-semibold">{user?.name}</h2>
             <p className="text-sm text-gray-400">
-              {user?.user_metadata?.bio
-                ? user?.user_metadata?.bio
-                : 'there is no bio for this profile.'}
+              {user?.bio ? user?.bio : 'there is no bio for this profile.'}
             </p>
           </div>
           <div className="flex items-center gap-5">
             <div className="text-right">
-              <h1 className="text-lg font-bold">Rp. 1.000.000.000</h1>
+              <h1 className="text-lg font-bold">
+                {formatCurrency(user?.balance || 0)}
+              </h1>
               <h2 className="text-sm font-normal">my Balance</h2>
             </div>
             <Separator className="h-10" orientation="vertical" />
@@ -79,7 +77,7 @@ const ProfilePage = () => {
         <div className="relative grid grid-cols-2 gap-2 overflow-auto">
           {isProductsLoading ? (
             <Spinner className="h-10 w-10" />
-          ) : products.length > 0 ? (
+          ) : products?.length > 0 ? (
             products?.map((product) => (
               <ProductUserCard product={product} key={product.id} />
             ))

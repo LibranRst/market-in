@@ -1,6 +1,6 @@
-import { useProducts } from '../../hooks/products/useProducts';
 import Spinner from '../../components/ui/loading/Spinner';
 import ProductCard from '../../components/ui/product/Product-card';
+import { useProducts } from '../../hooks/products/useProducts';
 import { formatCurrency } from '../../utils/helpers';
 
 const HomePage = () => {

@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from '../navbar/Navbar';
 
-const Layout = () => {
+const RootLayout = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -12,4 +12,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default RootLayout;

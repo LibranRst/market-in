@@ -1,16 +1,16 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { FaStar } from 'react-icons/fa';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
-import ShoppingCart from '../../components/ui/product/Shopping-Cart';
-import { useProduct } from '../../hooks/products/useProduct';
-import { useTruncatedElement } from '../../hooks/useTruncatedElement';
-import { formatCurrency } from '../../utils/helpers';
 import { Separator } from '../../components/ui/Separator';
-import { useProducts } from '../../hooks/products/useProducts';
 import Spinner from '../../components/ui/loading/Spinner';
 import ProductCard from '../../components/ui/product/Product-card';
+import ShoppingCart from '../../components/ui/product/Shopping-Cart';
+import { useProduct } from '../../hooks/products/useProduct';
+import { useProducts } from '../../hooks/products/useProducts';
+import { useTruncatedElement } from '../../hooks/useTruncatedElement';
+import { formatCurrency } from '../../utils/helpers';
 
 const ProductPage = () => {
   const { product, isLoading } = useProduct();
@@ -31,7 +31,7 @@ const ProductPage = () => {
         <div className="col-span-4 h-full rounded-md">
           <img
             src={product?.product_image}
-            className="sticky top-[7.688rem] rounded-md object-cover"
+            className="sticky top-[7.688rem] h-[375px] w-[375px] rounded-md object-cover"
           />
         </div>
         <div className="col-span-5 flex flex-col gap-10 py-2">

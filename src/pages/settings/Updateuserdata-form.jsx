@@ -25,35 +25,48 @@ const UpdateUserDataForm = () => {
     formState: { errors },
   } = useForm({
     values: {
-      email: user?.email,
-      username: user?.user_metadata?.username,
-      bio: user?.user_metadata?.bio,
+      name: user?.name,
+      username: user?.username,
+      bio: user?.bio,
     },
   });
 
-  const onSubmit = ({ email, username, bio }) => {
+  const onSubmit = ({ name, username, bio }) => {
     if (
-      email === user?.email &&
-      username === user?.user_metadata?.username &&
-      bio === user?.user_metadata?.bio
+      username === user?.username &&
+      name === user?.name &&
+      bio === user?.bio
     ) {
       return;
     }
-    updateUser({ email, username, bio });
+    updateUser({ name, username, bio, id: user?.$id }, {
+      
+    });
   };
 
   return (
     <Card>
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardHeader>
-          <CardTitle>Account Settings</CardTitle>
+          <CardTitle>User Settings</CardTitle>
           <CardDescription>
-            Manage your account account details. The Account Settings section
+            Manage your user information. The User Settings section
             allows you to update your basic information.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
+            <FormRowVertical label="Name" htmlFor={'name'} error={errors.name}>
+              <Input
+                id="name"
+                disabled={isLoading || isUpdating}
+                placeholder="input your name here..."
+                className={`focus-visible:ring-0 ${
+                  errors.name && 'border-destructive'
+                }`}
+                {...register('name', { required: 'Name is required' })}
+              />
+            </FormRowVertical>
             <FormRowVertical
               label="Username"
               htmlFor={'username'}
@@ -67,21 +80,6 @@ const UpdateUserDataForm = () => {
                   errors.username && 'border-destructive'
                 }`}
                 {...register('username', { required: 'Username is required' })}
-              />
-            </FormRowVertical>
-            <FormRowVertical
-              label="Email"
-              htmlFor={'email'}
-              error={errors.email}
-            >
-              <Input
-                id="email"
-                disabled={isLoading || isUpdating}
-                placeholder="input your email here..."
-                className={`focus-visible:ring-0 ${
-                  errors.email && 'border-destructive'
-                }`}
-                {...register('email', { required: 'Email is required' })}
               />
             </FormRowVertical>
             <FormRowVertical label="Bio" htmlFor={'bio'} error={errors.bio}>
@@ -98,7 +96,7 @@ const UpdateUserDataForm = () => {
           </div>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button>
+          <Button disabled={isLoading || isUpdating}>
             Update {isUpdating && <Spinner className={'ml-1 h-4 w-4'} />}
           </Button>
         </CardFooter>

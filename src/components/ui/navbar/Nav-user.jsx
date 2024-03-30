@@ -1,8 +1,9 @@
 import { FiShoppingCart } from 'react-icons/fi';
 import { GrNotification } from 'react-icons/gr';
 import UserDropdown from './User-dropdown';
+import Spinner from '../loading/Spinner';
 
-const NavUser = ({ user }) => {
+const NavUser = ({ user, isLoading }) => {
   return (
     <>
       <div className="flex items-center gap-1">
@@ -14,7 +15,11 @@ const NavUser = ({ user }) => {
         </button>
       </div>
       <div className="h-[20px] w-[1px] rounded-lg bg-accent" />
-      <UserDropdown user={user} />
+      {isLoading ? (
+        <Spinner padding={2} className="h-4 w-4" />
+      ) : (
+        <UserDropdown user={user} />
+      )}
     </>
   );
 };

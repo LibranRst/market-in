@@ -1,19 +1,8 @@
-import { Link, Navigate } from 'react-router-dom';
-import { useUser } from '../../hooks/auth/useUser';
-import SignInForm from './SignIn.form';
+import { Link } from 'react-router-dom';
 import FormContainer from '../../components/ui/authentication/Form-auth_container';
+import SignInForm from './SignIn.form';
 
 const SignInPage = () => {
-  const { isAuthenticated, isLoading } = useUser();
-
-  if (isAuthenticated && !isLoading) {
-    return <Navigate to="/" />;
-  }
-
-  if (isLoading) {
-    return <div>Loading..</div>;
-  }
-
   return (
     <FormContainer>
       <SignInForm />
