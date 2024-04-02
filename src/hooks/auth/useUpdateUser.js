@@ -12,13 +12,13 @@ export const useUpdateUser = () => {
       console.log(user);
       toast({
         title: 'Account updated',
-        description: 'Your account has been updated.',
+        variant: 'success',
       });
 
       if (user?.passwordUpdate) {
         toast({
           title: 'Password updated',
-          description: 'Your password has been updated.',
+          variant: 'success',
         });
         return;
       }

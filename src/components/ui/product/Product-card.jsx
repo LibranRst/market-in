@@ -19,7 +19,7 @@ const ProductCard = ({ imgSrc, name, price, rating = 0, children, id }) => {
             <img
               src={imgSrc}
               alt="Card 1 image"
-              className="h-[200px] w-full cursor-pointer object-cover "
+              className="h-[200px] w-full cursor-pointer object-cover"
             />
           </Link>
           <div className="relative flex h-[140px] flex-col gap-[2px] p-2">

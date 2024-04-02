@@ -1,9 +1,8 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import useImagePreview from '../../../hooks/use-imagepreview';
-import Spinner from '../loading/Spinner';
-import { useCategories } from '../../../hooks/categories/useCategories';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useAddProduct } from '../../../hooks/products/useAddProduct';
+import useImagePreview from '../../../hooks/use-imagepreview';
+import { Button } from '../Button';
 import {
   Dialog,
   DialogContent,
@@ -13,14 +12,19 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../Dialog';
-import { Button } from '../Button';
 import FormRow from '../Formrow';
 import { Input } from '../Input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../Select';
 import { Textarea } from '../Textarea';
-import CategorySelect from './Categories-select';
+import Spinner from '../loading/Spinner';
 
 const AddProductDialog = () => {
-  const { categories } = useCategories();
   const { addProduct, isAdding } = useAddProduct();
 
   const [open, setOpen] = useState(false);
@@ -42,13 +46,20 @@ const AddProductDialog = () => {
   const imageData = watch('image');
   const [imagePreview, setImagePreview] = useImagePreview(imageData);
 
-  const onSubmit = ({ name, description, price, categories, image, stock }) => {
+  useEffect(() => {
+    if (!open) {
+      reset();
+      setImagePreview(null);
+    }
+  }, [open, reset, setImagePreview]);
+
+  const onSubmit = ({ name, description, price, category, image, stock }) => {
     if (!image || !name || !description || !price) return;
-    const selectedCategories = categories
-      ? Object.entries(categories)
-          .filter(([, isSelected]) => isSelected)
-          .map(([categoryId]) => parseInt(categoryId))
-      : [];
+    // const selectedCategories = categories
+    //   ? Object.entries(categories)
+    //       .filter(([, isSelected]) => isSelected)
+    //       .map(([category]) => category)
+    //   : [];
 
     const imageFile = image[0];
     addProduct(
@@ -57,7 +68,7 @@ const AddProductDialog = () => {
         description,
         price,
         stock,
-        categories: selectedCategories,
+        category,
         imageFile,
       },
       {
@@ -145,7 +156,32 @@ const AddProductDialog = () => {
                 })}
               />
             </FormRow>
-            <CategorySelect control={control} categories={categories} />
+            {/* <CategorySelect control={control} categories={categories} /> */}
+            <FormRow label="Category" error={errors?.category}>
+              <Controller
+                control={control}
+                name="category"
+                rules={{
+                  required: 'Category of the product is required.',
+                }}
+                render={({ field }) => (
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger
+                      className={errors?.category && 'border-destructive'}
+                    >
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent ref={field.ref}>
+                      <SelectItem value="Phones">Phones</SelectItem>
+                      <SelectItem value="PC">PC</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </FormRow>
             <FormRow label="Image" error={errors?.image}>
               <label
                 htmlFor="image"
@@ -164,7 +200,6 @@ const AddProductDialog = () => {
                 <input
                   type="file"
                   id="image"
-                  name="image"
                   accept="image/png, image/jpeg"
                   className="absolute top-0 hidden"
                   {...register('image', {

@@ -16,10 +16,10 @@ const ProfileProductCard = ({ product }) => {
   return (
     <div
       className="flex w-full flex-row items-center gap-2 rounded-md border border-border bg-card px-2 py-2"
-      key={product.id}
+      key={product.$id}
     >
       <img
-        src={product.product_image}
+        src={product.imageUrl}
         className="h-20 w-20 rounded-md object-cover"
       />
       <div className="flex w-[calc(100%-120px)] flex-col overflow-hidden">
@@ -55,7 +55,12 @@ const ProfileProductCard = ({ product }) => {
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={() => deleteProduct(product.id)}
+                onClick={() =>
+                  deleteProduct({
+                    productId: product.$id,
+                    imageId: product.imageId,
+                  })
+                }
               >
                 {isDeleting ? (
                   <span>

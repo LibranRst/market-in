@@ -30,7 +30,7 @@ const ProductPage = () => {
       <div className="grid w-full grid-cols-12 gap-10">
         <div className="col-span-4 h-full rounded-md">
           <img
-            src={product?.product_image}
+            src={product?.imageUrl}
             className="sticky top-[7.688rem] h-[375px] w-[375px] rounded-md object-cover"
           />
         </div>
@@ -39,12 +39,13 @@ const ProductPage = () => {
             <h1 className="text-3xl font-bold">{product?.name}</h1>
             <div className="text-md flex flex-row gap-2 font-normal">
               <div className="flex flex-wrap gap-1 text-card-foreground/70">
-                {product?.categories?.map((category, index, array) => (
-                  <p key={category.id}>
-                    {category.name}
+                {/* {product?.categories?.map((category, index, array) => (
+                  <p key={category.$id}>
+                    {category.category}
                     {index !== array.length - 1 && ', '}
                   </p>
-                ))}
+                ))} */}
+                {product?.category}
               </div>
               |
               <p className="flex gap-1">
@@ -68,12 +69,15 @@ const ProductPage = () => {
                 <h2 className="font-medium">Description</h2>
                 <div className="mt-0.5 h-[2px] w-[50%] bg-primary" />
               </div>
-              <p
-                className={`min-h-[220px] overflow-hidden break-words font-normal ${!isReadMore && 'line-clamp-[8]'}`}
+              <div
+                className={`min-h-[220px] overflow-hidden ${!isReadMore && 'line-clamp-[8]'}`}
                 ref={ref}
               >
-                {product?.description}
-              </p>
+                <div
+                  className="page-description break-words"
+                  dangerouslySetInnerHTML={{ __html: product?.description }}
+                />
+              </div>
             </div>
             {isTruncated && (
               <p
@@ -85,15 +89,15 @@ const ProductPage = () => {
             )}
           </div>
           <Separator />
-          <Card className="flex flex-row items-center gap-3 p-4 shadow-md">
+          <Card className="flex flex-row items-center gap-3 p-4">
             <img
-              src={product?.profiles.avatar}
-              alt={product?.profiles.username}
+              src={product?.seller.imageUrl}
+              alt={product?.seller.username}
               className="h-[5rem] w-[5rem] rounded-full"
             />
             <div className="flex w-full flex-row items-center justify-between">
               <h2 className="text-base font-semibold">
-                {product?.profiles.username}{' '}
+                {product?.seller.username}{' '}
                 <span className="flex items-center gap-1 text-sm font-normal">
                   <FaStar size={15} className="text-yellow-400" /> 5.0
                 </span>
@@ -115,14 +119,14 @@ const ProductPage = () => {
           ) : (
             products?.map((product) => (
               <ProductCard
-                key={product.id}
-                imgSrc={product.product_image}
+                key={product.$id}
+                imgSrc={product.imageUrl}
                 name={product.name}
                 price={formatCurrency(product.price)}
-                id={product.id}
+                id={product.$id}
               >
                 <ProductCard.Seller sellerLink="/profile">
-                  {product.profiles.username}
+                  {product.seller.username}
                 </ProductCard.Seller>
               </ProductCard>
             ))

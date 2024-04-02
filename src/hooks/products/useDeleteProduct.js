@@ -15,6 +15,7 @@ const useDeleteProduct = () => {
       toast({
         title: 'Product deleted',
         description: 'The product has been deleted successfully',
+        variant: 'success',
       });
       queryClient.invalidateQueries({
         queryKey: ['products'],

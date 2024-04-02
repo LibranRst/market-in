@@ -78,24 +78,6 @@ export const getCurrentUser = async () => {
   }
 };
 
-export const forgotPassword = async ({ email }) => {
-  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: 'http://localhost:5173/reset-password',
-  });
-
-  if (error) throw new Error(error.message);
-
-  return data;
-};
-
-export const changePassword = async ({ password }) => {
-  const { data, error } = await supabase.auth.updateUser({ password });
-
-  if (error) throw new Error(error.message);
-
-  return data;
-};
-
 export const updateCurrentUser = async ({
   email,
   name,
@@ -212,4 +194,22 @@ export const logout = async () => {
   } catch (error) {
     console.log(error);
   }
+};
+
+export const forgotPassword = async ({ email }) => {
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: 'http://localhost:5173/reset-password',
+  });
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
+export const changePassword = async ({ password }) => {
+  const { data, error } = await supabase.auth.updateUser({ password });
+
+  if (error) throw new Error(error.message);
+
+  return data;
 };

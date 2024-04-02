@@ -1,37 +1,77 @@
-import supabase, { SUPABASE_URL } from './supabase';
+import { ID, Query } from 'appwrite';
+import { getFilePreview, uploadFile } from './apiAuth';
+import { appwriteConfig, databases, storage } from './appwrite';
 
 export const getProducts = async () => {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*, profiles(*), categories(id, name, description)')
+  try {
+    const products = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.productsCollectionId,
+    );
 
-  if (error) {
+    if (!products) throw Error;
+
+    return products.documents;
+  } catch (error) {
     throw new Error(error.message);
   }
+  // const { data, error } = await supabase
+  //   .from('products')
+  //   .select('*, profiles(*), categories(id, name, description)');
 
-  return data;
+  // if (error) {
+  //   throw new Error(error.message);
+  // }
+
+  // return data;
 };
 
 export const getProduct = async (id) => {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*, profiles(*), categories(id, name, description)')
-    .eq('id', id)
-    .single();
+  try {
+    const product = await databases.getDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.productsCollectionId,
+      id,
+    );
 
-  if (error) throw new Error(error.message);
+    if (!product) throw Error;
 
-  return data;
+    return product;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+  // const { data, error } = await supabase
+  //   .from('products')
+  //   .select('*, profiles(*), categories(id, name, description)')
+  //   .eq('id', id)
+  //   .single();
+
+  // if (error) throw new Error(error.message);
+
+  // return data;
 };
 export const getUserProducts = async (userId) => {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*, categories(id, name, description)')
-    .eq('profile_id', userId);
+  try {
+    const products = await databases.listDocuments(
+      appwriteConfig.databaseId,
+      appwriteConfig.productsCollectionId,
+      [Query.equal('seller', userId), Query.orderDesc('$createdAt')],
+    );
 
-  if (error) throw new Error(error.message);
+    if (!products) throw Error;
 
-  return data;
+    return products.documents;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+  // const { data, error } = await supabase
+  //   .from('products')
+  //   .select('*, categories(id, name, description)')
+  //   .eq('profile_id', userId);
+
+  // if (error) throw new Error(error.message);
+
+  // return data;
 };
 
 export const addProduct = async ({
@@ -39,83 +79,102 @@ export const addProduct = async ({
   description,
   price,
   stock,
-  categories,
+  category,
   imageFile: productImage,
   user_id,
 }) => {
-  if (categories.length > 2)
-    throw new Error('You can only add up to 2 categories');
+  try {
+    // if (categories.length > 2)
+    //   throw new Error('You can only add up to 2 categories');
 
-  const productName = name.split(' ').join('_');
-  const fileName = `product-${productName.toLowerCase()}-${Math.random()}`;
+    const uploadedFile = await uploadFile(productImage);
 
-  const { error: storageError } = await supabase.storage
-    .from('products')
-    .upload(fileName, productImage);
+    if (!uploadedFile) throw Error;
 
-  if (storageError) throw new Error(storageError.message);
+    // Get File Url
+    const fileUrl = await getFilePreview(uploadedFile.$id);
+    if (!fileUrl) {
+      await storage.deleteFile(appwriteConfig.storageId, uploadedFile.$id);
+      throw Error;
+    }
 
-  const { data, error } = await supabase
-    .from('products')
-    .insert([
+    const newProduct = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.productsCollectionId,
+      ID.unique(),
       {
+        seller: user_id,
+        category,
         name,
+        imageUrl: fileUrl,
+        imageId: uploadedFile.$id,
         description,
         price,
-        product_image: `${SUPABASE_URL}/storage/v1/object/public/products/${fileName}`,
+        isActive: true,
         stock,
-        profile_id: user_id,
       },
-    ])
-    .select();
+    );
 
-  if (error) throw new Error(error.message);
+    if (!newProduct) {
+      await storage.deleteFile(appwriteConfig.storageId, uploadedFile.$id);
+      throw Error;
+    }
 
-  const categoryInserts = categories.map((categoryId) => ({
-    product_id: data[0]?.id,
-    category_id: categoryId,
-  }));
-
-  const { error: categoryError } = await supabase
-    .from('products_categories')
-    .insert(categoryInserts);
-
-  if (categoryError) throw new Error(categoryError.message);
+    return newProduct;
+  } catch (error) {
+    throw new Error(error.message);
+  }
 };
 
-export const deleteProduct = async (id) => {
-  // Delete product categories
-  const { error: productCategoriesError } = await supabase
-    .from('products_categories')
-    .delete()
-    .eq('product_id', id);
+export const deleteProduct = async ({ productId, imageId }) => {
+  if (!productId || !imageId) return;
+  try {
+    const statusCode = await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.productsCollectionId,
+      productId,
+    );
 
-  if (productCategoriesError) throw new Error(productCategoriesError.message);
+    if (!statusCode) throw Error;
 
-  // Delete product
-  const { data, error } = await supabase
-    .from('products')
-    .delete()
-    .eq('id', id)
-    .select();
+    await storage.deleteFile(appwriteConfig.storageId, imageId);
 
-  if (error) throw new Error(error.message);
-
-  // Delete product image from storage
-  const { data: productListImage } = await supabase.storage
-    .from('products')
-    .list();
-  const productName = data[0]?.name?.split(' ').join('_');
-  const existingProductImage = productListImage.find((item) =>
-    item.name.includes(productName.toLowerCase()),
-  );
-
-  if (existingProductImage) {
-    const { error: deleteError } = await supabase.storage
-      .from('products')
-      .remove([existingProductImage.name]);
-    if (deleteError) throw new Error(deleteError.message);
+    return { status: 'Ok' };
+  } catch (error) {
+    throw new Error(error.message);
   }
+  // Delete product categories
+  // const { error: productCategoriesError } = await supabase
+  //   .from('products_categories')
+  //   .delete()
+  //   .eq('product_id', id);
 
-  return data;
+  // if (productCategoriesError) throw new Error(productCategoriesError.message);
+
+  // // Delete product
+  // const { data, error } = await supabase
+  //   .from('products')
+  //   .delete()
+  //   .eq('id', id)
+  //   .select();
+
+  // if (error) throw new Error(error.message);
+
+  // // Delete product image from storage
+  // const { data: productListImage } = await supabase.storage
+  //   .from('products')
+  //   .list();
+  // const productName = data[0]?.name?.split(' ').join('_');
+  // const existingProductImage = productListImage.find((item) =>
+  //   item.name.includes(productName.toLowerCase()),
+  // );
+
+  // if (existingProductImage) {
+  //   const { error: deleteError } = await supabase.storage
+  //     .from('products')
+  //     .remove([existingProductImage.name]);
+  //   if (deleteError) throw new Error(deleteError.message);
+  // }
+
+  // return data;
 };

@@ -12,6 +12,7 @@ export const useForgotPassword = () => {
         title: 'Check your email',
         description:
           'We have sent you an email with instructions on how to reset your password.',
+        variant: 'success',
       });
     },
     onError: (err) => {

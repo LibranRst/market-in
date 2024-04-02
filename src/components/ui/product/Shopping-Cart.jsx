@@ -14,7 +14,7 @@ const ShoppingCart = ({ product }) => {
   };
 
   const handleChange = (e) => {
-    const newQuantity = parseInt(e.target.value, 10) || '';
+    const newQuantity = parseInt(e.target.value) || '';
     if (!isNaN(newQuantity) && newQuantity >= 1) {
       // reset quantity to empty input and set new value
       e.target.value = '';
@@ -27,6 +27,9 @@ const ShoppingCart = ({ product }) => {
     if (newQuantity > product?.stock) {
       setQuantity(product?.stock);
       setError('Max quantity is ' + product?.stock);
+    }
+    if (newQuantity <= 0) {
+      setError('Minimum quantity of this product is 1');
     }
   };
 
@@ -68,6 +71,7 @@ const ShoppingCart = ({ product }) => {
             onBlur={() => {
               if (quantity <= 0) {
                 setQuantity(1);
+                setError('')
               }
             }}
           />

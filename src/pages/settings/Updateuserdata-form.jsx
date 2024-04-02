@@ -39,9 +39,7 @@ const UpdateUserDataForm = () => {
     ) {
       return;
     }
-    updateUser({ name, username, bio, id: user?.$id }, {
-      
-    });
+    updateUser({ name, username, bio, id: user?.$id }, {});
   };
 
   return (
@@ -50,8 +48,8 @@ const UpdateUserDataForm = () => {
         <CardHeader>
           <CardTitle>User Settings</CardTitle>
           <CardDescription>
-            Manage your user information. The User Settings section
-            allows you to update your basic information.
+            Manage your user information. The User Settings section allows you
+            to update your basic information.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -79,7 +77,14 @@ const UpdateUserDataForm = () => {
                 className={`focus-visible:ring-0 ${
                   errors.username && 'border-destructive'
                 }`}
-                {...register('username', { required: 'Username is required' })}
+                {...register('username', {
+                  required: 'Username is required',
+                  pattern: {
+                    value: /^[a-z0-9_]+$/,
+                    message:
+                      'Username cannot contain spaces or uppercase characters',
+                  },
+                })}
               />
             </FormRowVertical>
             <FormRowVertical label="Bio" htmlFor={'bio'} error={errors.bio}>

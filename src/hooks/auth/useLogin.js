@@ -13,6 +13,7 @@ export const useLogin = () => {
       queryClient.invalidateQueries({ queryKey: ['user'] });
       toast({
         title: 'Logged in',
+        variant: 'success',
       });
       navigate('/', { replace: true });
     },

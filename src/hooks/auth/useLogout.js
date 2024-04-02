@@ -14,6 +14,7 @@ export const useLogout = () => {
       queryClient.removeQueries();
       toast({
         title: 'Logged out',
+        variant: 'success',
       });
       navigate('/signin', { replace: true });
     },

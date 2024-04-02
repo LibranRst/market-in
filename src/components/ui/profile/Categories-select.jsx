@@ -27,23 +27,23 @@ const CategorySelect = ({ categories, control }) => {
           <div className="flex flex-wrap gap-1">
             {categories?.map((category) => (
               <Controller
-                key={category.id}
+                key={category.$id}
                 control={control}
-                name={`categories.${category.id}`}
+                name={`categories.${category.$id}`}
                 render={({ field }) => {
                   return (
                     <div
                       className={`relative rounded-md border border-input transition-all active:scale-90 ${field.value ? 'bg-primary  text-primary-foreground' : 'bg-transparent hover:bg-accent'} cursor-pointer px-1 py-1 text-sm `}
                     >
-                      <label htmlFor={`category-${category.id}`}>
-                        {category.name}
+                      <label htmlFor={`category-${category.$id}`}>
+                        {category.category}
                       </label>
                       <input
                         type="checkbox"
-                        id={`category-${category.id}`}
+                        id={`category-${category.$id}`}
                         className={`absolute left-0  h-full w-full cursor-pointer opacity-0`}
                         checked={field.value || false}
-                        onClick={() => handlePreviewCategories(category.name)}
+                        onClick={() => handlePreviewCategories(category.category)}
                         {...field}
                       />
                     </div>

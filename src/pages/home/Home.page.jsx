@@ -22,14 +22,14 @@ const HomePage = () => {
           ) : (
             products?.map((product) => (
               <ProductCard
-                key={product.id}
-                imgSrc={product.product_image}
+                key={product.$id}
+                imgSrc={product.imageUrl}
                 name={product.name}
                 price={formatCurrency(product.price)}
-                id={product.id}
+                id={product.$id}
               >
                 <ProductCard.Seller sellerLink="/profile">
-                  {product.profiles.username}
+                  {product.seller.username}
                 </ProductCard.Seller>
               </ProductCard>
             ))

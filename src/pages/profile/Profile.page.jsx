@@ -14,8 +14,9 @@ import { useUserProducts } from '../../hooks/products/useProducts';
 import CenteredContainer from '../../components/ui/layout/Centered-container';
 import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
 import Avatar from '../../components/ui/Avatar';
-import { Button } from '../../components/ui/Button';
+import { Button, buttonVariants } from '../../components/ui/Button';
 import { formatCurrency } from '../../utils/helpers';
+import { Link } from 'react-router-dom';
 
 // import { Form, FormInput } from '@/components/ui/form';
 
@@ -71,11 +72,12 @@ const ProfilePage = () => {
       <div className="flex h-full flex-col gap-3 overflow-hidden rounded-md border bg-card p-4">
         <div className="flex justify-between">
           <h1 className="text-lg font-semibold">My Products</h1>
-          <AddProductDialog />
+          {/* <AddProductDialog /> */}
+          <Link className={buttonVariants({ size: 'sm' })} to='/product/create'>Add Product</Link>
         </div>
         <hr />
         <div className="relative grid grid-cols-2 gap-2 overflow-auto">
-          {isProductsLoading ? (
+          {isProductsLoading || isLoading ? (
             <Spinner className="h-10 w-10" />
           ) : products?.length > 0 ? (
             products?.map((product) => (

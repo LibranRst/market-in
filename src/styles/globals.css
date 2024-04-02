@@ -105,3 +105,93 @@ input:-internal-autofill-selected:active {
   ) !important; /* Set the text color to match the theme's foreground */
   transition: background-color 5000s ease-in-out 0s; /* Add a transition for smoother color change */
 }
+
+/* PRODUCT DESCRIPTION STYLING */
+.page-description h1 {
+  @apply text-2xl;
+}
+.page-description h2 {
+  @apply text-xl;
+}
+
+.page-description p,
+.page-description li {
+  @apply text-lg;
+}
+
+.page-description strong {
+  @apply font-semibold !important;
+}
+
+.page-description li {
+  @apply list-item mb-4;
+  text-align: -webkit-match-parent;
+  unicode-bidi: isolate;
+  margin-bottom: 1rem;
+}
+
+.page-description ul {
+  @apply list-disc pl-6;
+}
+
+.page-description em {
+  @apply italic;
+}
+.page-description code {
+  @apply font-mono bg-accent px-1 rounded;
+}
+.page-description u {
+  @apply underline decoration-primary decoration-2;
+}
+
+.ql-bubble .ql-editor h1 {
+  @apply text-2xl;
+}
+.ql-bubble .ql-editor h2 {
+  @apply text-xl;
+}
+
+.ql-bubble .ql-editor p,
+.ql-bubble .ql-editor li {
+  @apply text-lg !important;
+}
+
+.ql-bubble .ql-editor strong {
+  @apply font-semibold !important;
+}
+.ql-bubble .ql-editor em {
+  @apply italic;
+}
+.ql-bubble .ql-editor code {
+  @apply font-mono bg-accent px-1 rounded;
+}
+.ql-bubble .ql-editor u {
+  @apply underline decoration-primary decoration-2;
+}
+
+.ql-editor ol,
+.ql-editor ul {
+  @apply pl-0;
+}
+
+.ql-editor ul {
+  @apply list-disc pl-6;
+}
+
+.ql-editor ol li:not(.ql-direction-rtl),
+.ql-editor ul li:not(.ql-direction-rtl) {
+  @apply mb-4 list-item pl-0;
+  text-align: -webkit-match-parent;
+  unicode-bidi: isolate;
+}
+
+.ql-container {
+  @apply font-poppins text-lg;
+}
+
+.quill > .ql-container > .ql-editor {
+  @apply p-0;
+}
+.quill > .ql-container > .ql-editor.ql-blank::before {
+  @apply left-0 text-muted-foreground;
+}

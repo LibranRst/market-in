@@ -60,7 +60,7 @@ const UpdatePasswordForm = () => {
                   errors.oldPassword && 'border-destructive'
                 }`}
                 {...register('oldPassword', {
-                  required: 'OldPassword is required',
+                  required: 'Old Password is required',
                 })}
               />
             </FormRowVertical>

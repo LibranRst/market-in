@@ -1,5 +1,5 @@
-import UpdateUserDataForm from './Updateuserdata-form';
-import UpdatePasswordForm from './Updatepassword-form';
+import UpdateUserDataForm from './UpdateUserData-form';
+import UpdatePasswordForm from './UpdatePassword-form';
 import CenteredContainer from '../../components/ui/layout/Centered-container';
 import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
 import UpdateEmailForm from './Updateemail-form';

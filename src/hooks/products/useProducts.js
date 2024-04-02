@@ -22,8 +22,8 @@ export const useUserProducts = () => {
     data: products,
     error,
   } = useQuery({
-    queryKey: ['products', user?.id],
-    queryFn: () => getUserProducts(user?.id),
+    queryKey: ['products', user?.$id],
+    queryFn: () => getUserProducts(user?.$id),
   });
 
   return { isLoading, products, error };

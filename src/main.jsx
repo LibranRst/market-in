@@ -5,7 +5,6 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App.jsx';
 import { ThemeProvider } from './components/Theme-provider.jsx';
-import { Toaster } from './components/ui/Toaster.jsx';
 import './styles/globals.css';
 
 const queryClient = new QueryClient({
@@ -24,7 +23,6 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <BrowserRouter>
           <App />
         </BrowserRouter>
-        <Toaster />
       </QueryClientProvider>
     </ThemeProvider>
   </React.StrictMode>,

@@ -13,6 +13,7 @@ export const useResetPassword = () => {
       toast({
         title: 'Password changed',
         description: 'Logged in with the new password',
+        variant: 'success',
       });
       navigate('/');
     },
