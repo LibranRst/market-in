@@ -113,14 +113,9 @@ export const updateCurrentUser = async ({
       }
     }
 
+    const { imageUrl, imageId } = await getCurrentUser();
     if (avatar) {
       // upload file to storage
-      const { imageUrl, imageId } = await getCurrentUser();
-
-      // delete old image
-      if (imageUrl && imageId) {
-        await storage.deleteFile(appwriteConfig.storageId, imageId);
-      }
 
       const uploadedFile = await uploadFile(avatar);
 
@@ -146,6 +141,17 @@ export const updateCurrentUser = async ({
       id,
       updateData,
     );
+
+    if (!data) {
+      if (imageUrl && imageId) {
+        await storage.deleteFile(appwriteConfig.storageId, updateData.imageId);
+      }
+      throw Error;
+    }
+
+    if (imageUrl && imageId && updateData.imageId !== imageId) {
+      await storage.deleteFile(appwriteConfig.storageId, imageId);
+    }
 
     return data;
   } catch (error) {

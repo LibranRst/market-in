@@ -6,8 +6,10 @@ import { formatCurrency } from '../../../utils/helpers';
 
 import Spinner from '../loading/Spinner';
 import { useState } from 'react';
-import { Button } from '../Button';
+import { Button, buttonVariants } from '../Button';
 import { Popover, PopoverContent, PopoverTrigger } from '../Popover';
+import { cn } from '../../../lib/utils';
+import { Link } from 'react-router-dom';
 
 const ProfileProductCard = ({ product }) => {
   const { deleteProduct, isDeleting } = useDeleteProduct();
@@ -15,15 +17,19 @@ const ProfileProductCard = ({ product }) => {
 
   return (
     <div
-      className="flex w-full flex-row items-center gap-2 rounded-md border border-border bg-card px-2 py-2"
+      className="flex w-full flex-row items-center gap-2 rounded-xl border border-border bg-card px-2 py-2"
       key={product.$id}
     >
-      <img
-        src={product.imageUrl}
-        className="h-20 w-20 rounded-md object-cover"
-      />
+      <Link to={`/product/${product.$id}`}>
+        <img
+          src={product.imageUrl}
+          className="h-20 w-20 rounded-md object-cover"
+        />
+      </Link>
       <div className="flex w-[calc(100%-120px)] flex-col overflow-hidden">
-        <p className="truncate text-sm">{product.name}</p>
+        <Link className="truncate text-sm" to={`/product/${product.$id}`}>
+          {product.name}
+        </Link>
         <p className="font-semibold">{formatCurrency(product.price)}</p>
         <p className="text-sm text-gray-400">
           Stock: <span className="text-xs">{product?.stock}</span>
@@ -31,16 +37,33 @@ const ProfileProductCard = ({ product }) => {
       </div>
       <Separator orientation="vertical" />
       <div className="flex flex-col gap-2">
-        <Button size="icon" variant="outline" className="h-6 w-6">
+        <Link
+          to={`/product/edit/${product.$id}`}
+          size="icon"
+          variant="outline"
+          className={cn(
+            buttonVariants({
+              variant: 'outline',
+              size: 'icon',
+              className: 'h-6 w-6',
+            }),
+          )}
+        >
           <MdModeEditOutline />
-        </Button>
+        </Link>
         <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger>
-            <Button size="icon" variant="destructive" className="h-6 w-6">
-              <TrashIcon />
-            </Button>
+          <PopoverTrigger
+            className={cn(
+              buttonVariants({
+                variant: 'destructive',
+                size: 'icon',
+                className: 'h-6 w-6',
+              }),
+            )}
+          >
+            <TrashIcon />
           </PopoverTrigger>
-          <PopoverContent className="">
+          <PopoverContent className="rounded-xl">
             <p className="text-sm">
               Are you sure you want to delete this product?
             </p>
@@ -55,6 +78,7 @@ const ProfileProductCard = ({ product }) => {
               <Button
                 variant="destructive"
                 size="sm"
+                disabled={isDeleting}
                 onClick={() =>
                   deleteProduct({
                     productId: product.$id,

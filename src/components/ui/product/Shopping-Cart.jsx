@@ -14,7 +14,11 @@ const ShoppingCart = ({ product }) => {
   };
 
   const handleChange = (e) => {
-    const newQuantity = parseInt(e.target.value) || '';
+    const newQuantity = parseFloat(e.target.value) || '';
+
+    if(e.target.value == '00') {
+      e.target.value=''
+    }
     if (!isNaN(newQuantity) && newQuantity >= 1) {
       // reset quantity to empty input and set new value
       e.target.value = '';

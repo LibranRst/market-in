@@ -1,26 +1,50 @@
+// React Imports
 import { useRef } from 'react';
+import { Link } from 'react-router-dom';
+
+// Third-Party Imports
 import { FaStar } from 'react-icons/fa';
-import { Button } from '../../components/ui/Button';
-import { Card } from '../../components/ui/Card';
+
+// Component Imports
+import { Button, buttonVariants } from '../../components/ui/Button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/Card';
 import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
 import { Separator } from '../../components/ui/Separator';
 import Spinner from '../../components/ui/loading/Spinner';
 import ProductCard from '../../components/ui/product/Product-card';
 import ShoppingCart from '../../components/ui/product/Shopping-Cart';
+
+// Hook Imports
 import { useProduct } from '../../hooks/products/useProduct';
 import { useProducts } from '../../hooks/products/useProducts';
 import { useTruncatedElement } from '../../hooks/useTruncatedElement';
+import { useUser } from '../../hooks/auth/useUser';
+
+// Utility Imports
 import { formatCurrency } from '../../utils/helpers';
+import { cn } from '../../lib/utils';
+import Avatar from '../../components/ui/Avatar';
 
 const ProductPage = () => {
   const { product, isLoading } = useProduct();
   const { products, isLoading: isProductsLoading } = useProducts();
+  const { user, isLoading: isUserLoading } = useUser();
 
   const ref = useRef(null);
   const { isTruncated, isReadMore, setIsReadMore } = useTruncatedElement({
     ref,
     data: product,
   });
+
+  console.log(isTruncated);
+
+  const isSeller = user?.$id === product?.seller?.$id;
 
   if (isLoading) return <div>loading...</div>;
 
@@ -89,13 +113,16 @@ const ProductPage = () => {
             )}
           </div>
           <Separator />
-          <Card className="flex flex-row items-center gap-3 p-4">
-            <img
+          <Card className="flex flex-row items-center gap-2 p-4">
+            {/* <img
               src={product?.seller.imageUrl}
               alt={product?.seller.username}
               className="h-[5rem] w-[5rem] rounded-full"
-            />
-            <div className="flex w-full flex-row items-center justify-between">
+            /> */}
+            <Avatar type='user' className='h-[5rem] w-[5rem]'>
+              <Avatar.Image src={product?.seller.imageUrl} name={product?.seller.name}/>
+            </Avatar>
+            <div className="flex w-[calc(100%-5.5rem)] flex-row items-center justify-between">
               <h2 className="text-base font-semibold">
                 {product?.seller.username}{' '}
                 <span className="flex items-center gap-1 text-sm font-normal">
@@ -107,7 +134,29 @@ const ProductPage = () => {
           </Card>
         </div>
         <div className="col-span-3 h-full">
-          <ShoppingCart product={product} />
+          {isSeller ? (
+            <Card className="sticky top-[7.688rem]">
+              <CardHeader className="p-4">
+                <CardTitle>You Own This Product</CardTitle>
+                <CardDescription>
+                  This product belongs to you as a seller. Click "Edit Mode" to
+                  update its details.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="px-4">
+                <Link
+                  className={cn(
+                    buttonVariants({ variant: 'default', className: 'w-full' }),
+                  )}
+                  to={`/product/edit/${product?.$id}`}
+                >
+                  Edit Mode
+                </Link>
+              </CardContent>
+            </Card>
+          ) : (
+            <ShoppingCart product={product} />
+          )}
         </div>
       </div>
       <Separator />

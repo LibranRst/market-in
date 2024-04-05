@@ -126,6 +126,73 @@ export const addProduct = async ({
   }
 };
 
+export const updateProduct = async ({
+  name,
+  description,
+  price,
+  stock,
+  category,
+  imageFile,
+  imageUrl,
+  imageId,
+  id,
+  user_id,
+}) => {
+  const hasFileToUpdate = imageFile !== undefined;
+  console.log(id)
+
+  try {
+    let image = {
+      imageUrl: imageUrl,
+      imageId: imageId,
+    };
+
+    if (hasFileToUpdate) {
+      const uploadedFile = await uploadFile(imageFile);
+
+      if (!uploadedFile) throw Error;
+
+      // Get File Url
+      const fileUrl = await getFilePreview(uploadedFile.$id);
+      if (!fileUrl) {
+        await storage.deleteFile(appwriteConfig.storageId, uploadedFile.$id);
+        throw Error;
+      }
+
+      image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id };
+    }
+
+    const updatedProduct = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.productsCollectionId,
+      id,
+      {
+        category,
+        name,
+        ...image,
+        description,
+        price,
+        stock,
+      },
+    );
+
+    if (!updatedProduct) {
+      if(hasFileToUpdate) {
+        await storage.deleteFile(appwriteConfig.storageId, image.imageId);
+      }
+      throw Error;
+    }
+
+    if(hasFileToUpdate) {
+      await storage.deleteFile(appwriteConfig.storageId, imageId)
+    }
+
+    return updatedProduct;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 export const deleteProduct = async ({ productId, imageId }) => {
   if (!productId || !imageId) return;
   try {

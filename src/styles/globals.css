@@ -195,3 +195,72 @@ input:-internal-autofill-selected:active {
 .quill > .ql-container > .ql-editor.ql-blank::before {
   @apply left-0 text-muted-foreground;
 }
+
+.ql-bubble .ql-tooltip {
+  @apply bg-accent text-accent-foreground drop-shadow-sm border-border border rounded-xl w-fit !important;
+}
+
+.ql-bubble .ql-tooltip .ql-toolbar {
+  @apply flex flex-row !important;
+}
+
+.ql-bubble .ql-tooltip:not(.ql-flip) .ql-tooltip-arrow {
+  @apply top-[-6px];
+  border-bottom: 6px solid hsl(var(--accent));
+}
+
+.ql-bubble .ql-stroke {
+  @apply stroke-accent-foreground
+}
+
+.ql-bubble .ql-fill, .ql-bubble .ql-stroke .ql-fill {
+  @apply fill-accent-foreground
+}
+
+.ql-bubble .ql-toolbar .ql-formats {
+  @apply flex flex-row w-fit gap-1 !important;
+}
+.ql-bubble .ql-toolbar .ql-formats button {
+  @apply w-7 h-7 flex items-center rounded-md transition-colors !important;
+}
+
+.ql-bubble .ql-toolbar button:hover, .ql-bubble .ql-toolbar .ql-active {
+  @apply bg-accent-foreground/20 !important;
+}
+
+.ql-bubble .ql-toolbar button:active {
+  @apply scale-95;
+}
+
+@keyframes appear {
+  0% {
+    opacity: 0;
+    transform: scale(.8) translateY(-20px);
+  } 100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes exit {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  } 99% {
+    opacity: 0;
+    transform: scale(.8) translateY(-20px);
+  } 100% {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+.ql-tooltip:not(.ql-hidden) {
+  animation: appear .2s ease forwards;
+}
+
+.ql-hidden {
+  display: block !important;
+  animation: exit .2s ease forwards;
+}

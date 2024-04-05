@@ -9,7 +9,6 @@ export const useTruncatedElement = ({ ref, data }) => {
       offsetHeight: 0,
       scrollHeight: 0,
     };
-    console.log(offsetHeight, scrollHeight);
 
     if (offsetHeight && scrollHeight && offsetHeight < scrollHeight) {
       setIsTruncated(true);

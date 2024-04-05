@@ -16,7 +16,13 @@ const avatarVariants = cva('overflow-hidden rounded-full relative', {
   },
 });
 
-const Avatar = ({ children, type, className, onChange = null }) => {
+const Avatar = ({
+  children,
+  type,
+  className,
+  onChange = null,
+  disabled = false,
+}) => {
   return (
     <div className={cn(avatarVariants({ type, className }))}>
       {children}
@@ -27,12 +33,13 @@ const Avatar = ({ children, type, className, onChange = null }) => {
             id="avatar"
             accept="image/*"
             name="avatar"
-            className="absolute top-0 z-10 h-full w-full cursor-pointer opacity-0"
+            disabled={disabled}
+            className="absolute top-0 z-10 h-full w-full cursor-pointer opacity-0 disabled:pointer-events-none disabled:cursor-default"
             onChange={onChange}
           />
           <label
             htmlFor="avatar"
-            className="absolute top-0 z-30 flex h-full w-full cursor-pointer items-center justify-center font-semibold  text-white opacity-0 transition-all group-hover:bg-black/30 group-hover:opacity-100"
+            className={`absolute top-0 z-30 flex h-full w-full items-center justify-center font-semibold  text-white opacity-0 transition-all  ${!disabled ? 'cursor-pointer group-hover:bg-black/30 group-hover:opacity-100' : 'cursor-default pointer-events-none'}`}
           >
             CHANGE
           </label>
@@ -65,7 +72,10 @@ const Image = ({ src, className, name, textSize = 'xs' }) => {
       ) : (
         name && (
           <div
-            className={`flex h-full w-full items-center justify-center bg-blue-400 text-center text-${textSize} font-semibold text-white`}
+            className={cn(
+              `flex h-full w-full items-center justify-center bg-blue-400 text-center text-${textSize} font-semibold text-white`,
+              className,
+            )}
           >
             {getInitials(name)}
           </div>

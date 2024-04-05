@@ -15,7 +15,7 @@ const FormAuth = ({ children, onSubmit, authType = 'login', isLoading }) => {
       <button
         onClick={() => navigate(-1)}
         type="button"
-        className="absolute rounded-lg p-2 transition-colors hover:bg-accent"
+        className="absolute rounded-xl p-2 transition-colors hover:bg-accent"
       >
         <IoArrowBack size={20} />
       </button>
@@ -37,7 +37,7 @@ const FormAuth = ({ children, onSubmit, authType = 'login', isLoading }) => {
         {authType === 'forgot-password' && 'Send'}
         {isLoading && <Spinner className="ml-1 h-4 w-4" />}
       </button> */}
-      <Button size='lg' className='w-[200px] self-center'>
+      <Button size='lg' className='w-[200px] self-center' disabled={isLoading}>
         {authType === 'login' && 'Login'}
         {authType === 'signup' && 'SignUp'}
         {authType === 'forgot-password' && 'Send'}
@@ -63,7 +63,7 @@ const Inputs = ({ forms, register, errors, watch }) => {
             {...register(form.name, {
               ...form.validation,
             })}
-            className={`peer rounded-md bg-accent px-5 pb-2 pt-4 focus:outline-none`}
+            className={`peer rounded-xl bg-accent px-5 pb-2 pt-4 focus:outline-none`}
           />
           {errors[form.name] && (
             <span className="absolute -bottom-4 left-5 animate-valid-slide-up text-xs text-red-500">

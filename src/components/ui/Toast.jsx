@@ -2,20 +2,17 @@ import { Cross2Icon } from '@radix-ui/react-icons';
 import * as ToastPrimitives from '@radix-ui/react-toast';
 import { cva } from 'class-variance-authority';
 import * as React from 'react';
-import { useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
 
 const ToastProvider = ToastPrimitives.Provider;
 
 const ToastViewport = React.forwardRef(({ className, ...props }, ref) => {
-  const locationPath = useLocation().pathname;
-  const authPath = locationPath === '/signin' || locationPath === '/signup';
   return (
     <ToastPrimitives.Viewport
       ref={ref}
       className={cn(
-        `fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-auto sm:right-0 sm:top-[${authPath ? '0' : '3.5rem'}] sm:flex-col md:max-w-[420px]`,
-        className,
+        "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      className,
       )}
       {...props}
     />
@@ -103,5 +100,6 @@ export {
   ToastDescription,
   ToastProvider,
   ToastTitle,
-  ToastViewport,
+  ToastViewport
 };
+

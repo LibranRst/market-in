@@ -18,6 +18,11 @@ const forms = [
     type: 'text',
     validation: {
       required: 'Username is required',
+      pattern: {
+        value: /^[a-z0-9_]+$/,
+        message:
+          'Lowercase letters, and numbers only. No spaces',
+      },
     },
   },
   {

@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 
-export default function useImagePreview(image) {
+export default function useImagePreview(image, initialValue = null) {
   const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
+    if (initialValue && !image && imagePreview !== initialValue) {
+      setImagePreview(initialValue);
+      return
+    }
     if (image && image.length > 0) {
       const reader = new FileReader();
       reader.readAsDataURL(image?.[0]);
@@ -13,7 +17,7 @@ export default function useImagePreview(image) {
         }
       };
     }
-  }, [image, imagePreview]);
+  }, [image, imagePreview, initialValue]);
 
   return [imagePreview, setImagePreview];
 }

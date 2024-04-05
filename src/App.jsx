@@ -12,7 +12,7 @@ import ProductPage from './pages/product/Product.page';
 import AuthLayout from './components/ui/layout/AuthLayout';
 import SettingsPage from './pages/settings/Settings.page';
 import ProtectedRoute from './components/ui/authentication/Protected-route';
-import AddProductPage from './pages/product/AddProduct.page';
+import AddEditProduct from './pages/product/AddEditProduct.page';
 
 function App() {
   return (
@@ -25,7 +25,15 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<SettingsPage />} />
-          <Route path="/product/create" element={<AddProductPage />} />
+          <Route
+            path="/product/create"
+            element={<AddEditProduct mode="add" />}
+          />
+          <Route path="/product/edit" element={<Navigate to="/" />} />
+          <Route
+            path="/product/edit/:id"
+            element={<AddEditProduct mode="edit" />}
+          />
         </Route>
       </Route>
       <Route element={<AuthLayout />}>

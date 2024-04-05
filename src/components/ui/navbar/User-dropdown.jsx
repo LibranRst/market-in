@@ -39,7 +39,7 @@ const UserDropdown = ({ user }) => {
   return (
     <Dialog>
       <DropdownMenu>
-        <DropdownMenuTrigger className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1 text-sm font-[500] outline-none transition-colors hover:bg-accent">
+        <DropdownMenuTrigger className="flex cursor-pointer items-center gap-2 rounded-xl px-2 py-1 text-sm font-[500] outline-none transition-colors hover:bg-accent">
           <Avatar type="user">
             <Avatar.Image src={user?.imageUrl} name={user?.name} />
           </Avatar>

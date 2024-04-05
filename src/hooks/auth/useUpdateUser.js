@@ -9,7 +9,6 @@ export const useUpdateUser = () => {
   const { mutate: updateUser, isPending: isUpdating } = useMutation({
     mutationFn: updateCurrentUser,
     onSuccess: (user) => {
-      console.log(user);
       toast({
         title: 'Account updated',
         variant: 'success',
