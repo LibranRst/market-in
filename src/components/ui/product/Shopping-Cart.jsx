@@ -107,6 +107,14 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
     setIsInCart(false);
   };
 
+  const handleKeyDown = (e) => {
+    const keysToPreventDefault = new Set(['e', '-', '+', '.']);
+    // Prevent the default behavior of the these buttons
+    if (keysToPreventDefault.has(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <Card className="sticky top-[7.688rem] flex flex-col gap-4 p-4">
       <div className="flex flex-col gap-2">
@@ -135,20 +143,7 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
                 setError('');
               }
             }}
-            onKeyDown={(e) => {
-              if (e.key === 'e') {
-                e.preventDefault();
-              }
-              if (e.key === '-') {
-                e.preventDefault();
-              }
-              if (e.key === '+') {
-                e.preventDefault();
-              }
-              if (e.key === '.') {
-                e.preventDefault();
-              }
-            }}
+            onKeyDown={handleKeyDown}
           />
           <Button
             className="absolute right-1 flex h-[25px] w-[25px] rounded-full  transition-colors "

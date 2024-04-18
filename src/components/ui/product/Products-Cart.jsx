@@ -42,7 +42,7 @@ const ProductsCart = () => {
       <DropdownMenuTrigger className="rounded-xl p-2 transition-colors hover:bg-accent">
         <FiShoppingCart size={20} />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className='mr-2'>
+      <DropdownMenuContent className="mr-2">
         <DropdownMenuLabel className="p-2">Products Cart.</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {!cartProducts?.length && !isLoading && !isFetching && !isDeleting && (
@@ -76,7 +76,7 @@ const ProductsItem = ({ product, deleteProductCart }) => {
 
   return (
     <Link
-      to="/cart"
+      to={`/product/${product.$id}`}
       className="flex w-[35rem] cursor-pointer flex-row items-center gap-2 rounded-xl px-2 py-1.5 transition-colors hover:bg-accent"
     >
       <img
