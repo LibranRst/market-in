@@ -1,7 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useUser } from '../../../hooks/auth/useUser';
 import Spinner from '../loading/Spinner';
-import { Toaster } from '../Toaster';
 
 const AuthLayout = () => {
   const { isAuthenticated, isLoading } = useUser();
@@ -18,7 +17,6 @@ const AuthLayout = () => {
   ) : (
     <>
       <Outlet />
-      <Toaster />
     </>
   );
 };

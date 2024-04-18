@@ -1,15 +1,15 @@
+// React Core
+import { lazy, Suspense, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+// Third-Party Libraries
 import { Controller, useForm } from 'react-hook-form';
-import ReactQuill from 'react-quill';
-import { Button, buttonVariants } from '../../components/ui/Button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '../../components/ui/Card';
+
+// Components
 import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
 import { Input } from '../../components/ui/Input';
+import Spinner from '../../components/ui/loading/Spinner';
+import ProductImageUpload from '../../components/ui/product/Product-ImageUpload';
 import {
   Select,
   SelectContent,
@@ -17,38 +17,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../components/ui/Select';
-import useImagePreview from '../../hooks/use-imagepreview';
 
-import { useEffect, useState } from 'react';
-import 'react-quill/dist/quill.bubble.css';
-import Spinner from '../../components/ui/loading/Spinner';
+// Hooks
+import { useUser } from '../../hooks/auth/useUser';
 import { useAddProduct } from '../../hooks/products/useAddProduct';
 import { useProduct } from '../../hooks/products/useProduct';
-import { useUser } from '../../hooks/auth/useUser';
-import { useNavigate } from 'react-router-dom';
 import { useUpdateProduct } from '../../hooks/products/useUpdateProduct';
-import { toast } from '../../hooks/use-toast';
-import { useDeleteProduct } from '../../hooks/products/useDeleteProduct';
-import { cn } from '../../lib/utils';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '../../components/ui/Popover';
-import { TrashIcon } from '@radix-ui/react-icons';
+import useImagePreview from '../../hooks/use-imagepreview';
+
+// Utils
+import 'react-quill/dist/quill.bubble.css';
+import ProductActionCard from '../../components/ui/product/Product-ActionCard';
+import { toast } from 'sonner';
+
+// React Quill
+const ReactQuill = lazy(() => import('react-quill'));
 
 const AddProductPage = ({ mode = 'add' }) => {
+  const [description, setDescription] = useState('');
+
   const { product, isLoading: isProductLoading } = useProduct();
   const { user, isLoading: isUserLoading } = useUser();
-
-  const navigate = useNavigate();
-
-  const [description, setDescription] = useState('');
   const { addProduct, isAdding } = useAddProduct();
   const { updateProduct, isUpdating } = useUpdateProduct(product?.$id);
-  const { deleteProduct, isDeleting } = useDeleteProduct();
 
-  console.log(isAdding);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -96,10 +89,7 @@ const AddProductPage = ({ mode = 'add' }) => {
         description === product?.description &&
         !imageFile
       ) {
-        toast({
-          title: 'No changes made',
-          variant: 'destructive',
-        });
+        toast('No changes made.');
         return;
       }
       updateProduct({
@@ -141,30 +131,12 @@ const AddProductPage = ({ mode = 'add' }) => {
           pageName={mode === 'edit' ? product?.name : 'Add Product'}
         />
         <div className="grid w-full grid-cols-12 gap-10">
-          <div className="col-span-4 h-full rounded-xl">
-            <label
-              htmlFor="image"
-              className={`sticky top-[7.688rem] flex h-[375px] w-[375px] cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed bg-transparent transition-colors hover:bg-accent-foreground/20 ${errors?.image ? 'border-destructive' : 'border-border'}`}
-            >
-              {imagePreview ? (
-                <img
-                  src={imagePreview}
-                  className="h-full w-full rounded-lg object-cover transition-opacity hover:opacity-50"
-                />
-              ) : (
-                'Upload Product Image'
-              )}
-              <input
-                type="file"
-                id="image"
-                accept="image/png, image/jpeg"
-                className="absolute top-0 hidden"
-                {...register('image', {
-                  required: mode === 'edit' ? false : 'Image is required.',
-                })}
-              />
-            </label>
-          </div>
+          <ProductImageUpload
+            errors={errors}
+            imagePreview={imagePreview}
+            register={register}
+            mode={mode}
+          />
           <div className="col-span-5 flex flex-col gap-10 py-2">
             <div className="flex flex-col gap-3">
               <input
@@ -222,6 +194,11 @@ const AddProductPage = ({ mode = 'add' }) => {
                       }
                     },
                   })}
+                  onKeyDown={(e) => {
+                    if (e.key === 'e') {
+                      e.preventDefault();
+                    }
+                  }}
                 />
               </div>
               {/* <p className="text-2xl font-normal">{formatCurrency(12000000)}</p> */}
@@ -254,104 +231,39 @@ const AddProductPage = ({ mode = 'add' }) => {
                   <h2 className="font-medium">Description</h2>
                   <div className="mt-0.5 h-[2px] w-[50%] bg-primary" />
                 </div>
-                <ReactQuill
-                  className="min-h-[220px]"
-                  theme="bubble"
-                  placeholder="Product description..."
-                  formats={[
-                    'bold',
-                    'italic',
-                    'underline',
-                    'code',
-                    'header',
-                    'list',
-                  ]}
-                  modules={{
-                    toolbar: [
-                      ['bold', 'italic', 'underline', 'code'],
-                      [{ header: 1 }, { header: 2 }],
-                      [{ list: 'bullet' }],
-                    ],
-                  }}
-                  value={description}
-                  onChange={setDescription}
-                />
+                <Suspense fallback={<Spinner className="h-8 w-8" />}>
+                  <ReactQuill
+                    className="min-h-[220px]"
+                    theme="bubble"
+                    placeholder="Product description..."
+                    formats={[
+                      'bold',
+                      'italic',
+                      'underline',
+                      'code',
+                      'header',
+                      'list',
+                    ]}
+                    modules={{
+                      toolbar: [
+                        ['bold', 'italic', 'underline', 'code'],
+                        [{ header: 1 }, { header: 2 }],
+                        [{ list: 'bullet' }],
+                      ],
+                    }}
+                    value={description}
+                    onChange={setDescription}
+                  />
+                </Suspense>
               </div>
             </div>
           </div>
           <div className="col-span-3 h-full">
-            <Card className="sticky top-[7.688rem]">
-              <CardHeader className="p-4">
-                <CardTitle>
-                  {mode === 'edit' ? 'Edit Product Details' : 'Add New Product'}
-                </CardTitle>
-                <CardDescription>
-                  {mode === 'edit'
-                    ? 'Make changes to your product'
-                    : 'Start selling by adding a product'}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-row gap-1 px-4">
-                <Button
-                  className="w-[calc(100%-2.25rem)]"
-                  type="submit"
-                  disabled={isAdding || isUpdating || isDeleting}
-                >
-                  {mode === 'edit' ? 'Save Changes' : 'Add Product'}{' '}
-                  {isAdding || isUpdating ? (
-                    <Spinner className="ml-1 h-4 w-4" />
-                  ) : null}
-                </Button>
-                {mode === 'edit' && (
-                  <Popover>
-                    <PopoverTrigger
-                      className={cn(
-                        buttonVariants({
-                          variant: 'destructive',
-                          size: 'icon',
-                        }),
-                      )}
-                      disabled={isDeleting || isUpdating}
-                    >
-                      <TrashIcon />
-                    </PopoverTrigger>
-                    <PopoverContent className="rounded-xl">
-                      <p className="text-sm">
-                        Are you sure you want to delete this product?
-                      </p>
-                      <div className="flex justify-end">
-                        <Button
-                          variant="destructive"
-                          disabled={isDeleting}
-                          onClick={() =>
-                            deleteProduct(
-                              {
-                                productId: product.$id,
-                                imageId: product.imageId,
-                              },
-                              {
-                                onSuccess: () => {
-                                  navigate('/profile');
-                                },
-                              },
-                            )
-                          }
-                        >
-                          {isDeleting ? (
-                            <span>
-                              Deleting
-                              <Spinner className={'ml-1 h-4 w-4'} />{' '}
-                            </span>
-                          ) : (
-                            'Confirm'
-                          )}
-                        </Button>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                )}
-              </CardContent>
-            </Card>
+            <ProductActionCard
+              mode={mode}
+              isAdding={isAdding}
+              isUpdating={isUpdating}
+            />
           </div>
         </div>
       </form>

@@ -1,6 +1,5 @@
 import { ID, Query } from 'appwrite';
 import { account, appwriteConfig, databases, storage } from './appwrite';
-import supabase from './supabase';
 
 export const signup = async ({ name, username, email, password }) => {
   try {
@@ -202,20 +201,20 @@ export const logout = async () => {
   }
 };
 
-export const forgotPassword = async ({ email }) => {
-  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: 'http://localhost:5173/reset-password',
-  });
+// export const forgotPassword = async ({ email }) => {
+//   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+//     redirectTo: 'http://localhost:5173/reset-password',
+//   });
 
-  if (error) throw new Error(error.message);
+//   if (error) throw new Error(error.message);
 
-  return data;
-};
+//   return data;
+// };
 
-export const changePassword = async ({ password }) => {
-  const { data, error } = await supabase.auth.updateUser({ password });
+// export const changePassword = async ({ password }) => {
+//   const { data, error } = await supabase.auth.updateUser({ password });
 
-  if (error) throw new Error(error.message);
+//   if (error) throw new Error(error.message);
 
-  return data;
-};
+//   return data;
+// };

@@ -1,10 +1,9 @@
 import Spinner from '../../components/ui/loading/Spinner';
-import ProductCard from '../../components/ui/product/Product-card';
+import ProductCard from '../../components/ui/product/Product-Card';
 import { useProducts } from '../../hooks/products/useProducts';
-import { formatCurrency } from '../../utils/helpers';
 
 const HomePage = () => {
-  const { products, isLoading } = useProducts();
+  const { products, isLoading, isFetching } = useProducts();
 
   return (
     <div className="flex w-full gap-5">
@@ -22,11 +21,9 @@ const HomePage = () => {
           ) : (
             products?.map((product) => (
               <ProductCard
-                key={product.$id}
-                imgSrc={product.imageUrl}
-                name={product.name}
-                price={formatCurrency(product.price)}
-                id={product.$id}
+                key={product?.$id}
+                product={product}
+                isFetching={isFetching}
               >
                 <ProductCard.Seller sellerLink="/profile">
                   {product.seller.username}

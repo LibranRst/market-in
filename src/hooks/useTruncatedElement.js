@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 
 export const useTruncatedElement = ({ ref, data }) => {
   const [isTruncated, setIsTruncated] = useState(false);
-  const [isReadMore, setIsReadMore] = useState(false);
 
   useEffect(() => {
+    if(!ref.current) {
+      return
+    }
     const { offsetHeight, scrollHeight } = ref?.current || {
       offsetHeight: 0,
       scrollHeight: 0,
@@ -19,7 +21,6 @@ export const useTruncatedElement = ({ ref, data }) => {
 
   return {
     isTruncated,
-    isReadMore,
-    setIsReadMore,
   };
 };
+

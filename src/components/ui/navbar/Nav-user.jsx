@@ -1,15 +1,13 @@
-import { FiShoppingCart } from 'react-icons/fi';
 import { GrNotification } from 'react-icons/gr';
-import UserDropdown from './User-dropdown';
 import Spinner from '../loading/Spinner';
+import ProductsCart from '../product/Products-Cart';
+import UserDropdown from './User-dropdown';
 
 const NavUser = ({ user, isLoading }) => {
   return (
     <>
       <div className="flex items-center gap-1">
-        <button className="rounded-lg p-2 transition-colors hover:bg-accent">
-          <FiShoppingCart size={20} />
-        </button>
+        <ProductsCart />
         <button className="rounded-lg p-2 transition-colors hover:bg-accent">
           <GrNotification size={20} />
         </button>

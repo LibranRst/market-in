@@ -4,7 +4,11 @@ import { useEffect, useState } from 'react';
 
 export const useUser = () => {
   const [isSessionExist, setIsSessionExist] = useState(false);
-  const { isLoading, data: user } = useQuery({
+  const {
+    isLoading,
+    data: user,
+    isFetching,
+  } = useQuery({
     queryKey: ['user'],
     queryFn: getCurrentUser,
   });
@@ -24,8 +28,10 @@ export const useUser = () => {
   const isAuthenticated = !!user || isSessionExist;
 
   return {
-    isLoading: isLoading,
+    isLoading,
+    isFetching,
     user,
     isAuthenticated,
   };
 };
+

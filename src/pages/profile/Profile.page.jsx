@@ -13,7 +13,7 @@ import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
 import { Separator } from '../../components/ui/Separator';
 import CenteredContainer from '../../components/ui/layout/Centered-container';
 import Spinner from '../../components/ui/loading/Spinner';
-import ProductUserCard from '../../components/ui/product/Profile-productcard';
+import ProductUserCard from '../../components/ui/profile/Profile-ProductCard';
 import { useUserProducts } from '../../hooks/products/useProducts';
 import { formatCurrency } from '../../utils/helpers';
 

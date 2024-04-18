@@ -1,8 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from '../use-toast';
 import { useUser } from '../auth/useUser';
 import { addProduct as addProductApi } from '../../services/apiProducts';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export const useAddProduct = () => {
   const queryClient = useQueryClient();
@@ -21,10 +21,8 @@ export const useAddProduct = () => {
         user_id: user?.$id,
       }),
     onSuccess: () => {
-      toast({
-        title: 'Product added',
+      toast('Product added', {
         description: 'The product has been added successfully',
-        variant: 'success',
       });
       queryClient.invalidateQueries({
         queryKey: ['products'],
@@ -32,10 +30,8 @@ export const useAddProduct = () => {
       navigate('/');
     },
     onError: (err) => {
-      toast({
-        title: 'Error',
+      toast('Error', {
         description: err.message,
-        variant: 'destructive',
       });
     },
   });

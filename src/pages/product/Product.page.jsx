@@ -1,5 +1,5 @@
 // React Imports
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 // Third-Party Imports
@@ -17,7 +17,7 @@ import {
 import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
 import { Separator } from '../../components/ui/Separator';
 import Spinner from '../../components/ui/loading/Spinner';
-import ProductCard from '../../components/ui/product/Product-card';
+import ProductCard from '../../components/ui/product/Product-Card';
 import ShoppingCart from '../../components/ui/product/Shopping-Cart';
 
 // Hook Imports
@@ -32,17 +32,21 @@ import { cn } from '../../lib/utils';
 import Avatar from '../../components/ui/Avatar';
 
 const ProductPage = () => {
-  const { product, isLoading } = useProduct();
+  const { product, isLoading, isFetching } = useProduct();
   const { products, isLoading: isProductsLoading } = useProducts();
-  const { user, isLoading: isUserLoading } = useUser();
+  const {
+    user,
+    isLoading: isUserLoading,
+    isFetching: isUserFetching,
+  } = useUser();
 
+  
   const ref = useRef(null);
-  const { isTruncated, isReadMore, setIsReadMore } = useTruncatedElement({
+  const [isReadMore, setIsReadMore] = useState(false);
+  const { isTruncated } = useTruncatedElement({
     ref,
     data: product,
   });
-
-  console.log(isTruncated);
 
   const isSeller = user?.$id === product?.seller?.$id;
 
@@ -119,8 +123,11 @@ const ProductPage = () => {
               alt={product?.seller.username}
               className="h-[5rem] w-[5rem] rounded-full"
             /> */}
-            <Avatar type='user' className='h-[5rem] w-[5rem]'>
-              <Avatar.Image src={product?.seller.imageUrl} name={product?.seller.name}/>
+            <Avatar type="user" className="h-[5rem] w-[5rem]">
+              <Avatar.Image
+                src={product?.seller.imageUrl}
+                name={product?.seller.name}
+              />
             </Avatar>
             <div className="flex w-[calc(100%-5.5rem)] flex-row items-center justify-between">
               <h2 className="text-base font-semibold">
@@ -140,7 +147,7 @@ const ProductPage = () => {
                 <CardTitle>You Own This Product</CardTitle>
                 <CardDescription>
                   This product belongs to you as a seller. Click "Edit Mode" to
-                  update its details.
+                  update its details or delete this product.
                 </CardDescription>
               </CardHeader>
               <CardContent className="px-4">
@@ -155,7 +162,11 @@ const ProductPage = () => {
               </CardContent>
             </Card>
           ) : (
-            <ShoppingCart product={product} />
+            <ShoppingCart
+              product={product}
+              isProductFetching={isFetching}
+              isProductLoading={isLoading}
+            />
           )}
         </div>
       </div>
@@ -169,10 +180,8 @@ const ProductPage = () => {
             products?.map((product) => (
               <ProductCard
                 key={product.$id}
-                imgSrc={product.imageUrl}
-                name={product.name}
-                price={formatCurrency(product.price)}
-                id={product.$id}
+                product={product}
+                onClick={() => setIsReadMore(false)} //Temp Solution (i think) to fix read more not working/not appearing when visiting product page from another product page
               >
                 <ProductCard.Seller sellerLink="/profile">
                   {product.seller.username}

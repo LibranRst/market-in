@@ -1,34 +1,25 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateCurrentUser } from '../../services/apiAuth';
-import { useToast } from '../use-toast';
+import { toast } from 'sonner';
 
 export const useUpdateUser = () => {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
 
   const { mutate: updateUser, isPending: isUpdating } = useMutation({
     mutationFn: updateCurrentUser,
     onSuccess: (user) => {
-      toast({
-        title: 'Account updated',
-        variant: 'success',
-      });
+      toast('Account Updated.');
 
       if (user?.passwordUpdate) {
-        toast({
-          title: 'Password updated',
-          variant: 'success',
-        });
+        toast('Password Updated.');
         return;
       }
 
       queryClient.invalidateQueries({ queryKey: ['user'] });
     },
     onError: (err) =>
-      toast({
-        title: 'Error',
+      toast('error', {
         description: err.message,
-        variant: 'destructive',
       }),
   });
 

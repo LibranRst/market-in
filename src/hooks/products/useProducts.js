@@ -5,6 +5,7 @@ import { useUser } from '../auth/useUser';
 export const useProducts = () => {
   const {
     isLoading,
+    isFetching,
     data: products,
     error,
   } = useQuery({
@@ -12,7 +13,7 @@ export const useProducts = () => {
     queryFn: getProducts,
   });
 
-  return { isLoading, products, error };
+  return { isLoading, isFetching, products, error };
 };
 
 export const useUserProducts = () => {

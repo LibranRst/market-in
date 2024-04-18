@@ -1,11 +1,27 @@
 import { useState } from 'react';
+import { MdOutlineRemoveShoppingCart } from 'react-icons/md';
 import { formatCurrency } from '../../../utils/helpers';
 import { Button } from '../Button';
 import { Card } from '../Card';
 import { Separator } from '../Separator';
-const ShoppingCart = ({ product }) => {
+import { useAddToCart } from '../../../hooks/cart/useAddToCart';
+import Spinner from '../loading/Spinner';
+import { useDeleteProductCart } from '../../../hooks/cart/useDeleteProductCart';
+import { useUpdateCartProduct } from '../../../hooks/cart/useUpdateCartProduct';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+
+const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
   const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState('');
+  const [isInCart, setIsInCart] = useState(product?.cart?.length > 0);
+
+  const queryClient = useQueryClient();
+
+  const { addToCart, isLoading: isAdding } = useAddToCart();
+  const { deleteProductCart, isLoading: isDeleting } = useDeleteProductCart();
+  const { updateCartProduct, isLoading: isUpdating } = useUpdateCartProduct();
+
   const handleNegative = () => {
     if (quantity <= 1) {
       return;
@@ -14,27 +30,22 @@ const ShoppingCart = ({ product }) => {
   };
 
   const handleChange = (e) => {
-    const newQuantity = parseFloat(e.target.value) || '';
+    const newQuantity = parseInt(e.target.value).toFixed(0) || '';
 
-    if(e.target.value == '00') {
-      e.target.value=''
+    if (isNaN(newQuantity) || newQuantity < 1) {
+      setQuantity('');
+      setError('Quantity must be a valid number and greater than 0');
+      return;
     }
-    if (!isNaN(newQuantity) && newQuantity >= 1) {
-      // reset quantity to empty input and set new value
-      e.target.value = '';
-      setQuantity(newQuantity);
-      setError('');
-    } else {
-      setQuantity(0); // Reset to 1 if the input is invalid or less than 1
-      setError('');
-    }
+
     if (newQuantity > product?.stock) {
       setQuantity(product?.stock);
-      setError('Max quantity is ' + product?.stock);
+      setError(`Maximum quantity is ${product?.stock}`);
+      return;
     }
-    if (newQuantity <= 0) {
-      setError('Minimum quantity of this product is 1');
-    }
+
+    setQuantity(newQuantity);
+    setError('');
   };
 
   const handlePositive = () => {
@@ -44,10 +55,56 @@ const ShoppingCart = ({ product }) => {
     setQuantity((cur) => cur + 1);
   };
 
-  const onSubmit = () => {
-    if (quantity <= 0) {
-      setQuantity(1);
+  const handleAddToCart = () => {
+    setError('');
+
+    if (!isProductFetching) {
+      const maxQuantity = product?.stock - product?.cart[0]?.quantity;
+      if (quantity > maxQuantity) {
+        if (maxQuantity == 0) {
+          toast('Product quantity limit reached.', {
+            description: `You have reached the maximum quantity of this product that can be added to your cart`,
+          });
+        } else {
+          toast('Product quantity limit reached.', {
+            description: `You can only add up to ${maxQuantity} of this product to your cart.`,
+          });
+        }
+        return;
+      }
     }
+    if (!isInCart) {
+      if (quantity <= 0) {
+        setQuantity(1);
+      }
+      addToCart({ productId: product.$id, quantity });
+      setIsInCart(true);
+    } else {
+      if (product?.cart[0] == undefined) {
+        return;
+      }
+      if (isProductFetching) {
+        return;
+      }
+      updateCartProduct({
+        cartId: product?.cart[0]?.$id,
+        quantity: quantity + product?.cart[0]?.quantity,
+      });
+    }
+  };
+
+  const handleRemoveFromCart = () => {
+    if (isProductFetching) {
+      return;
+    }
+    deleteProductCart(product?.cart[0]?.$id, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ['product', product.$id],
+        });
+      },
+    });
+    setIsInCart(false);
   };
 
   return (
@@ -75,7 +132,21 @@ const ShoppingCart = ({ product }) => {
             onBlur={() => {
               if (quantity <= 0) {
                 setQuantity(1);
-                setError('')
+                setError('');
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'e') {
+                e.preventDefault();
+              }
+              if (e.key === '-') {
+                e.preventDefault();
+              }
+              if (e.key === '+') {
+                e.preventDefault();
+              }
+              if (e.key === '.') {
+                e.preventDefault();
               }
             }}
           />
@@ -98,7 +169,40 @@ const ShoppingCart = ({ product }) => {
           {formatCurrency(product.price * quantity)}
         </h2>
       </div>
-      <Button onClick={onSubmit}>Add to cart</Button>
+      <div className="flex w-full items-center gap-1">
+        <Button
+          className={`${isInCart ? 'w-[calc(100%-2.25rem)]' : 'w-full'}`}
+          disabled={isAdding || isDeleting || isProductLoading || isUpdating}
+          onClick={handleAddToCart}
+        >
+          {isInCart ? (
+            isAdding || isDeleting || isProductLoading || isUpdating ? (
+              <Spinner className={'h-4 w-4'} />
+            ) : (
+              '+ Cart'
+            )
+          ) : isAdding || isDeleting || isProductLoading || isUpdating ? (
+            <Spinner className={'h-4 w-4'} />
+          ) : (
+            'Add To Cart'
+          )}
+          {/* {isAdding && <Spinner className={'h-5 w-5'} />} */}
+        </Button>
+        {isInCart && (
+          <Button
+            size="icon"
+            variant="destructive"
+            disabled={isAdding || isDeleting || isProductLoading || isUpdating}
+            onClick={handleRemoveFromCart}
+          >
+            {isAdding || isDeleting || isProductLoading || isUpdating ? (
+              <Spinner className={'h-4 w-4'} />
+            ) : (
+              <MdOutlineRemoveShoppingCart />
+            )}
+          </Button>
+        )}
+      </div>
     </Card>
   );
 };

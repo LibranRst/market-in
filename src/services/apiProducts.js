@@ -15,15 +15,6 @@ export const getProducts = async () => {
   } catch (error) {
     throw new Error(error.message);
   }
-  // const { data, error } = await supabase
-  //   .from('products')
-  //   .select('*, profiles(*), categories(id, name, description)');
-
-  // if (error) {
-  //   throw new Error(error.message);
-  // }
-
-  // return data;
 };
 
 export const getProduct = async (id) => {
@@ -40,15 +31,6 @@ export const getProduct = async (id) => {
   } catch (error) {
     throw new Error(error.message);
   }
-  // const { data, error } = await supabase
-  //   .from('products')
-  //   .select('*, profiles(*), categories(id, name, description)')
-  //   .eq('id', id)
-  //   .single();
-
-  // if (error) throw new Error(error.message);
-
-  // return data;
 };
 export const getUserProducts = async (userId) => {
   try {
@@ -64,14 +46,6 @@ export const getUserProducts = async (userId) => {
   } catch (error) {
     throw new Error(error.message);
   }
-  // const { data, error } = await supabase
-  //   .from('products')
-  //   .select('*, categories(id, name, description)')
-  //   .eq('profile_id', userId);
-
-  // if (error) throw new Error(error.message);
-
-  // return data;
 };
 
 export const addProduct = async ({
@@ -136,10 +110,10 @@ export const updateProduct = async ({
   imageUrl,
   imageId,
   id,
-  user_id,
+  // user_id,
 }) => {
   const hasFileToUpdate = imageFile !== undefined;
-  console.log(id)
+  console.log(id);
 
   try {
     let image = {
@@ -177,14 +151,14 @@ export const updateProduct = async ({
     );
 
     if (!updatedProduct) {
-      if(hasFileToUpdate) {
+      if (hasFileToUpdate) {
         await storage.deleteFile(appwriteConfig.storageId, image.imageId);
       }
       throw Error;
     }
 
-    if(hasFileToUpdate) {
-      await storage.deleteFile(appwriteConfig.storageId, imageId)
+    if (hasFileToUpdate) {
+      await storage.deleteFile(appwriteConfig.storageId, imageId);
     }
 
     return updatedProduct;
@@ -210,38 +184,62 @@ export const deleteProduct = async ({ productId, imageId }) => {
   } catch (error) {
     throw new Error(error.message);
   }
-  // Delete product categories
-  // const { error: productCategoriesError } = await supabase
-  //   .from('products_categories')
-  //   .delete()
-  //   .eq('product_id', id);
+};
 
-  // if (productCategoriesError) throw new Error(productCategoriesError.message);
+// Products Cart
 
-  // // Delete product
-  // const { data, error } = await supabase
-  //   .from('products')
-  //   .delete()
-  //   .eq('id', id)
-  //   .select();
+export const addProductToCart = async ({ userId, productId, quantity }) => {
+  try {
+    const newCart = await databases.createDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.cartsCollectionId,
+      ID.unique(),
+      {
+        user: userId,
+        product: productId,
+        quantity,
+      },
+    );
 
-  // if (error) throw new Error(error.message);
+    if (!newCart) throw Error;
 
-  // // Delete product image from storage
-  // const { data: productListImage } = await supabase.storage
-  //   .from('products')
-  //   .list();
-  // const productName = data[0]?.name?.split(' ').join('_');
-  // const existingProductImage = productListImage.find((item) =>
-  //   item.name.includes(productName.toLowerCase()),
-  // );
+    return newCart;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
 
-  // if (existingProductImage) {
-  //   const { error: deleteError } = await supabase.storage
-  //     .from('products')
-  //     .remove([existingProductImage.name]);
-  //   if (deleteError) throw new Error(deleteError.message);
-  // }
+export const updateProductFromCart = async ({ cartId, quantity }) => {
+  try {
+    const updatedCart = await databases.updateDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.cartsCollectionId,
+      cartId,
+      {
+        quantity,
+      },
+    );
 
-  // return data;
+    if (!updatedCart) throw Error;
+
+    return updatedCart;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
+export const deleteProductFromCart = async (cartId) => {
+  try {
+    const statusCode = await databases.deleteDocument(
+      appwriteConfig.databaseId,
+      appwriteConfig.cartsCollectionId,
+      cartId,
+    );
+
+    if (!statusCode) throw Error;
+
+    return { status: 'Ok' };
+  } catch (err) {
+    throw new Error(err.message);
+  }
 };

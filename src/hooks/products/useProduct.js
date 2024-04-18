@@ -9,10 +9,12 @@ export const useProduct = () => {
     data: product,
     isLoading,
     error,
+    isFetching,
   } = useQuery({
     queryKey: ['product', id],
     queryFn: () => getProduct(id),
+    gcTime: 0,
   });
 
-  return { product, isLoading, error };
+  return { product, isLoading, error, isFetching };
 };

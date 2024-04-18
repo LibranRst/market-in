@@ -11,9 +11,4 @@ export const getCategories = async () => {
   } catch (error) {
     throw new Error(error.message);
   }
-  // const { data, error } = await supabase.from('categories').select('*');
-
-  // if (error) throw new Error(error.message);
-
-  // return data;
 };
