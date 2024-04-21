@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 
 const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
   const [quantity, setQuantity] = useState(1);
+  const [cartQuantity, setCartQuantity] = useState(product?.cart[0]?.quantity);
   const [error, setError] = useState('');
   const [isInCart, setIsInCart] = useState(product?.cart?.length > 0);
 
@@ -59,7 +60,8 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
     setError('');
 
     if (!isProductFetching) {
-      const maxQuantity = product?.stock - product?.cart[0]?.quantity;
+      // const maxQuantity = product?.stock - product?.cart[0]?.quantity;
+      const maxQuantity = product?.stock - cartQuantity;
       if (quantity > maxQuantity) {
         if (maxQuantity == 0) {
           toast('Product quantity limit reached.', {
@@ -77,19 +79,33 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
       if (quantity <= 0) {
         setQuantity(1);
       }
-      addToCart({ productId: product.$id, quantity });
+      addToCart(
+        { productId: product.$id, quantity },
+        {
+          onSuccess: (data) => {
+            setCartQuantity(data.quantity)
+          },
+        },
+      );
       setIsInCart(true);
     } else {
       if (product?.cart[0] == undefined) {
         return;
       }
-      if (isProductFetching) {
-        return;
-      }
-      updateCartProduct({
-        cartId: product?.cart[0]?.$id,
-        quantity: quantity + product?.cart[0]?.quantity,
-      });
+      // if (isProductFetching) {
+      //   return;
+      // }
+      updateCartProduct(
+        {
+          cartId: product?.cart[0]?.$id,
+          quantity: quantity + cartQuantity,
+        },
+        {
+          onSuccess: (data) => {
+            setCartQuantity(data.quantity)
+          },
+        },
+      );
     }
   };
 

@@ -88,6 +88,7 @@ const ProductCard = ({ product, onClick }) => {
               isInCart ? (
                 <Button
                   className="absolute bottom-2 right-2"
+                  variant='destructive'
                   size="icon"
                   disabled={isAdding || isDeleting || isUserLoading}
                   onClick={handleRemoveFromCart}
