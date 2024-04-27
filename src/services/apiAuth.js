@@ -1,80 +1,72 @@
-import { ID, Query } from 'appwrite';
-import { account, appwriteConfig, databases, storage } from './appwrite';
+import supabase, { SUPABASE_URL } from './supabase.js';
 
 export const signup = async ({ name, username, email, password }) => {
-  try {
-    const newAccount = await account.create(ID.unique(), email, password, name);
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        name,
+        username,
+        avatar: '',
+        avatar_filename: '',
+        bio: '',
+        balance: 0,
+      },
+    },
+  });
 
-    if (!newAccount) throw new Error('Sign up failed. Please try again.');
+  if (error) throw new Error(error.message);
 
-    const newUser = await saveUserToDB({
-      accountId: newAccount.$id,
-      name: newAccount.name,
-      email: newAccount.email,
-      username: username,
-    });
-
-    return newUser;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
-const saveUserToDB = async (user) => {
-  try {
-    const newUser = await databases.createDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.usersCollectionId,
-      ID.unique(),
-      user,
-    );
-
-    return newUser;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  return data;
 };
 
 export const login = async ({ email, password }) => {
-  try {
-    const session = await account.createEmailSession(email, password);
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-    if (!session)
-      throw new Error('Something went wrong, Please login your new account.');
+  if (error) throw new Error(error.message);
 
-    return session;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  return data;
 };
 
 export const getCurrentUser = async () => {
-  try {
-    const cookieFallback = localStorage.getItem('cookieFallback');
-    if (
-      cookieFallback === '[]' ||
-      cookieFallback === null ||
-      cookieFallback === undefined
-    ) {
-      return null;
-    }
+  const { data: session } = await supabase.auth.getSession();
+  if (!session.session) return null;
 
-    const currentAccount = await account.get();
+  const { data: authData, error } = await supabase.auth.getUser();
 
-    if (!currentAccount) throw Error;
+  if (error) throw new Error(error.message);
 
-    const currentUser = await databases.listDocuments(
-      appwriteConfig.databaseId,
-      appwriteConfig.usersCollectionId,
-      [Query.equal('accountId', currentAccount.$id)],
-    );
+  const { data: profileData, error: profileError } = await supabase
+    .from('profiles')
+    .select('carts(*, products(*))')
+    .eq('id', authData?.user.id)
+    .single();
 
-    if (!currentUser) throw Error;
+  if (profileError) throw new Error(profileError.message);
 
-    return currentUser.documents[0];
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  return { ...profileData, ...authData?.user };
+};
+
+export const forgotPassword = async ({ email }) => {
+  const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: 'http://localhost:5173/reset-password',
+  });
+
+  if (error) throw new Error(error.message);
+
+  return data;
+};
+
+export const changePassword = async ({ password }) => {
+  const { data, error } = await supabase.auth.updateUser({ password });
+
+  if (error) throw new Error(error.message);
+
+  return data;
 };
 
 export const updateCurrentUser = async ({
@@ -82,139 +74,65 @@ export const updateCurrentUser = async ({
   name,
   username,
   password,
-  oldPassword,
   avatar,
   bio,
-  id,
 }) => {
-  try {
-    let updateData = {};
-    if (name || username || bio) {
-      await account.updateName(name);
-      updateData = { ...updateData, name, username, bio };
-    }
+  // 1. Update Password OR username
+  let updateData = {};
+  if (email) updateData = { ...updateData, email };
+  if (name || username || bio)
+    updateData = { ...updateData, data: { name, username, bio } };
+  if (password) updateData = { ...updateData, password };
 
-    if (email) {
-      try {
-        await account.updateEmail(email, password);
-        updateData = { ...updateData, email };
-      } catch (error) {
-        throw new Error('Password is incorrect');
-      }
-    }
+  const { data, error } = await supabase.auth.updateUser(updateData, {
+    emailRedirectTo: 'http://localhost:5173/settings',
+  });
 
-    if (password && oldPassword) {
-      try {
-        const response = await account.updatePassword(password, oldPassword);
-        return response;
-      } catch (error) {
-        throw new Error('Old password is incorrect');
-      }
-    }
+  if (error) throw new Error(error.message);
+  if (!avatar) return data;
 
-    const { imageUrl, imageId } = await getCurrentUser();
-    if (avatar) {
-      // upload file to storage
+  // 2. Upload the avatar image
+  const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+  //  2.1 check if image is valid
+  if (!validImageTypes.includes(avatar.type))
+    throw new Error('Invalid image type, must be JPEG, PNG or GIF');
 
-      const uploadedFile = await uploadFile(avatar);
+  //  2.2 Delete Previous Avatar if it exist
+  const isExist = data?.user?.user_metadata?.avatar_filename;
 
-      if (!uploadedFile) throw Error;
+  if (isExist) {
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .remove([isExist]);
 
-      // Get file url
-      const fileUrl = getFilePreview(uploadedFile.$id);
-      if (!fileUrl) {
-        await storage.deleteFile(appwriteConfig.storageId, uploadedFile.$id);
-        throw Error;
-      }
-
-      updateData = {
-        ...updateData,
-        imageUrl: fileUrl,
-        imageId: uploadedFile.$id,
-      };
-    }
-
-    const data = await databases.updateDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.usersCollectionId,
-      id,
-      updateData,
-    );
-
-    if (!data) {
-      if (imageUrl && imageId) {
-        await storage.deleteFile(appwriteConfig.storageId, updateData.imageId);
-      }
-      throw Error;
-    }
-
-    if (imageUrl && imageId && updateData.imageId !== imageId) {
-      await storage.deleteFile(appwriteConfig.storageId, imageId);
-    }
-
-    return data;
-  } catch (error) {
-    throw new Error(error.message);
+    if (uploadError) throw new Error(uploadError.message);
   }
-};
 
-export const uploadFile = async (file) => {
-  try {
-    const uploadedFile = await storage.createFile(
-      appwriteConfig.storageId,
-      ID.unique(),
-      file,
-    );
+  let fileName = `avatar-${data.user.id}-${Math.random()}`;
 
-    return uploadedFile;
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
+  //  2.3 Upload Avatar to storage
+  const { error: storageError } = await supabase.storage
+    .from('avatars')
+    .upload(fileName, avatar);
 
-export const getFilePreview = (fileId) => {
-  try {
-    const fileUrl = storage.getFilePreview(
-      appwriteConfig.storageId,
-      fileId,
-      500,
-      500,
-      'center',
-      50,
-    );
+  if (storageError) throw new Error(storageError.message);
 
-    if (!fileUrl) throw Error;
+  // 3. Upload avatar in the user
+  const { data: updatedUser, error: updateAvatarError } =
+    await supabase.auth.updateUser({
+      data: {
+        avatar: `${SUPABASE_URL}/storage/v1/object/public/avatars/${fileName}`,
+        avatar_filename: fileName,
+      },
+    });
 
-    return fileUrl;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  if (updateAvatarError) throw new Error(updateAvatarError.message);
+
+  return updatedUser;
 };
 
 export const logout = async () => {
-  try {
-    const session = await account.deleteSession('current');
+  const { error } = await supabase.auth.signOut();
 
-    return session;
-  } catch (error) {
-    console.log(error);
-  }
+  if (error) throw new Error(error.message);
 };
-
-// export const forgotPassword = async ({ email }) => {
-//   const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-//     redirectTo: 'http://localhost:5173/reset-password',
-//   });
-
-//   if (error) throw new Error(error.message);
-
-//   return data;
-// };
-
-// export const changePassword = async ({ password }) => {
-//   const { data, error } = await supabase.auth.updateUser({ password });
-
-//   if (error) throw new Error(error.message);
-
-//   return data;
-// };

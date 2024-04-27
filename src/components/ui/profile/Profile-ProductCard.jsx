@@ -18,16 +18,16 @@ const ProfileProductCard = ({ product }) => {
   return (
     <div
       className="flex w-full flex-row items-center gap-2 rounded-xl border border-border bg-card px-2 py-2"
-      key={product.$id}
+      key={product.id}
     >
-      <Link to={`/product/${product.$id}`}>
+      <Link to={`/product/${product.id}`}>
         <img
-          src={product.imageUrl}
+          src={product.image_url}
           className="h-20 w-20 rounded-md object-cover"
         />
       </Link>
       <div className="flex w-[calc(100%-120px)] flex-col overflow-hidden">
-        <Link className="truncate text-sm" to={`/product/${product.$id}`}>
+        <Link className="truncate text-sm" to={`/product/${product.id}`}>
           {product.name}
         </Link>
         <p className="font-semibold">{formatCurrency(product.price)}</p>
@@ -38,7 +38,7 @@ const ProfileProductCard = ({ product }) => {
       <Separator orientation="vertical" />
       <div className="flex flex-col gap-2">
         <Link
-          to={`/product/edit/${product.$id}`}
+          to={`/product/edit/${product.id}`}
           size="icon"
           variant="outline"
           className={cn(
@@ -81,8 +81,7 @@ const ProfileProductCard = ({ product }) => {
                 disabled={isDeleting}
                 onClick={() =>
                   deleteProduct({
-                    productId: product.$id,
-                    imageId: product.imageId,
+                    productId: product.id,
                   })
                 }
               >

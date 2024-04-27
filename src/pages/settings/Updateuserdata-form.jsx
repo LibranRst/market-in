@@ -25,21 +25,21 @@ const UpdateUserDataForm = () => {
     formState: { errors },
   } = useForm({
     values: {
-      name: user?.name,
-      username: user?.username,
-      bio: user?.bio,
+      name: user?.user_metadata?.name,
+      username: user?.user_metadata?.username,
+      bio: user?.user_metadata?.bio,
     },
   });
 
   const onSubmit = ({ name, username, bio }) => {
     if (
-      username === user?.username &&
-      name === user?.name &&
-      bio === user?.bio
+      username === user?.user_metadata?.username &&
+      name === user?.user_metadata?.name &&
+      bio === user?.user_metadata?.bio
     ) {
       return;
     }
-    updateUser({ name, username, bio, id: user?.$id }, {});
+    updateUser({ name, username, bio });
   };
 
   return (

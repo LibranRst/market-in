@@ -1,6 +1,5 @@
 import { useForm } from 'react-hook-form';
 import FormAuth from '../../components/ui/authentication/Form-auth';
-import { useLogin } from '../../hooks/auth/useLogin';
 import { useSignup } from '../../hooks/auth/useSignup';
 
 const forms = [
@@ -20,8 +19,7 @@ const forms = [
       required: 'Username is required',
       pattern: {
         value: /^[a-z0-9_]+$/,
-        message:
-          'Lowercase letters, and numbers only. No spaces',
+        message: 'Lowercase letters, and numbers only. No spaces',
       },
     },
   },
@@ -52,41 +50,50 @@ const forms = [
 ];
 
 const SignUpForm = () => {
-  // const { toast } = useToast();
-
-  const { signup, isLoading: isCreatingUser } = useSignup();
-  const { login, isLoading: isSigningIn } = useLogin();
-  // const { checkAuthUser, isLoading: isUserLoading } = useUserContext();
-
+  const { signup, isLoading } = useSignup();
   const {
-    handleSubmit,
     register,
+    handleSubmit,
     formState: { errors },
     watch,
     reset,
   } = useForm();
 
-  // const navigate = useNavigate();
-
-  const onSubmit = async (values) => {
-    try {
-      await signup(values);
-      await login(
-        {
-          email: values.email,
-          password: values.password,
-        },
-        { onSuccess: reset },
-      );
-    } catch (error) {
-      console.log(error);
-    }
+  const onSubmit = ({ name, username, email, password }) => {
+    signup({ name, username, email, password }, { onSuccess: reset });
   };
+
+  // Appwrite
+  // const { signup, isLoading: isCreatingUser } = useSignup();
+  // const { login, isLoading: isSigningIn } = useLogin();
+
+  // const {
+  //   handleSubmit,
+  //   register,
+  //   formState: { errors },
+  //   watch,
+  //   reset,
+  // } = useForm();
+
+  // const onSubmit = async (values) => {
+  //   try {
+  //     await signup(values);
+  //     await login(
+  //       {
+  //         email: values.email,
+  //         password: values.password,
+  //       },
+  //       { onSuccess: reset },
+  //     );
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
   return (
     <FormAuth
       authType="signup"
       onSubmit={handleSubmit(onSubmit)}
-      isLoading={isCreatingUser || isSigningIn}
+      isLoading={isLoading}
     >
       <FormAuth.Title>SignUp</FormAuth.Title>
       <FormAuth.Inputs

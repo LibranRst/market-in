@@ -18,7 +18,7 @@ export const useUpdateProduct = (id) => {
       imageFile,
       stock,
       imageUrl,
-      imageId,
+      imageFileName,
     }) =>
       updateProductApi({
         name,
@@ -28,9 +28,9 @@ export const useUpdateProduct = (id) => {
         category,
         imageFile,
         imageUrl,
-        imageId,
+        imageFileName,
         id,
-        user_id: user?.$id,
+        user_id: user?.id,
       }),
     onSuccess: () => {
       toast('Product updated', {

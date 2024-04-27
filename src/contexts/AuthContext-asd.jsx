@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getCurrentUser } from '../services/apiAuth';
+import { getCurrentUser } from '../services/apiAuth-appwrite.js.old';
 
 const INITIAL_USER = {
   id: '',
@@ -73,4 +73,5 @@ const AuthProvider = ({ children }) => {
 
 const useUserContext = () => useContext(AuthContext);
 
-export { AuthProvider, useUserContext, INITIAL_USER };
+export { AuthProvider, INITIAL_USER, useUserContext };
+

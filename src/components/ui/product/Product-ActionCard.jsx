@@ -69,8 +69,7 @@ const ProductActionCard = ({ mode, isAdding, isUpdating, product }) => {
                   onClick={() =>
                     deleteProduct(
                       {
-                        productId: product.$id,
-                        imageId: product.imageId,
+                        productId: product?.id,
                       },
                       {
                         onSuccess: () => {

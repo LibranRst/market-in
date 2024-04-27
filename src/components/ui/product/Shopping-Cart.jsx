@@ -1,21 +1,20 @@
-import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { MdOutlineRemoveShoppingCart } from 'react-icons/md';
+import { toast } from 'sonner';
+import { useAddToCart } from '../../../hooks/cart/useAddToCart';
+import { useDeleteProductCart } from '../../../hooks/cart/useDeleteProductCart';
+import { useUpdateCartProduct } from '../../../hooks/cart/useUpdateCartProduct';
 import { formatCurrency } from '../../../utils/helpers';
 import { Button } from '../Button';
 import { Card } from '../Card';
 import { Separator } from '../Separator';
-import { useAddToCart } from '../../../hooks/cart/useAddToCart';
-import Spinner from '../loading/Spinner';
-import { useDeleteProductCart } from '../../../hooks/cart/useDeleteProductCart';
-import { useUpdateCartProduct } from '../../../hooks/cart/useUpdateCartProduct';
-import { useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 
 const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
   const [quantity, setQuantity] = useState(1);
-  const [cartQuantity, setCartQuantity] = useState(product?.cart[0]?.quantity);
+  const [cartQuantity, setCartQuantity] = useState(product?.carts[0]?.quantity);
   const [error, setError] = useState('');
-  const [isInCart, setIsInCart] = useState(product?.cart?.length > 0);
+  const [isInCart, setIsInCart] = useState(product?.carts?.length > 0);
 
   const queryClient = useQueryClient();
 
@@ -60,7 +59,7 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
     setError('');
 
     if (!isProductFetching) {
-      // const maxQuantity = product?.stock - product?.cart[0]?.quantity;
+      // const maxQuantity = product?.stock - product?.carts[0]?.quantity;
       const maxQuantity = product?.stock - cartQuantity;
       if (quantity > maxQuantity) {
         if (maxQuantity == 0) {
@@ -75,34 +74,36 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
         return;
       }
     }
+
     if (!isInCart) {
       if (quantity <= 0) {
         setQuantity(1);
       }
       addToCart(
-        { productId: product.$id, quantity },
+        { product_id: product.id, quantity },
         {
           onSuccess: (data) => {
-            setCartQuantity(data.quantity)
+            setCartQuantity(data.quantity);
           },
         },
       );
       setIsInCart(true);
     } else {
-      if (product?.cart[0] == undefined) {
+      if (product?.carts[0] == undefined) {
         return;
       }
       // if (isProductFetching) {
       //   return;
       // }
+
       updateCartProduct(
         {
-          cartId: product?.cart[0]?.$id,
-          quantity: quantity + cartQuantity,
+          cartId: product?.carts[0]?.id,
+          quantity: Number(quantity) + Number(cartQuantity),
         },
         {
           onSuccess: (data) => {
-            setCartQuantity(data.quantity)
+            setCartQuantity(data[0]?.quantity);
           },
         },
       );
@@ -113,10 +114,10 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
     if (isProductFetching) {
       return;
     }
-    deleteProductCart(product?.cart[0]?.$id, {
+    deleteProductCart(product?.carts[0]?.id, {
       onSuccess: () => {
         queryClient.invalidateQueries({
-          queryKey: ['product', product.$id],
+          queryKey: ['product', product.id],
         });
       },
     });
@@ -130,6 +131,10 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
       e.preventDefault();
     }
   };
+
+  useEffect(() => {
+    setCartQuantity(product?.carts[0]?.quantity);
+  }, [product?.carts]);
 
   return (
     <Card className="sticky top-[7.688rem] flex flex-col gap-4 p-4">
@@ -186,17 +191,7 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
           disabled={isAdding || isDeleting || isProductLoading || isUpdating}
           onClick={handleAddToCart}
         >
-          {isInCart ? (
-            isAdding || isDeleting || isProductLoading || isUpdating ? (
-              <Spinner className={'h-4 w-4'} />
-            ) : (
-              '+ Cart'
-            )
-          ) : isAdding || isDeleting || isProductLoading || isUpdating ? (
-            <Spinner className={'h-4 w-4'} />
-          ) : (
-            'Add To Cart'
-          )}
+          {isInCart ? '+ Cart' : 'Add To Cart'}
           {/* {isAdding && <Spinner className={'h-5 w-5'} />} */}
         </Button>
         {isInCart && (
@@ -206,11 +201,7 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
             disabled={isAdding || isDeleting || isProductLoading || isUpdating}
             onClick={handleRemoveFromCart}
           >
-            {isAdding || isDeleting || isProductLoading || isUpdating ? (
-              <Spinner className={'h-4 w-4'} />
-            ) : (
-              <MdOutlineRemoveShoppingCart />
-            )}
+            <MdOutlineRemoveShoppingCart />
           </Button>
         )}
       </div>

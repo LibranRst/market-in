@@ -8,9 +8,9 @@ export const useAddToCart = () => {
   const { user } = useUser();
 
   const { mutate: addToCart, isPending: isLoading } = useMutation({
-    mutationFn: ({ productId, quantity }) =>
-      addProductToCart({ userId: user?.$id, productId, quantity }),
-    onSuccess: ({ product }) => {
+    mutationFn: ({ product_id, quantity }) =>
+      addProductToCart({ user_id: user?.id, product_id, quantity }),
+    onSuccess: (data) => {
       toast('Product added to Cart.');
       queryClient.invalidateQueries({
         queryKey: ['user'],
@@ -19,7 +19,7 @@ export const useAddToCart = () => {
         queryKey: ['products'],
       });
       queryClient.invalidateQueries({
-        queryKey: ['product', product.$id],
+        queryKey: ['product', data[0].product_id],
       });
     },
     onError: (err) => {

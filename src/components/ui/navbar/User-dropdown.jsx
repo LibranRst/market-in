@@ -36,14 +36,15 @@ import Spinner from '../loading/Spinner';
 const UserDropdown = ({ user }) => {
   const { logout, isLoading } = useLogout();
   const { theme, setTheme } = useTheme();
+
   return (
     <Dialog>
       <DropdownMenu>
         <DropdownMenuTrigger className="flex cursor-pointer items-center gap-2 rounded-xl px-2 py-1 text-sm font-[500] outline-none transition-colors hover:bg-accent">
           <Avatar type="user">
-            <Avatar.Image src={user?.imageUrl} name={user?.name} />
+            <Avatar.Image src={user?.user_metadata?.avatar} name={user?.user_metadata?.name} />
           </Avatar>
-          <p className="w-36 truncate text-left">{user?.username}</p>
+          <p className="w-36 truncate text-left">{user?.user_metadata?.username}</p>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-[12.5rem]">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>

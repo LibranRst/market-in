@@ -1,5 +1,5 @@
 // React Imports
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 // Third-Party Imports
@@ -21,34 +21,28 @@ import ProductCard from '../../components/ui/product/Product-Card';
 import ShoppingCart from '../../components/ui/product/Shopping-Cart';
 
 // Hook Imports
+import { useUser } from '../../hooks/auth/useUser';
 import { useProduct } from '../../hooks/products/useProduct';
 import { useProducts } from '../../hooks/products/useProducts';
 import { useTruncatedElement } from '../../hooks/useTruncatedElement';
-import { useUser } from '../../hooks/auth/useUser';
 
 // Utility Imports
-import { formatCurrency } from '../../utils/helpers';
-import { cn } from '../../lib/utils';
 import Avatar from '../../components/ui/Avatar';
+import { cn } from '../../lib/utils';
+import { formatCurrency } from '../../utils/helpers';
 
 const ProductPage = () => {
   const { product, isLoading, isFetching } = useProduct();
-  const { products, isLoading: isProductsLoading } = useProducts();
-  const {
-    user,
-    isLoading: isUserLoading,
-    isFetching: isUserFetching,
-  } = useUser();
+  const { products } = useProducts();
+  const { user } = useUser();
 
-  
   const ref = useRef(null);
-  const [isReadMore, setIsReadMore] = useState(false);
-  const { isTruncated } = useTruncatedElement({
+  const { isTruncated, isReadMore, setIsReadMore } = useTruncatedElement({
     ref,
     data: product,
   });
 
-  const isSeller = user?.$id === product?.seller?.$id;
+  const isSeller = user?.id === product?.profiles?.id;
 
   if (isLoading) return <div>loading...</div>;
 
@@ -58,7 +52,7 @@ const ProductPage = () => {
       <div className="grid w-full grid-cols-12 gap-10">
         <div className="col-span-4 h-full rounded-md">
           <img
-            src={product?.imageUrl}
+            src={product?.image_url}
             className="sticky top-[7.688rem] h-[375px] w-[375px] rounded-md object-cover"
           />
         </div>
@@ -68,7 +62,7 @@ const ProductPage = () => {
             <div className="text-md flex flex-row gap-2 font-normal">
               <div className="flex flex-wrap gap-1 text-card-foreground/70">
                 {/* {product?.categories?.map((category, index, array) => (
-                  <p key={category.$id}>
+                  <p key={category.id}>
                     {category.category}
                     {index !== array.length - 1 && ', '}
                   </p>
@@ -125,13 +119,13 @@ const ProductPage = () => {
             /> */}
             <Avatar type="user" className="h-[5rem] w-[5rem]">
               <Avatar.Image
-                src={product?.seller.imageUrl}
-                name={product?.seller.name}
+                src={product?.profiles.avatar}
+                name={product?.profiles.name}
               />
             </Avatar>
             <div className="flex w-[calc(100%-5.5rem)] flex-row items-center justify-between">
               <h2 className="text-base font-semibold">
-                {product?.seller.username}{' '}
+                {product?.profiles.username}{' '}
                 <span className="flex items-center gap-1 text-sm font-normal">
                   <FaStar size={15} className="text-yellow-400" /> 5.0
                 </span>
@@ -155,7 +149,7 @@ const ProductPage = () => {
                   className={cn(
                     buttonVariants({ variant: 'default', className: 'w-full' }),
                   )}
-                  to={`/product/edit/${product?.$id}`}
+                  to={`/product/edit/${product?.id}`}
                 >
                   Edit Mode
                 </Link>
@@ -178,13 +172,9 @@ const ProductPage = () => {
             <Spinner className="h-10 w-10" />
           ) : (
             products?.map((product) => (
-              <ProductCard
-                key={product.$id}
-                product={product}
-                onClick={() => setIsReadMore(false)} //Temp Solution (i think) to fix read more not working/not appearing when visiting product page from another product page
-              >
+              <ProductCard key={product.id} product={product}>
                 <ProductCard.Seller sellerLink="/profile">
-                  {product.seller.username}
+                  {product.profiles.username}
                 </ProductCard.Seller>
               </ProductCard>
             ))

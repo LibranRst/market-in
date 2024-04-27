@@ -39,7 +39,7 @@ const AddProductPage = ({ mode = 'add' }) => {
   const { product, isLoading: isProductLoading } = useProduct();
   const { user, isLoading: isUserLoading } = useUser();
   const { addProduct, isAdding } = useAddProduct();
-  const { updateProduct, isUpdating } = useUpdateProduct(product?.$id);
+  const { updateProduct, isUpdating } = useUpdateProduct(product?.id);
 
   const navigate = useNavigate();
 
@@ -64,7 +64,7 @@ const AddProductPage = ({ mode = 'add' }) => {
   });
 
   const imageData = watch('image');
-  const [imagePreview] = useImagePreview(imageData, product?.imageUrl);
+  const [imagePreview] = useImagePreview(imageData, product?.image_url);
 
   useEffect(() => {
     if (mode === 'edit') {
@@ -74,7 +74,7 @@ const AddProductPage = ({ mode = 'add' }) => {
 
   if (mode === 'edit') {
     if (isProductLoading || isUserLoading) return <div>Loading...</div>;
-    if (!product?.$permissions[1].includes(user?.accountId)) navigate('/');
+    // if (!product?.$permissions[1].includes(user?.accountId)) navigate('/');
   }
 
   const onSubmit = ({ name, price, stock, category, image }) => {
@@ -99,8 +99,8 @@ const AddProductPage = ({ mode = 'add' }) => {
         stock,
         category,
         imageFile,
-        imageUrl: product?.imageUrl,
-        imageId: product?.imageId,
+        imageUrl: product?.image_url,
+        imageFileName: product?.image_filename,
       });
     }
 
@@ -263,6 +263,7 @@ const AddProductPage = ({ mode = 'add' }) => {
               mode={mode}
               isAdding={isAdding}
               isUpdating={isUpdating}
+              product={product}
             />
           </div>
         </div>

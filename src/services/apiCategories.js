@@ -1,14 +1,9 @@
-import { appwriteConfig, databases } from './appwrite';
+import supabase from './supabase';
 
 export const getCategories = async () => {
-  try {
-    const categories = await databases.listDocuments(
-      appwriteConfig.databaseId,
-      appwriteConfig.categoriesCollectionId,
-    );
+  const { data, error } = await supabase.from('categories').select('*');
 
-    return categories.documents
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  if (error) throw new Error(error.message);
+
+  return data;
 };

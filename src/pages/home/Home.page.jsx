@@ -21,12 +21,12 @@ const HomePage = () => {
           ) : (
             products?.map((product) => (
               <ProductCard
-                key={product?.$id}
+                key={product?.id}
                 product={product}
                 isFetching={isFetching}
               >
                 <ProductCard.Seller sellerLink="/profile">
-                  {product.seller.username}
+                  {product.profiles.username}
                 </ProductCard.Seller>
               </ProductCard>
             ))

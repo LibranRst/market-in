@@ -1,51 +1,35 @@
-import { ID, Query } from 'appwrite';
-import { getFilePreview, uploadFile } from './apiAuth';
-import { appwriteConfig, databases, storage } from './appwrite';
+import supabase, { SUPABASE_URL } from './supabase';
 
 export const getProducts = async () => {
-  try {
-    const products = await databases.listDocuments(
-      appwriteConfig.databaseId,
-      appwriteConfig.productsCollectionId,
-    );
+  const { data, error } = await supabase
+    .from('products')
+    .select('*, profiles(*), carts(*)');
 
-    if (!products) throw Error;
+  if (error) throw new Error(error.message);
 
-    return products.documents;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  return data;
 };
 
 export const getProduct = async (id) => {
-  try {
-    const product = await databases.getDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.productsCollectionId,
-      id,
-    );
+  const { data, error } = await supabase
+    .from('products')
+    .select('*, profiles(*), carts(*)')
+    .eq('id', id)
+    .single();
 
-    if (!product) throw Error;
+  if (error) throw new Error(error.message);
 
-    return product;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  return data;
 };
 export const getUserProducts = async (userId) => {
-  try {
-    const products = await databases.listDocuments(
-      appwriteConfig.databaseId,
-      appwriteConfig.productsCollectionId,
-      [Query.equal('seller', userId), Query.orderDesc('$createdAt')],
-    );
+  const { data, error } = await supabase
+    .from('products')
+    .select('*')
+    .eq('user_id', userId);
 
-    if (!products) throw Error;
+  if (error) throw new Error(error.message);
 
-    return products.documents;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  return data;
 };
 
 export const addProduct = async ({
@@ -57,47 +41,32 @@ export const addProduct = async ({
   imageFile: productImage,
   user_id,
 }) => {
-  try {
-    // if (categories.length > 2)
-    //   throw new Error('You can only add up to 2 categories');
+  const productName = name.split(' ').join('-').toLowerCase();
+  const fileName = `product-${productName}-${Math.random()}`;
 
-    const uploadedFile = await uploadFile(productImage);
+  const { error: storageError } = await supabase.storage
+    .from('products')
+    .upload(fileName, productImage);
 
-    if (!uploadedFile) throw Error;
+  if (storageError) throw new Error(storageError.message);
 
-    // Get File Url
-    const fileUrl = await getFilePreview(uploadedFile.$id);
-    if (!fileUrl) {
-      await storage.deleteFile(appwriteConfig.storageId, uploadedFile.$id);
-      throw Error;
-    }
+  const { data, error } = await supabase.from('products').insert([
+    {
+      name,
+      description,
+      price,
+      stock,
+      category,
+      image_url: `${SUPABASE_URL}/storage/v1/object/public/products/${fileName}`,
+      image_filename: fileName,
+      isActive: true,
+      user_id,
+    },
+  ]);
 
-    const newProduct = await databases.createDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.productsCollectionId,
-      ID.unique(),
-      {
-        seller: user_id,
-        category,
-        name,
-        imageUrl: fileUrl,
-        imageId: uploadedFile.$id,
-        description,
-        price,
-        isActive: true,
-        stock,
-      },
-    );
+  if (error) throw new Error(error.message);
 
-    if (!newProduct) {
-      await storage.deleteFile(appwriteConfig.storageId, uploadedFile.$id);
-      throw Error;
-    }
-
-    return newProduct;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  return data;
 };
 
 export const updateProduct = async ({
@@ -108,138 +77,143 @@ export const updateProduct = async ({
   category,
   imageFile,
   imageUrl,
-  imageId,
+  imageFileName,
   id,
   // user_id,
 }) => {
   const hasFileToUpdate = imageFile !== undefined;
-  console.log(id);
 
-  try {
-    let image = {
-      imageUrl: imageUrl,
-      imageId: imageId,
+  let image = {
+    image_url: imageUrl,
+    image_filename: imageFileName,
+  };
+
+  if (hasFileToUpdate) {
+    const productName = name.split(' ').join('-').toLowerCase();
+    const fileName = `product-${productName}-${Math.random()}`;
+
+    const { error } = await supabase.storage
+      .from('products')
+      .upload(fileName, imageFile);
+    if (error) throw new Error(error.message);
+
+    image = {
+      ...image,
+      image_url: `${SUPABASE_URL}/storage/v1/object/public/products/${fileName}`,
+      image_filename: fileName,
     };
+  }
 
+  const { data, error } = await supabase
+    .from('products')
+    .update({
+      name,
+      description,
+      price,
+      stock,
+      category,
+      ...image,
+      isActive: true,
+      // user_id,
+    })
+    .eq('id', id)
+    .select();
+
+  if (error) {
     if (hasFileToUpdate) {
-      const uploadedFile = await uploadFile(imageFile);
+      const { error } = await supabase.storage
+        .from('products')
+        .remove([image.image_filename]);
 
-      if (!uploadedFile) throw Error;
-
-      // Get File Url
-      const fileUrl = await getFilePreview(uploadedFile.$id);
-      if (!fileUrl) {
-        await storage.deleteFile(appwriteConfig.storageId, uploadedFile.$id);
-        throw Error;
-      }
-
-      image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id };
+      if (error) throw new Error(error.message);
     }
-
-    const updatedProduct = await databases.updateDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.productsCollectionId,
-      id,
-      {
-        category,
-        name,
-        ...image,
-        description,
-        price,
-        stock,
-      },
-    );
-
-    if (!updatedProduct) {
-      if (hasFileToUpdate) {
-        await storage.deleteFile(appwriteConfig.storageId, image.imageId);
-      }
-      throw Error;
-    }
-
-    if (hasFileToUpdate) {
-      await storage.deleteFile(appwriteConfig.storageId, imageId);
-    }
-
-    return updatedProduct;
-  } catch (error) {
     throw new Error(error.message);
   }
+
+  if (hasFileToUpdate) {
+    const { error } = await supabase.storage
+      .from('products')
+      .remove([imageFileName]);
+
+    if (error) throw new Error(error.message);
+  }
+
+  return data;
 };
 
-export const deleteProduct = async ({ productId, imageId }) => {
-  if (!productId || !imageId) return;
-  try {
-    const statusCode = await databases.deleteDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.productsCollectionId,
-      productId,
-    );
+export const deleteProduct = async ({ productId }) => {
+  if (!productId) return;
 
-    if (!statusCode) throw Error;
+  const { data, error: deleteProductError } = await supabase
+    .from('products')
+    .delete()
+    .eq('id', productId)
+    .select();
 
-    await storage.deleteFile(appwriteConfig.storageId, imageId);
+  if (deleteProductError) throw new Error(deleteProductError.message);
 
-    return { status: 'Ok' };
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  // delete product image/file from storage
+  const { error: storageError } = await supabase.storage
+    .from('products')
+    .remove([data[0]?.image_filename]);
+
+  if (storageError) throw new Error(storageError.message);
+
+  return data;
 };
 
 // Products Cart
 
-export const addProductToCart = async ({ userId, productId, quantity }) => {
-  try {
-    const newCart = await databases.createDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.cartsCollectionId,
-      ID.unique(),
+export const addProductToCart = async ({ user_id, product_id, quantity }) => {
+  const { data, error } = await supabase
+    .from('carts')
+    .insert([
       {
-        user: userId,
-        product: productId,
+        user_id,
+        product_id,
         quantity,
       },
-    );
+    ])
+    .select();
 
-    if (!newCart) throw Error;
+  if (error) throw new Error(error.message);
 
-    return newCart;
-  } catch (error) {
-    throw new Error(error.message);
-  }
+  return data;
 };
 
 export const updateProductFromCart = async ({ cartId, quantity }) => {
-  try {
-    const updatedCart = await databases.updateDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.cartsCollectionId,
-      cartId,
-      {
-        quantity,
-      },
-    );
+  const { data, error } = await supabase
+    .from('carts')
+    .update({ quantity })
+    .eq('id', cartId)
+    .select('*, products(*)');
 
-    if (!updatedCart) throw Error;
+  if (error) throw new Error(error.message);
 
-    return updatedCart;
-  } catch (err) {
-    throw new Error(err.message);
-  }
+  // const maxQuantity = data[0]?.products?.stock - data[0]?.quantity;
+  // if (quantity > maxQuantity) {
+  //   if (maxQuantity == 0) {
+  //     toast('Product quantity limit reached.', {
+  //       description: `You have reached the maximum quantity of this product that can be added to your cart`,
+  //     });
+  //   } else {
+  //     toast('Product quantity limit reached.', {
+  //       description: `You can only add up to ${maxQuantity} of this product to your cart.`,
+  //     });
+  //   }
+  //   return;
+  // }
+
+  return data;
 };
 
 export const deleteProductFromCart = async (cartId) => {
-  try {
-    const statusCode = await databases.deleteDocument(
-      appwriteConfig.databaseId,
-      appwriteConfig.cartsCollectionId,
-      cartId,
-    );
+  const { data, error } = await supabase
+    .from('carts')
+    .delete()
+    .eq('id', cartId);
 
-    if (!statusCode) throw Error;
+  if (error) throw new Error(error.message);
 
-    return { status: 'Ok' };
-  } catch (err) {
-    throw new Error(err.message);
-  }
+  return data;
 };

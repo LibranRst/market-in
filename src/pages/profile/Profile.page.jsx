@@ -29,11 +29,11 @@ const ProfilePage = () => {
   useEffect(() => {
     if (avatar) {
       updateUser(
-        { avatar, id: user?.$id },
+        { avatar },
         { onSuccess: () => setAvatar(null) },
       );
     }
-  }, [avatar, updateUser, user?.$id]);
+  }, [avatar, updateUser]);
 
   return (
     <CenteredContainer className="gap-4">
@@ -47,8 +47,8 @@ const ProfilePage = () => {
           onChange={(e) => setAvatar(e.target.files[0])}
         >
           <Avatar.Image
-            src={user?.imageUrl}
-            name={user?.name}
+            src={user?.user_metadata?.avatar}
+            name={user?.user_metadata?.name}
             textSize="3xl"
           />
           {isUpdating && <Avatar.Loading />}
@@ -56,15 +56,15 @@ const ProfilePage = () => {
         </Avatar>
         <div className="flex w-[calc(100%-5rem)] items-center justify-between rounded-xl border bg-card px-6">
           <div className="flex flex-col">
-            <h2 className="text-lg font-semibold">{user?.name}</h2>
+            <h2 className="text-lg font-semibold">{user?.user_metadata?.name}</h2>
             <p className="text-sm text-gray-400">
-              {user?.bio ? user?.bio : 'there is no bio for this profile.'}
+              {user?.user_metadata?.bio ? user?.user_metadata?.bio : 'there is no bio for this profile.'}
             </p>
           </div>
           <div className="flex items-center gap-5">
             <div className="text-right">
               <h1 className="text-lg font-bold">
-                {formatCurrency(user?.balance || 0)}
+                {formatCurrency(user?.user_metadata?.balance || 0)}
               </h1>
               <h2 className="text-sm font-normal">my Balance</h2>
             </div>
@@ -87,7 +87,7 @@ const ProfilePage = () => {
             <Spinner className="h-10 w-10" />
           ) : products?.length > 0 ? (
             products?.map((product) => (
-              <ProductUserCard product={product} key={product.$id} />
+              <ProductUserCard product={product} key={product.id} />
             ))
           ) : (
             <p>There is no product on your shop yet.</p>

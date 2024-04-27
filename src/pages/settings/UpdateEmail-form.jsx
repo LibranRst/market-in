@@ -22,21 +22,28 @@ const UpdateEmailForm = () => {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm({
     values: {
       email: user?.email,
     },
   });
 
-  const onSubmit = ({ email, password }) => {
+  // const onSubmit = ({ email, password }) => {
+  //   if (email === user?.email) {
+  //     return;
+  //   }
+  //   updateUser(
+  //     { email, password, id: user?.$id },
+  //     { onSuccess: () => reset({ password: '' }) },
+  //   );
+  // };
+
+  const onSubmit = ({ email }) => {
     if (email === user?.email) {
       return;
     }
-    updateUser(
-      { email, password, id: user?.$id },
-      { onSuccess: () => reset({ password: '' }) },
-    );
+
+    updateUser({ email });
   };
 
   return (
@@ -44,9 +51,7 @@ const UpdateEmailForm = () => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardHeader>
           <CardTitle>Change Email</CardTitle>
-          <CardDescription>
-            You need to enter your current password to update your email.
-          </CardDescription>
+          <CardDescription>You can change your email here.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
@@ -65,7 +70,7 @@ const UpdateEmailForm = () => {
                 {...register('email', { required: 'Email is required' })}
               />
             </FormRowVertical>
-            <FormRowVertical
+            {/* <FormRowVertical
               label="Password"
               htmlFor={'password'}
               error={errors.password}
@@ -80,7 +85,7 @@ const UpdateEmailForm = () => {
                 }`}
                 {...register('password', { required: 'Password is required' })}
               />
-            </FormRowVertical>
+            </FormRowVertical> */}
           </div>
         </CardContent>
         <CardFooter className="flex justify-end">

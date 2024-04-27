@@ -18,7 +18,7 @@ export const useAddProduct = () => {
         stock,
         category,
         imageFile,
-        user_id: user?.$id,
+        user_id: user?.id,
       }),
     onSuccess: () => {
       toast('Product added', {

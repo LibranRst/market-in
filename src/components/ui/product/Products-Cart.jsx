@@ -2,6 +2,7 @@ import { DropdownMenuLabel } from '@radix-ui/react-dropdown-menu';
 import { FiShoppingCart } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { useUser } from '../../../hooks/auth/useUser';
+import { useDeleteProductCart } from '../../../hooks/cart/useDeleteProductCart';
 import { formatCurrency } from '../../../utils/helpers';
 import {
   DropdownMenu,
@@ -10,27 +11,28 @@ import {
   DropdownMenuTrigger,
 } from '../Dropdown-menu';
 import Spinner from '../loading/Spinner';
-import { useEffect } from 'react';
-import { deleteProductFromCart } from '../../../services/apiProducts';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+// import { deleteProductFromCart } from '../../../services/apiProducts';
+// import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const ProductsCart = () => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   const { user, isLoading, isFetching } = useUser();
-  const { mutate: deleteProductCart, isPending: isDeleting } = useMutation({
-    mutationFn: deleteProductFromCart,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['user'],
-      });
-    },
-  });
+  // const { mutate: deleteProductCart, isPending: isDeleting } = useMutation({
+  //   mutationFn: deleteProductFromCart,
+  //   onSuccess: () => {
+  //     queryClient.invalidateQueries({
+  //       queryKey: ['user'],
+  //     });
+  //   },
+  // });
 
-  const cartProducts = user?.cart
-    .map((cartProduct) => ({
-      cartProductId: cartProduct.$id,
-      ...cartProduct.product,
+  const { deleteProductCart, isLoading: isDeleting } = useDeleteProductCart();
+
+  const cartProducts = user?.carts
+    ?.map((cartProduct) => ({
+      cartProductId: cartProduct.id,
+      ...cartProduct.products,
       quantity: cartProduct.quantity,
     }))
     .reverse();
@@ -55,10 +57,9 @@ const ProductsCart = () => {
         ) : (
           cartProducts?.map((product) => (
             <ProductsItem
-              key={product.$id}
+              key={product.id}
               product={product}
               isFetching={isFetching}
-              deleteProductCart={deleteProductCart}
             />
           ))
         )}
@@ -67,20 +68,21 @@ const ProductsCart = () => {
   );
 };
 
-const ProductsItem = ({ product, deleteProductCart }) => {
-  useEffect(() => {
-    if (product.$id === undefined) {
-      deleteProductCart(product?.cartProductId);
-    }
-  }, [product.$id, product?.cartProductId, deleteProductCart]);
+const ProductsItem = ({ product }) => {
+  // console.log(product);
+  // useEffect(() => {
+  //   if (product.id === undefined) {
+  //     deleteProductCart(product?.cartProductId);
+  //   }
+  // }, [product.id, product?.cartProductId, deleteProductCart]);
 
   return (
     <Link
-      to={`/product/${product.$id}`}
+      to={`/product/${product.id}`}
       className="flex w-[35rem] cursor-pointer flex-row items-center gap-2 rounded-xl px-2 py-1.5 transition-colors hover:bg-accent"
     >
       <img
-        src={product.imageUrl}
+        src={product.image_url}
         alt={product.name}
         className="h-14 w-14 rounded-xl object-cover"
       />

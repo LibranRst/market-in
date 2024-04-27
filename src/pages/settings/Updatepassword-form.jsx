@@ -24,15 +24,14 @@ const UpdatePasswordForm = () => {
     reset,
   } = useForm();
 
-  const onSubmit = ({ newPassword, oldPassword }) => {
-    if (newPassword === '') {
+  const onSubmit = ({ password }) => {
+    if (password === '') {
       return;
     }
     updateUser(
-      { password: newPassword, oldPassword },
+      { password },
       {
-        onSuccess: () =>
-          reset({ oldPassword: '', newPassword: '', confirmPassword: '' }),
+        onSuccess: () => reset({ password: '', confirmPassword: '' }),
       },
     );
   };
@@ -46,7 +45,7 @@ const UpdatePasswordForm = () => {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
-            <FormRowVertical
+            {/* <FormRowVertical
               label="Old Password"
               htmlFor={'oldPassword'}
               error={errors.oldPassword}
@@ -63,22 +62,22 @@ const UpdatePasswordForm = () => {
                   required: 'Old Password is required',
                 })}
               />
-            </FormRowVertical>
+            </FormRowVertical> */}
             <FormRowVertical
-              label="New Password"
-              htmlFor={'newPassword'}
-              error={errors.newPassword}
+              label="Password"
+              htmlFor={'password'}
+              error={errors.password}
             >
               <Input
-                id="newPassword"
+                id="password"
                 type="password"
                 disabled={isUpdating}
-                placeholder="input your new password here..."
+                placeholder="input your password here..."
                 className={`focus-visible:ring-0 ${
-                  errors.newPassword && 'border-destructive'
+                  errors.password && 'border-destructive'
                 }`}
-                {...register('newPassword', {
-                  required: 'New password is required',
+                {...register('password', {
+                  required: 'Password is required',
                 })}
               />
             </FormRowVertical>
@@ -97,8 +96,7 @@ const UpdatePasswordForm = () => {
                 }`}
                 {...register('confirmPassword', {
                   validate: (value) =>
-                    getValues().newPassword === value ||
-                    'Passwords do not match',
+                    getValues().password === value || 'Passwords do not match',
                 })}
               />
             </FormRowVertical>

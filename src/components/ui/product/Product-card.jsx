@@ -1,12 +1,12 @@
 import { FaStar } from 'react-icons/fa';
 import { FaShop } from 'react-icons/fa6';
-import { MdAddShoppingCart, MdOutlineRemoveShoppingCart } from 'react-icons/md';
+import { MdAddShoppingCart, MdPlusOne } from 'react-icons/md';
 
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../../../hooks/auth/useUser';
 import { useAddToCart } from '../../../hooks/cart/useAddToCart';
-import { useDeleteProductCart } from '../../../hooks/cart/useDeleteProductCart';
+import { useUpdateCartProduct } from '../../../hooks/cart/useUpdateCartProduct';
 import { formatCurrency } from '../../../utils/helpers';
 import { Button } from '../Button';
 import {
@@ -15,37 +15,52 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../Tooltip';
-import Spinner from '../loading/Spinner';
-const ProductCard = ({ product, onClick }) => {
+import { toast } from 'sonner';
+const ProductCard = ({ product }) => {
   const {
-    imageUrl: imgSrc,
+    image_url: imgSrc,
     name,
     price,
     rating = 0,
     children,
-    $id: id,
+    id: id,
   } = product;
   const { user, isLoading: isUserLoading, isFetching } = useUser();
   const { addToCart, isLoading: isAdding } = useAddToCart();
-  const { deleteProductCart, isLoading: isDeleting } = useDeleteProductCart();
+  const { updateCartProduct, isLoading: isCartUpdateLoading } =
+    useUpdateCartProduct();
 
-  const [isInCart, setIsInCart] = useState(product?.cart.length > 0);
+  const [isInCart, setIsInCart] = useState(product?.carts.length > 0);
 
   // const isInCart = product?.cart.length > 0;
 
-  const isSeller = user?.$id === product?.seller?.$id;
+  const isSeller = user?.id === product?.profiles.id;
 
   const handleAddToCart = () => {
-    addToCart({ productId: product.$id, quantity: 1 });
+    addToCart({ product_id: product.id, quantity: 1 });
     setIsInCart(true);
   };
 
-  const handleRemoveFromCart = () => {
+  const handleUpdateCart = () => {
+    // const maxQuantity = product?.stock - product?.carts[0]?.quantity;
+    const maxQuantity = product?.stock - product?.carts[0].quantity;
+    if (maxQuantity == 0) {
+      toast('Product quantity limit reached.', {
+        description: `You have reached the maximum quantity of this product that can be added to your cart`,
+      });
+      return;
+    }
+
+    if (product?.carts[0] == undefined) {
+      return;
+    }
     if (isFetching) {
       return;
     }
-    deleteProductCart(product?.cart[0]?.$id);
-    setIsInCart(false);
+    updateCartProduct({
+      cartId: product?.carts[0]?.id,
+      quantity: product?.carts[0]?.quantity + 1,
+    });
   };
 
   // useEffect(() => {
@@ -56,11 +71,11 @@ const ProductCard = ({ product, onClick }) => {
     <TooltipProvider>
       <Tooltip>
         <div className="overflow-hidden rounded-xl border-[1px] bg-card drop-shadow-sm">
-          <Link to={`/product/${id}`} onClick={onClick}>
+          <Link to={`/product/${id}`}>
             <img
               src={imgSrc}
-              alt="Card 1 image"
-              className="max-h-full max-w-full cursor-pointer object-cover"
+              alt={name}
+              className="h-[13.688rem] max-h-full max-w-full cursor-pointer object-cover"
             />
           </Link>
           <div className="relative flex h-[140px] flex-col gap-[2px] p-2">
@@ -68,7 +83,6 @@ const ProductCard = ({ product, onClick }) => {
               <Link
                 className="line-clamp-2 cursor-pointer overflow-hidden text-ellipsis"
                 to={`/product/${id}`}
-                onClick={onClick}
               >
                 {name}
               </Link>
@@ -88,30 +102,22 @@ const ProductCard = ({ product, onClick }) => {
               isInCart ? (
                 <Button
                   className="absolute bottom-2 right-2"
-                  variant='destructive'
+                  variant="default"
                   size="icon"
-                  disabled={isAdding || isDeleting || isUserLoading}
-                  onClick={handleRemoveFromCart}
+                  disabled={isAdding || isCartUpdateLoading || isUserLoading}
+                  onClick={handleUpdateCart}
                 >
-                  {isDeleting || isUserLoading || isAdding ? (
-                    <Spinner className="h-4 w-4" />
-                  ) : (
-                    <MdOutlineRemoveShoppingCart />
-                  )}
+                  <MdPlusOne size={20} />
                 </Button>
               ) : (
                 <Button
                   variant="outline"
                   size="icon"
-                  disabled={isDeleting || isAdding || isUserLoading}
+                  disabled={isCartUpdateLoading || isAdding || isUserLoading}
                   className="absolute bottom-2 right-2"
                   onClick={handleAddToCart}
                 >
-                  {isAdding || isUserLoading || isDeleting ? (
-                    <Spinner className="h-4 w-4" />
-                  ) : (
-                    <MdAddShoppingCart />
-                  )}
+                  <MdAddShoppingCart />
                 </Button>
               )
             ) : (
