@@ -41,7 +41,9 @@ const ForgotPassword = () => {
   
   const onSubmit = ({ email }) => {
     if (!email) return;
-    forgotPassword({ email }, { onSuccess: reset });
+    forgotPassword({ email }, { onSuccess: () => {
+      reset();
+    } });
   };
 
 

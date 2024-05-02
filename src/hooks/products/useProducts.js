@@ -1,5 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { getProducts, getUserProducts } from '../../services/apiProducts';
+import {
+  getCartProducts,
+  getProducts,
+  getUserProducts,
+} from '../../services/apiProducts';
 import { useUser } from '../auth/useUser';
 
 export const useProducts = () => {
@@ -28,4 +32,20 @@ export const useUserProducts = () => {
   });
 
   return { isLoading, products, error };
+};
+
+export const useCartProducts = ({ list = 'all' }) => {
+  const { user } = useUser();
+
+  const {
+    data: cartProducts,
+    isLoading,
+    isFetching,
+  } = useQuery({
+    queryKey: ['cartProducts', user?.id, list],
+    queryFn: () => getCartProducts({ userId: user?.id, list }),
+    gcTime: 0,
+  });
+
+  return { cartProducts, isLoading, isFetching };
 };

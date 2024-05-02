@@ -2,7 +2,6 @@ import { DropdownMenuLabel } from '@radix-ui/react-dropdown-menu';
 import { FiShoppingCart } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
 import { useUser } from '../../../hooks/auth/useUser';
-import { useDeleteProductCart } from '../../../hooks/cart/useDeleteProductCart';
 import { formatCurrency } from '../../../utils/helpers';
 import {
   DropdownMenu,
@@ -11,71 +10,64 @@ import {
   DropdownMenuTrigger,
 } from '../Dropdown-menu';
 import Spinner from '../loading/Spinner';
-// import { deleteProductFromCart } from '../../../services/apiProducts';
-// import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { cn } from '../../../lib/utils';
+import { buttonVariants } from '../Button';
 
 const ProductsCart = () => {
-  // const queryClient = useQueryClient();
+  const { cartProducts, isLoading, isFetching } = useUser();
 
-  const { user, isLoading, isFetching } = useUser();
-  // const { mutate: deleteProductCart, isPending: isDeleting } = useMutation({
-  //   mutationFn: deleteProductFromCart,
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({
-  //       queryKey: ['user'],
-  //     });
-  //   },
-  // });
-
-  const { deleteProductCart, isLoading: isDeleting } = useDeleteProductCart();
-
-  const cartProducts = user?.carts
-    ?.map((cartProduct) => ({
-      cartProductId: cartProduct.id,
-      ...cartProduct.products,
-      quantity: cartProduct.quantity,
-    }))
-    .reverse();
-
-  // console.log(cartProducts?.at(0).$id)
+  const totalQuantity = cartProducts?.reduce(
+    (acc, curr) => acc + curr.quantity,
+    0,
+  );
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="rounded-xl p-2 transition-colors hover:bg-accent">
-        <FiShoppingCart size={20} />
+        <div className="relative">
+          <FiShoppingCart size={20} />
+          {cartProducts?.length > 0 && (
+            <span
+              className={`absolute -right-3 -top-2 h-4 ${totalQuantity > 99 ? 'w-fit' : 'w-4'} rounded-full bg-destructive text-xs font-semibold text-destructive-foreground`}
+            >
+              {totalQuantity > 99 ? '99+' : totalQuantity}
+            </span>
+          )}
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mr-2">
-        <DropdownMenuLabel className="p-2">Products Cart.</DropdownMenuLabel>
+        <DropdownMenuLabel className="flex items-center justify-between p-2">
+          <p>Products Cart ({totalQuantity})</p>
+          <Link to="/cart" className={cn(buttonVariants({ size: 'sm' }))}>
+            View Cart
+          </Link>
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {!cartProducts?.length && !isLoading && !isFetching && !isDeleting && (
-          <div className="w-[35rem] p-2">No products in cart.</div>
-        )}
-        {isDeleting || isLoading || isFetching ? (
-          <div className="w-[35rem] p-2">
-            <Spinner className="h-10 w-10" />
-          </div>
-        ) : (
-          cartProducts?.map((product) => (
-            <ProductsItem
-              key={product.id}
-              product={product}
-              isFetching={isFetching}
-            />
-          ))
-        )}
+        <div className="max-h-[calc(68px*6)] overflow-auto">
+          {!cartProducts?.length && !isLoading && !isFetching && (
+            <div className="w-[35rem] p-2">No products in cart.</div>
+          )}
+          {isLoading || isFetching ? (
+            <div className="w-[35rem] p-2">
+              <Spinner className="h-10 w-10" />
+            </div>
+          ) : (
+            cartProducts?.map((product) => (
+              <ProductsItem
+                key={product?.id}
+                product={product}
+                quantity={product?.quantity}
+                isFetching={isFetching}
+              />
+            ))
+          )}
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 };
 
-const ProductsItem = ({ product }) => {
-  // console.log(product);
-  // useEffect(() => {
-  //   if (product.id === undefined) {
-  //     deleteProductCart(product?.cartProductId);
-  //   }
-  // }, [product.id, product?.cartProductId, deleteProductCart]);
-
+const ProductsItem = ({ product, quantity }) => {
   return (
     <Link
       to={`/product/${product.id}`}
@@ -90,10 +82,10 @@ const ProductsItem = ({ product }) => {
         <div className="flex flex-col">
           <p className="w-[250px] truncate text-base">{product.name}</p>
           <p className="text-sm font-normal text-card-foreground/70">
-            Qty: {product.quantity}
+            Qty: {quantity}
           </p>
         </div>
-        <p>{formatCurrency(product.price * product.quantity)}</p>
+        <p>{formatCurrency(product.price * quantity)}</p>
       </div>
     </Link>
   );

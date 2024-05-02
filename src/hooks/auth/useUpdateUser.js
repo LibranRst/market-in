@@ -33,9 +33,9 @@ export const useUpdateUser = () => {
     mutationFn: updateCurrentUser,
     onSuccess: ({ user }) => {
       if (user?.new_email) {
-        toast('Account Updated', {
+        toast('Check your email', {
           description:
-            'Your email has been updated. Please check your new email for verification.',
+            'We have sent you an email with instructions on how to verify your new email.',
         });
       } else {
         toast('Account Updated', {
@@ -43,7 +43,7 @@ export const useUpdateUser = () => {
         });
       }
 
-      queryClient.setQueryData(['user'], user);
+      queryClient.invalidateQueries({ queryKey: ['user'] });
     },
     onError: (err) =>
       toast('Error', {

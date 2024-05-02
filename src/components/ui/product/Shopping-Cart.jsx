@@ -9,6 +9,7 @@ import { formatCurrency } from '../../../utils/helpers';
 import { Button } from '../Button';
 import { Card } from '../Card';
 import { Separator } from '../Separator';
+import QuantityInput from '../cart/QuantityInput';
 
 const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
   const [quantity, setQuantity] = useState(1);
@@ -21,39 +22,6 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
   const { addToCart, isLoading: isAdding } = useAddToCart();
   const { deleteProductCart, isLoading: isDeleting } = useDeleteProductCart();
   const { updateCartProduct, isLoading: isUpdating } = useUpdateCartProduct();
-
-  const handleNegative = () => {
-    if (quantity <= 1) {
-      return;
-    }
-    setQuantity((cur) => cur - 1);
-  };
-
-  const handleChange = (e) => {
-    const newQuantity = parseInt(e.target.value).toFixed(0) || '';
-
-    if (isNaN(newQuantity) || newQuantity < 1) {
-      setQuantity('');
-      setError('Quantity must be a valid number and greater than 0');
-      return;
-    }
-
-    if (newQuantity > product?.stock) {
-      setQuantity(product?.stock);
-      setError(`Maximum quantity is ${product?.stock}`);
-      return;
-    }
-
-    setQuantity(newQuantity);
-    setError('');
-  };
-
-  const handlePositive = () => {
-    if (quantity >= product?.stock) {
-      return;
-    }
-    setQuantity((cur) => cur + 1);
-  };
 
   const handleAddToCart = () => {
     setError('');
@@ -121,15 +89,27 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
         });
       },
     });
-    setIsInCart(false);
-  };
 
-  const handleKeyDown = (e) => {
-    const keysToPreventDefault = new Set(['e', '-', '+', '.']);
-    // Prevent the default behavior of the these buttons
-    if (keysToPreventDefault.has(e.key)) {
-      e.preventDefault();
+    // Get the existing selectedProducts from localStorage
+    const selectedProducts =
+      JSON.parse(localStorage.getItem('selectedProducts')) || [];
+
+    // Find the index of the product being removed from the cart
+    const productIndex = selectedProducts.findIndex((p) => p.id === product.id);
+
+    // If the product is found in the selectedProducts array
+    if (productIndex !== -1) {
+      // Remove the product from the selectedProducts array
+      selectedProducts.splice(productIndex, 1);
+
+      // Update the localStorage with the updated selectedProducts array
+      localStorage.setItem(
+        'selectedProducts',
+        JSON.stringify(selectedProducts),
+      );
     }
+
+    setIsInCart(false);
   };
 
   useEffect(() => {
@@ -143,39 +123,17 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
         <Separator />
       </div>
       <div className="flex items-center gap-3">
-        <div className="relative flex w-[40%] items-center">
-          <Button
-            className="absolute left-1 flex h-[25px] w-[25px] rounded-full  transition-colors "
-            onClick={handleNegative}
-            disabled={quantity <= 1}
-            size="icon"
-            variant="ghost"
-          >
-            -
-          </Button>
-          <input
-            type="number"
-            className="h-[2.125rem] w-full rounded-md border border-border bg-card p-2 text-center text-card-foreground [appearance:textfield] focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-            onChange={handleChange}
-            value={quantity}
-            onBlur={() => {
-              if (quantity <= 0) {
-                setQuantity(1);
-                setError('');
-              }
-            }}
-            onKeyDown={handleKeyDown}
-          />
-          <Button
-            className="absolute right-1 flex h-[25px] w-[25px] rounded-full  transition-colors "
-            onClick={handlePositive}
-            disabled={quantity >= product?.stock}
-            size="icon"
-            variant="ghost"
-          >
-            +
-          </Button>
-        </div>
+        <QuantityInput
+          product={product}
+          quantity={quantity}
+          setQuantity={setQuantity}
+          onBlur={() => {
+            if (quantity <= 0) {
+              setQuantity(1);
+            }
+          }}
+          setError={setError}
+        />
         <h2 className="text-sm">Quantity</h2>
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}

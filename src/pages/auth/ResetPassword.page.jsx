@@ -31,7 +31,7 @@ const ResetPassword = () => {
     reset,
   } = useForm();
 
-  if(isAuthenticated && !isLoadingUser) {
+  if(!isAuthenticated && !isLoadingUser) {
     return <Navigate to='/' />
   }
 

@@ -13,6 +13,7 @@ import AuthLayout from './components/ui/layout/AuthLayout';
 import SettingsPage from './pages/settings/Settings.page';
 import ProtectedRoute from './components/ui/authentication/Protected-route';
 import AddEditProduct from './pages/product/AddEditProduct.page';
+import CartPage from './pages/cart/Cart.page';
 
 function App() {
   return (
@@ -34,13 +35,14 @@ function App() {
             path="/product/edit/:id"
             element={<AddEditProduct mode="edit" />}
           />
+          <Route path="/cart" element={<CartPage />} />
         </Route>
       </Route>
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route element={<AuthLayout />}>
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
       </Route>
     </Routes>
   );

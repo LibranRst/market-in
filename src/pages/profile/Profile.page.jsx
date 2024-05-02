@@ -28,10 +28,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (avatar) {
-      updateUser(
-        { avatar },
-        { onSuccess: () => setAvatar(null) },
-      );
+      updateUser({ avatar }, { onSuccess: () => setAvatar(null) });
     }
   }, [avatar, updateUser]);
 
@@ -42,7 +39,7 @@ const ProfilePage = () => {
       <div className="flex w-full gap-2">
         <Avatar
           type="profile"
-          className="h-[5rem] w-[5rem] rounded-xl"
+          className="h-[5rem] w-[5rem] rounded-xl shrink-0"
           disabled={isUpdating}
           onChange={(e) => setAvatar(e.target.files[0])}
         >
@@ -54,11 +51,16 @@ const ProfilePage = () => {
           {isUpdating && <Avatar.Loading />}
           {isLoading && <Avatar.Loading />}
         </Avatar>
-        <div className="flex w-[calc(100%-5rem)] items-center justify-between rounded-xl border bg-card px-6">
+        <div className="flex w-full items-center justify-between rounded-xl border bg-card px-6">
           <div className="flex flex-col">
-            <h2 className="text-lg font-semibold">{user?.user_metadata?.name}</h2>
+            <h2 className="text-lg font-semibold">
+              {user?.user_metadata?.name}{' '}
+              <span className='font-normal text-sm'>@{user?.user_metadata?.username}</span>
+            </h2>
             <p className="text-sm text-gray-400">
-              {user?.user_metadata?.bio ? user?.user_metadata?.bio : 'there is no bio for this profile.'}
+              {user?.user_metadata?.bio
+                ? user?.user_metadata?.bio
+                : 'there is no bio for this profile.'}
             </p>
           </div>
           <div className="flex items-center gap-5">

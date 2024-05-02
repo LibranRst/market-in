@@ -47,7 +47,7 @@ const ProductPage = () => {
   if (isLoading) return <div>loading...</div>;
 
   return (
-    <div className="mt-7 flex flex-col gap-5">
+    <div className="flex flex-col gap-5">
       <DynamicBreadcrumb pageName={product?.name} />
       <div className="grid w-full grid-cols-12 gap-10">
         <div className="col-span-4 h-full rounded-md">

@@ -2,7 +2,7 @@ import { FaStar } from 'react-icons/fa';
 import { FaShop } from 'react-icons/fa6';
 import { MdAddShoppingCart, MdPlusOne } from 'react-icons/md';
 
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../../../hooks/auth/useUser';
 import { useAddToCart } from '../../../hooks/cart/useAddToCart';
@@ -16,7 +16,8 @@ import {
   TooltipTrigger,
 } from '../Tooltip';
 import { toast } from 'sonner';
-const ProductCard = ({ product }) => {
+
+const ProductCard = memo(({ product }) => {
   const {
     image_url: imgSrc,
     name,
@@ -25,6 +26,7 @@ const ProductCard = ({ product }) => {
     children,
     id: id,
   } = product;
+
   const { user, isLoading: isUserLoading, isFetching } = useUser();
   const { addToCart, isLoading: isAdding } = useAddToCart();
   const { updateCartProduct, isLoading: isCartUpdateLoading } =
@@ -137,7 +139,9 @@ const ProductCard = ({ product }) => {
       </Tooltip>
     </TooltipProvider>
   );
-};
+});
+
+ProductCard.displayName = 'ProductCard';
 
 const Seller = ({ sellerLink, children }) => {
   return (

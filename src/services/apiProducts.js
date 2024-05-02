@@ -32,6 +32,42 @@ export const getUserProducts = async (userId) => {
   return data;
 };
 
+export const getCartProducts = async ({ userId, list }) => {
+  const { data, error } = await supabase
+    .from('carts')
+    .select('*, products(*, profiles(*))')
+    .eq('user_id', userId)
+
+  if (error) throw new Error(error.message);
+
+  let cartProductsData = data;
+
+  if (list === 'grouped') {
+    const groupedProducts = data.reduce((acc, item) => {
+      const seller = item.products.profiles;
+      if (!acc[seller.id]) {
+        acc[seller.id] = {
+          seller,
+          products: [],
+        };
+      }
+      const product = {
+        ...item.products,
+        cart: {
+          id: item.id,
+          quantity: item.quantity,
+        },
+      };
+      acc[seller.id].products.push(product);
+      return acc;
+    }, {});
+
+    cartProductsData = Object.values(groupedProducts);
+  }
+
+  return cartProductsData;
+};
+
 export const addProduct = async ({
   name,
   description,
@@ -181,28 +217,30 @@ export const addProductToCart = async ({ user_id, product_id, quantity }) => {
   return data;
 };
 
-export const updateProductFromCart = async ({ cartId, quantity }) => {
+export const updateProductFromCart = async ({
+  cartId,
+  isChecked,
+  quantity,
+}) => {
+  let updateData;
+
+  if (isChecked) {
+    updateData = {
+      isChecked,
+    };
+  } else {
+    updateData = {
+      quantity,
+    };
+  }
+
   const { data, error } = await supabase
     .from('carts')
-    .update({ quantity })
+    .update(updateData)
     .eq('id', cartId)
     .select('*, products(*)');
 
   if (error) throw new Error(error.message);
-
-  // const maxQuantity = data[0]?.products?.stock - data[0]?.quantity;
-  // if (quantity > maxQuantity) {
-  //   if (maxQuantity == 0) {
-  //     toast('Product quantity limit reached.', {
-  //       description: `You have reached the maximum quantity of this product that can be added to your cart`,
-  //     });
-  //   } else {
-  //     toast('Product quantity limit reached.', {
-  //       description: `You can only add up to ${maxQuantity} of this product to your cart.`,
-  //     });
-  //   }
-  //   return;
-  // }
 
   return data;
 };

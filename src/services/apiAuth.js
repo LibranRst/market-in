@@ -42,7 +42,7 @@ export const getCurrentUser = async () => {
 
   const { data: profileData, error: profileError } = await supabase
     .from('profiles')
-    .select('carts(*, products(*))')
+    .select('carts(*, products(*, profiles(*)))')
     .eq('id', authData?.user.id)
     .single();
 

@@ -40,9 +40,22 @@ export const useUser = () => {
     queryFn: getCurrentUser,
   });
 
+  const cartProducts = user?.carts
+    ?.map((cartProduct) => ({
+      cartProductId: cartProduct.id,
+      isChecked: cartProduct.isChecked,
+      ...cartProduct.products,
+      seller: cartProduct.products.profiles,
+      quantity: cartProduct.quantity,
+    }))
+    .reverse();
+
+  console.log(cartProducts);
+
   return {
     isLoading,
     user,
+    cartProducts,
     isAuthenticated: user?.role === 'authenticated',
   };
 };
