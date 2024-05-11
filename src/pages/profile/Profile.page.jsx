@@ -8,7 +8,7 @@ import { useUser } from '../../hooks/auth/useUser';
 
 import { Link } from 'react-router-dom';
 import Avatar from '../../components/ui/Avatar';
-import { Button, buttonVariants } from '../../components/ui/Button';
+import { buttonVariants } from '../../components/ui/Button';
 import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
 import { Separator } from '../../components/ui/Separator';
 import CenteredContainer from '../../components/ui/layout/Centered-container';
@@ -39,7 +39,7 @@ const ProfilePage = () => {
       <div className="flex w-full gap-2">
         <Avatar
           type="profile"
-          className="h-[5rem] w-[5rem] rounded-xl shrink-0"
+          className="h-[5rem] w-[5rem] shrink-0 rounded-xl"
           disabled={isUpdating}
           onChange={(e) => setAvatar(e.target.files[0])}
         >
@@ -55,7 +55,9 @@ const ProfilePage = () => {
           <div className="flex flex-col">
             <h2 className="text-lg font-semibold">
               {user?.user_metadata?.name}{' '}
-              <span className='font-normal text-sm'>@{user?.user_metadata?.username}</span>
+              <span className="text-sm font-normal">
+                @{user?.user_metadata?.username}
+              </span>
             </h2>
             <p className="text-sm text-gray-400">
               {user?.user_metadata?.bio
@@ -71,7 +73,9 @@ const ProfilePage = () => {
               <h2 className="text-sm font-normal">my Balance</h2>
             </div>
             <Separator className="h-10" orientation="vertical" />
-            <Button size="sm">Top Up</Button>
+            <Link to='/top-up' className={buttonVariants({ size: 'sm' })} size="sm">
+              Top Up
+            </Link>
           </div>
         </div>
       </div>

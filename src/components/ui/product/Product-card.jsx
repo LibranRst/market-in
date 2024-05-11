@@ -44,24 +44,31 @@ const ProductCard = memo(({ product }) => {
   };
 
   const handleUpdateCart = () => {
-    // const maxQuantity = product?.stock - product?.carts[0]?.quantity;
-    const maxQuantity = product?.stock - product?.carts[0].quantity;
-    if (maxQuantity == 0) {
+    // Check if the user is fetching data
+    if (isFetching) return;
+
+    // Get the first cart item for the current product
+    const cartItem = product?.carts[0];
+
+    // If there is no cart item, return
+    if (!cartItem) return;
+
+    // Calculate the maximum quantity that can be added to the cart
+    const maxQuantity = product?.stock - cartItem.quantity;
+
+    // If the maximum quantity is 0, show a toast message and return
+    if (maxQuantity === 0) {
       toast('Product quantity limit reached.', {
-        description: `You have reached the maximum quantity of this product that can be added to your cart`,
+        description:
+          'You have reached the maximum quantity of this product that can be added to your cart',
       });
       return;
     }
 
-    if (product?.carts[0] == undefined) {
-      return;
-    }
-    if (isFetching) {
-      return;
-    }
+    // Update the cart product with the new quantity
     updateCartProduct({
-      cartId: product?.carts[0]?.id,
-      quantity: product?.carts[0]?.quantity + 1,
+      cartId: cartItem.id,
+      quantity: cartItem.quantity + 1,
     });
   };
 

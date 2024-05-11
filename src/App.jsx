@@ -14,6 +14,7 @@ import SettingsPage from './pages/settings/Settings.page';
 import ProtectedRoute from './components/ui/authentication/Protected-route';
 import AddEditProduct from './pages/product/AddEditProduct.page';
 import CartPage from './pages/cart/Cart.page';
+import TopUp from './pages/payment/TopUp.page';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
             element={<AddEditProduct mode="edit" />}
           />
           <Route path="/cart" element={<CartPage />} />
+          <Route path="/top-up" element={<TopUp />} />
         </Route>
       </Route>
       <Route path="/reset-password" element={<ResetPassword />} />

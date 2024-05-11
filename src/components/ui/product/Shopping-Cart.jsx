@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { MdOutlineRemoveShoppingCart } from 'react-icons/md';
+import { FaTrashAlt } from 'react-icons/fa';
 import { toast } from 'sonner';
 import { useAddToCart } from '../../../hooks/cart/useAddToCart';
 import { useDeleteProductCart } from '../../../hooks/cart/useDeleteProductCart';
@@ -156,10 +156,11 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
           <Button
             size="icon"
             variant="destructive"
+            className='shrink-0'
             disabled={isAdding || isDeleting || isProductLoading || isUpdating}
             onClick={handleRemoveFromCart}
           >
-            <MdOutlineRemoveShoppingCart />
+            <FaTrashAlt />
           </Button>
         )}
       </div>

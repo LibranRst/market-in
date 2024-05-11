@@ -7,8 +7,6 @@ import { formatCurrency } from '../../utils/helpers';
 const ProductPage = () => {
   const { product, isLoading } = useProduct();
 
-  console.log(product);
-
   if (isLoading) return <div>loading...</div>;
 
   return (

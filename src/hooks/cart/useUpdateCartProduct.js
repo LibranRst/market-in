@@ -8,6 +8,9 @@ export const useUpdateCartProduct = () => {
   const { mutate: updateCartProduct, isPending: isLoading } = useMutation({
     mutationFn: updateProductFromCart,
     onSuccess: (data) => {
+      toast(`Add More product to cart.`, {
+        description: `Total quantity of this product is ${data?.at(0)?.quantity}`,
+      });
       queryClient.invalidateQueries({
         queryKey: ['user'],
       });

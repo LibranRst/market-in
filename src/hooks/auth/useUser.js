@@ -50,8 +50,6 @@ export const useUser = () => {
     }))
     .reverse();
 
-  console.log(cartProducts);
-
   return {
     isLoading,
     user,

@@ -27,8 +27,8 @@ import useImagePreview from '../../hooks/use-imagepreview';
 
 // Utils
 import 'react-quill/dist/quill.bubble.css';
-import ProductActionCard from '../../components/ui/product/Product-ActionCard';
 import { toast } from 'sonner';
+import ProductActionCard from '../../components/ui/product/Product-ActionCard';
 
 // React Quill
 const ReactQuill = lazy(() => import('react-quill'));
@@ -125,11 +125,11 @@ const AddProductPage = ({ mode = 'add' }) => {
     }
   };
   return (
-    <div className="mt-7 flex flex-col gap-5">
+    <div className="flex flex-col gap-5">
+      <DynamicBreadcrumb
+        pageName={mode === 'edit' ? product?.name : 'Add Product'}
+      />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <DynamicBreadcrumb
-          pageName={mode === 'edit' ? product?.name : 'Add Product'}
-        />
         <div className="grid w-full grid-cols-12 gap-10">
           <ProductImageUpload
             errors={errors}

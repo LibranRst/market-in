@@ -1,5 +1,5 @@
-import { GrNotification } from 'react-icons/gr';
 import Spinner from '../loading/Spinner';
+import Notification from '../notification/Notification';
 import ProductsCart from '../product/Products-Cart';
 import UserDropdown from './User-dropdown';
 
@@ -8,9 +8,7 @@ const NavUser = ({ user, isLoading }) => {
     <>
       <div className="flex items-center gap-1">
         <ProductsCart />
-        <button className="rounded-lg p-2 transition-colors hover:bg-accent">
-          <GrNotification size={20} />
-        </button>
+        <Notification />
       </div>
       <div className="h-[20px] w-[1px] rounded-lg bg-accent" />
       {isLoading ? (

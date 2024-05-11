@@ -1,4 +1,3 @@
-import { TrashIcon } from '@radix-ui/react-icons';
 import { useEffect, useState } from 'react';
 import { Button } from '../../components/ui/Button';
 import {
@@ -14,6 +13,12 @@ import QuantityInput from '../../components/ui/cart/QuantityInput';
 import { useUpdateCartProduct } from '../../hooks/cart/useUpdateCartProduct';
 import { useCartProducts } from '../../hooks/products/useProducts';
 import { formatCurrency } from '../../utils/helpers';
+import { useDeleteProductCart } from '../../hooks/cart/useDeleteProductCart';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import Spinner from '../../components/ui/loading/Spinner';
+import { useUser } from '../../hooks/auth/useUser';
+import { checkout } from '../../services/apiPayment';
+import { toast } from 'sonner';
 
 const CartPage = () => {
   const [selectedProducts, setSelectedProducts] = useState(() => {
@@ -22,6 +27,24 @@ const CartPage = () => {
   });
   const { cartProducts: products, isLoading } = useCartProducts({
     list: 'all',
+  });
+  const { user } = useUser();
+
+  const queryClient = useQueryClient();
+
+  const { mutate: checkoutMutation, isPending } = useMutation({
+    mutationFn: checkout,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['user'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['cartProducts', user?.id],
+      });
+    },
+    onError: (err) => {
+      toast(err.message);
+    },
   });
 
   const cartProducts = products
@@ -41,6 +64,25 @@ const CartPage = () => {
   const totalPrice = selectedProducts.reduce((acc, curr) => {
     return acc + curr.price * curr.quantity;
   }, 0);
+
+  const handleCheckout = () => {
+    if (selectedProducts.length === 0) {
+      return;
+    }
+    checkoutMutation(
+      {
+        currentBalance: user?.user_metadata?.balance,
+        price: totalPrice,
+        carts: selectedProducts,
+      },
+      {
+        onSuccess: () => {
+          toast('Payment Successful.');
+          setSelectedProducts([]);
+        },
+      },
+    );
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -64,6 +106,7 @@ const CartPage = () => {
             </CardHeader>
             <Separator />
             <CardContent className="flex flex-col gap-5 p-4">
+              {cartProducts.length === 0 && <div>Your cart is empty.</div>}
               {cartProducts?.map((product) => (
                 <CartProduct
                   key={product?.id}
@@ -117,8 +160,14 @@ const CartPage = () => {
             </CardContent>
             <Separator />
             <CardFooter className="p-4">
-              <Button variant="default" size="default" className="w-full">
-                Buy
+              <Button
+                variant="default"
+                size="default"
+                className="w-full"
+                disabled={isPending}
+                onClick={handleCheckout}
+              >
+                Buy {isPending && <Spinner className={'ml-1 h-4 w-4'} />}
               </Button>
             </CardFooter>
           </Card>
@@ -180,6 +229,7 @@ const SelectAllCheckbox = ({
           quantity: product?.quantity,
           price: product?.price,
           cartId: product?.cartProductId,
+          sellerId: product?.seller.id
         }));
       setSelectedProducts((prev) => [...prev, ...newSelectedProducts]);
     }
@@ -195,16 +245,28 @@ const SelectAllCheckbox = ({
 };
 
 const CartProduct = ({ product, selectedProducts, setSelectedProducts }) => {
-  const { updateCartProduct } = useUpdateCartProduct();
-
   const [quantity, setQuantity] = useState(product?.quantity);
 
+  const { updateCartProduct } = useUpdateCartProduct();
+  const { deleteProductCart, isLoading } = useDeleteProductCart();
+
+  const { user } = useUser();
+
+  const queryClient = useQueryClient();
   const handleSelectProduct = (product) => {
     const isSelected = selectedProducts.some((p) => p.id === product.id);
     if (isSelected) {
-      setSelectedProducts(selectedProducts.filter((p) => p.id !== product.id));
+      setSelectedProducts((prev) => prev.filter((p) => p.id !== product.id));
     } else {
-      setSelectedProducts([...selectedProducts, product]);
+      const newSelectedProduct = {
+        id: product.id,
+        name: product.name,
+        quantity: product.quantity,
+        price: product.price,
+        cartId: product.cartProductId,
+        sellerId: product.seller.id,
+      };
+      setSelectedProducts((prev) => [...prev, newSelectedProduct]);
     }
   };
 
@@ -232,6 +294,38 @@ const CartProduct = ({ product, selectedProducts, setSelectedProducts }) => {
       prev.map((p) => (p.id === product.id ? { ...p, quantity: quantity } : p)),
     );
   }, [quantity, product.id, setSelectedProducts]);
+
+  const handleRemoveFromCart = () => {
+    // if (isProductFetching) {
+    //   return;
+    // }
+    deleteProductCart(product?.cartProductId, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ['cartProducts', user?.id],
+        });
+      },
+    });
+
+    // Get the existing selectedProducts from localStorage
+    const selectedProducts =
+      JSON.parse(localStorage.getItem('selectedProducts')) || [];
+
+    // Find the index of the product being removed from the cart
+    const productIndex = selectedProducts.findIndex((p) => p.id === product.id);
+
+    // If the product is found in the selectedProducts array
+    if (productIndex !== -1) {
+      // Remove the product from the selectedProducts array
+      selectedProducts.splice(productIndex, 1);
+
+      // Update the localStorage with the updated selectedProducts array
+      localStorage.setItem(
+        'selectedProducts',
+        JSON.stringify(selectedProducts),
+      );
+    }
+  };
 
   return (
     <div className="flex w-full gap-2">
@@ -274,8 +368,14 @@ const CartProduct = ({ product, selectedProducts, setSelectedProducts }) => {
                 }
               }}
             />
-            <Button variant="destructive" size="icon" className="shrink-0">
-              <TrashIcon />
+            <Button
+              variant="destructive"
+              size="sm"
+              className="shrink-0 text-xs"
+              disabled={isLoading}
+              onClick={handleRemoveFromCart}
+            >
+              Remove {isLoading && <Spinner className={'ml-1 h-4 w-4'} />}
             </Button>
           </div>
         </div>

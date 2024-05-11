@@ -15,6 +15,7 @@ export const useProducts = () => {
   } = useQuery({
     queryKey: ['products'],
     queryFn: getProducts,
+    gcTime: 0,
   });
 
   return { isLoading, isFetching, products, error };
