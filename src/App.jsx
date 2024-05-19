@@ -1,20 +1,22 @@
 // import ProtectedRoute from './ui/authentication/ProtectedRoute';
 
 import { Navigate, Route, Routes } from 'react-router-dom';
+import ProtectedRoute from './components/ui/authentication/Protected-route';
+import AuthLayout from './components/ui/layout/AuthLayout';
 import RootLayout from './components/ui/layout/RootLayout';
-import ProfilePage from './pages/profile/Profile.page';
-import SignInPage from './pages/auth/Signin.page';
-import SignUpPage from './pages/auth/Signup.page';
+import UserSidebarLayout from './components/ui/layout/UserSidebarLayout';
+import AccountPage from './pages/account/Account.page';
 import ForgotPassword from './pages/auth/ForgotPassword.page';
 import ResetPassword from './pages/auth/ResetPassword.page';
-import HomePage from './pages/home/Home.page';
-import ProductPage from './pages/product/Product.page';
-import AuthLayout from './components/ui/layout/AuthLayout';
-import SettingsPage from './pages/settings/Settings.page';
-import ProtectedRoute from './components/ui/authentication/Protected-route';
-import AddEditProduct from './pages/product/AddEditProduct.page';
+import SignInPage from './pages/auth/Signin.page';
+import SignUpPage from './pages/auth/Signup.page';
 import CartPage from './pages/cart/Cart.page';
+import HomePage from './pages/home/Home.page';
+import Orders from './pages/orders/Orders.page';
 import TopUp from './pages/payment/TopUp.page';
+import AddEditProduct from './pages/product/AddEditProduct.page';
+import ProductPage from './pages/product/Product.page';
+import ProfilePage from './pages/profile/Profile.page';
 
 function App() {
   return (
@@ -26,7 +28,6 @@ function App() {
         <Route path="/product/:id" element={<ProductPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/settings" element={<SettingsPage />} />
           <Route
             path="/product/create"
             element={<AddEditProduct mode="add" />}
@@ -38,6 +39,11 @@ function App() {
           />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/top-up" element={<TopUp />} />
+          <Route path="*" element={<Navigate to="/" />} />
+          <Route element={<UserSidebarLayout />}>
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/account" element={<AccountPage />} />
+          </Route>
         </Route>
       </Route>
       <Route path="/reset-password" element={<ResetPassword />} />

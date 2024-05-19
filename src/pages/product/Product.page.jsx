@@ -53,7 +53,7 @@ const ProductPage = () => {
         <div className="col-span-4 h-full rounded-md">
           <img
             src={product?.image_url}
-            className="sticky top-[7.688rem] h-[375px] w-[375px] rounded-md object-cover"
+            className="sticky top-[7.688rem] h-[375px] w-full max-w-[375px] rounded-md object-cover"
           />
         </div>
         <div className="col-span-5 flex flex-col gap-10 py-2">

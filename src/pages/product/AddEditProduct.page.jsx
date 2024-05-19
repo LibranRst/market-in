@@ -1,6 +1,5 @@
 // React Core
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 // Third-Party Libraries
 import { Controller, useForm } from 'react-hook-form';
@@ -29,6 +28,14 @@ import useImagePreview from '../../hooks/use-imagepreview';
 import 'react-quill/dist/quill.bubble.css';
 import { toast } from 'sonner';
 import ProductActionCard from '../../components/ui/product/Product-ActionCard';
+import CategorySelect from '../../components/ui/profile/Categories-select';
+import { useCategories } from '../../hooks/categories/useCategories';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '../../components/ui/Popover';
+import { Separator } from '../../components/ui/Separator';
 
 // React Quill
 const ReactQuill = lazy(() => import('react-quill'));
@@ -37,11 +44,12 @@ const AddProductPage = ({ mode = 'add' }) => {
   const [description, setDescription] = useState('');
 
   const { product, isLoading: isProductLoading } = useProduct();
-  const { user, isLoading: isUserLoading } = useUser();
+  const { isLoading: isUserLoading } = useUser();
+  const { categories } = useCategories();
   const { addProduct, isAdding } = useAddProduct();
   const { updateProduct, isUpdating } = useUpdateProduct(product?.id);
 
-  const navigate = useNavigate();
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
   const {
     register,
@@ -56,7 +64,7 @@ const AddProductPage = ({ mode = 'add' }) => {
       name: mode === 'edit' ? product?.name : '',
       price: mode === 'edit' ? product?.price : 0,
       stock: mode === 'edit' ? product?.stock : '',
-      category: mode === 'edit' ? product?.category : '',
+      categories: mode === 'edit' ? product?.categories : [],
     },
     defaultValues: {
       price: 0,
@@ -77,52 +85,55 @@ const AddProductPage = ({ mode = 'add' }) => {
     // if (!product?.$permissions[1].includes(user?.accountId)) navigate('/');
   }
 
-  const onSubmit = ({ name, price, stock, category, image }) => {
+  const onSubmit = ({ name, price, stock, image }) => {
     const imageFile = image[0];
 
-    if (mode === 'edit') {
-      if (
-        name === product?.name &&
-        price === product?.price &&
-        stock === product?.stock &&
-        category === product?.category &&
-        description === product?.description &&
-        !imageFile
-      ) {
-        toast('No changes made.');
-        return;
-      }
-      updateProduct({
-        name,
-        description,
-        price,
-        stock,
-        category,
-        imageFile,
-        imageUrl: product?.image_url,
-        imageFileName: product?.image_filename,
-      });
-    }
+    const categories = selectedCategories.map((category) => category.name);
+    console.log(categories);
 
-    if (mode === 'add') {
-      if (!name || !price || !stock || !category || !image) return;
-      if (!description) return;
-      addProduct(
-        {
-          name,
-          description,
-          price,
-          stock,
-          category,
-          imageFile,
-        },
-        {
-          onSuccess: () => {
-            reset();
-          },
-        },
-      );
-    }
+    // if (mode === 'edit') {
+    //   if (
+    //     name === product?.name &&
+    //     price === product?.price &&
+    //     stock === product?.stock &&
+    //     category === product?.category &&
+    //     description === product?.description &&
+    //     !imageFile
+    //   ) {
+    //     toast('No changes made.');
+    //     return;
+    //   }
+    //   updateProduct({
+    //     name,
+    //     description,
+    //     price,
+    //     stock,
+    //     category,
+    //     imageFile,
+    //     imageUrl: product?.image_url,
+    //     imageFileName: product?.image_filename,
+    //   });
+    // }
+
+    // if (mode === 'add') {
+    //   if (!name || !price || !stock || !category || !image) return;
+    //   if (!description) return;
+    //   addProduct(
+    //     {
+    //       name,
+    //       description,
+    //       price,
+    //       stock,
+    //       category,
+    //       imageFile,
+    //     },
+    //     {
+    //       onSuccess: () => {
+    //         reset();
+    //       },
+    //     },
+    //   );
+    // }
   };
   return (
     <div className="flex flex-col gap-5">
@@ -149,7 +160,52 @@ const AddProductPage = ({ mode = 'add' }) => {
               />
               <div className="text-md flex flex-row gap-2 font-normal">
                 <div className="flex flex-wrap gap-1 text-card-foreground/70">
-                  <Controller
+                  <Popover>
+                    <PopoverTrigger>Categories</PopoverTrigger>
+                    <PopoverContent>
+                      <div className="grid gap-2">
+                        <div className="space-y-1">
+                          <h4 className="font-medium leading-none">
+                            Categories
+                          </h4>
+                          <div className="text-sm text-muted-foreground"></div>
+                        </div>
+                        <Separator className="my-1" />
+                        <div className="flex flex-wrap gap-1">
+                          {categories?.map((category) => (
+                            <div
+                              className={`relative cursor-pointer ${selectedCategories.includes(category) ? 'bg-primary  text-primary-foreground' : 'bg-transparent hover:bg-accent'} rounded-xl border border-input p-3 text-sm transition-all active:scale-90 `}
+                              key={category.id}
+                            >
+                              <label>{category.name}</label>
+                              <input
+                                type="checkbox"
+                                id={`category`}
+                                className={`absolute left-0  h-full w-full cursor-pointer opacity-0`}
+                                checked={selectedCategories.includes(category)}
+                                value={category}
+                                onChange={(e) => {
+                                  if (e.target.checked) {
+                                    setSelectedCategories([
+                                      ...selectedCategories,
+                                      category,
+                                    ]);
+                                  } else {
+                                    setSelectedCategories(
+                                      selectedCategories.filter(
+                                        (c) => c !== category,
+                                      ),
+                                    );
+                                  }
+                                }}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  {/* <Controller
                     control={control}
                     name="category"
                     rules={{
@@ -172,7 +228,7 @@ const AddProductPage = ({ mode = 'add' }) => {
                         </SelectContent>
                       </Select>
                     )}
-                  />
+                  /> */}
                 </div>
                 <Input
                   placeholder="Stock"

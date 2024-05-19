@@ -1,15 +1,14 @@
 import { TrashIcon } from '@radix-ui/react-icons';
 import { MdModeEditOutline } from 'react-icons/md';
-import { Separator } from '../Separator';
 import { useDeleteProduct } from '../../../hooks/products/useDeleteProduct';
 import { formatCurrency } from '../../../utils/helpers';
 
-import Spinner from '../loading/Spinner';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { cn } from '../../../lib/utils';
 import { Button, buttonVariants } from '../Button';
 import { Popover, PopoverContent, PopoverTrigger } from '../Popover';
-import { cn } from '../../../lib/utils';
-import { Link } from 'react-router-dom';
+import Spinner from '../loading/Spinner';
 
 const ProfileProductCard = ({ product }) => {
   const { deleteProduct, isDeleting } = useDeleteProduct();
@@ -35,7 +34,6 @@ const ProfileProductCard = ({ product }) => {
           Stock: <span className="text-xs">{product?.stock}</span>
         </p>
       </div>
-      <Separator orientation="vertical" />
       <div className="flex flex-col gap-2">
         <Link
           to={`/product/edit/${product.id}`}

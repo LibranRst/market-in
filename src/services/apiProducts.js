@@ -37,6 +37,7 @@ export const getCartProducts = async ({ userId, list }) => {
     .from('carts')
     .select('*, products(*, profiles(*))')
     .eq('user_id', userId)
+    .order('created_at', { ascending: false });
 
   if (error) throw new Error(error.message);
 

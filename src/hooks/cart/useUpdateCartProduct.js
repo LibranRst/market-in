@@ -8,6 +8,7 @@ export const useUpdateCartProduct = () => {
   const { mutate: updateCartProduct, isPending: isLoading } = useMutation({
     mutationFn: updateProductFromCart,
     onSuccess: (data) => {
+      console.log(data)
       toast(`Add More product to cart.`, {
         description: `Total quantity of this product is ${data?.at(0)?.quantity}`,
       });
@@ -19,6 +20,9 @@ export const useUpdateCartProduct = () => {
       });
       queryClient.invalidateQueries({
         queryKey: ['products'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['cartProducts', data[0].user_id],
       });
     },
     onError: (err) => {

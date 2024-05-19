@@ -84,7 +84,7 @@ const ProductCard = memo(({ product }) => {
             <img
               src={imgSrc}
               alt={name}
-              className="h-[13.688rem] max-h-full max-w-full cursor-pointer object-cover"
+              className="h-full max-h-[13.688rem] w-full cursor-pointe object-cover"
             />
           </Link>
           <div className="relative flex h-[140px] flex-col gap-[2px] p-2">

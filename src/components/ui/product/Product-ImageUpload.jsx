@@ -3,7 +3,7 @@ const ProductImageUpload = ({ errors, imagePreview, register, mode }) => {
     <div className="col-span-4 h-full rounded-xl">
       <label
         htmlFor="image"
-        className={`sticky top-[7.688rem] flex h-[375px] w-[375px] cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed bg-transparent transition-colors hover:bg-accent-foreground/20 ${errors?.image ? 'border-destructive' : 'border-border'}`}
+        className={`sticky top-[7.688rem] flex h-[375px] w-full max-w-[375px] cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed bg-transparent transition-colors hover:bg-accent-foreground/20 ${errors?.image ? 'border-destructive' : 'border-border'}`}
       >
         {imagePreview ? (
           <img

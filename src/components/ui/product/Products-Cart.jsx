@@ -37,7 +37,9 @@ const ProductsCart = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mr-2">
         <DropdownMenuLabel className="flex items-center justify-between p-2">
-          <p>Products Cart ({totalQuantity})</p>
+          <p className="text-lg font-semibold">
+            Products Cart <span className='text-card-foreground/30 font-normal'>({totalQuantity})</span>
+          </p>
           <Link to="/cart" className={cn(buttonVariants({ size: 'sm' }))}>
             View Cart
           </Link>

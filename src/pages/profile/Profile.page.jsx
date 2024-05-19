@@ -48,8 +48,7 @@ const ProfilePage = () => {
             name={user?.user_metadata?.name}
             textSize="3xl"
           />
-          {isUpdating && <Avatar.Loading />}
-          {isLoading && <Avatar.Loading />}
+          {isUpdating || (isLoading && <Avatar.Loading />)}
         </Avatar>
         <div className="flex w-full items-center justify-between rounded-xl border bg-card px-6">
           <div className="flex flex-col">
@@ -68,12 +67,16 @@ const ProfilePage = () => {
           <div className="flex items-center gap-5">
             <div className="text-right">
               <h1 className="text-lg font-bold">
-                {formatCurrency(user?.user_metadata?.balance || 0)}
+                {formatCurrency(user?.balance || 0)}
               </h1>
               <h2 className="text-sm font-normal">my Balance</h2>
             </div>
             <Separator className="h-10" orientation="vertical" />
-            <Link to='/top-up' className={buttonVariants({ size: 'sm' })} size="sm">
+            <Link
+              to="/top-up"
+              className={buttonVariants({ size: 'sm' })}
+              size="sm"
+            >
               Top Up
             </Link>
           </div>

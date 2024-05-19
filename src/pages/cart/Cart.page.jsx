@@ -71,8 +71,7 @@ const CartPage = () => {
     }
     checkoutMutation(
       {
-        currentBalance: user?.user_metadata?.balance,
-        price: totalPrice,
+        // price: totalPrice,
         carts: selectedProducts,
       },
       {
@@ -229,7 +228,7 @@ const SelectAllCheckbox = ({
           quantity: product?.quantity,
           price: product?.price,
           cartId: product?.cartProductId,
-          sellerId: product?.seller.id
+          sellerId: product?.seller.id,
         }));
       setSelectedProducts((prev) => [...prev, ...newSelectedProducts]);
     }
@@ -247,13 +246,15 @@ const SelectAllCheckbox = ({
 const CartProduct = ({ product, selectedProducts, setSelectedProducts }) => {
   const [quantity, setQuantity] = useState(product?.quantity);
 
-  const { updateCartProduct } = useUpdateCartProduct();
+  const { updateCartProduct, isLoading: isUpdating } = useUpdateCartProduct();
   const { deleteProductCart, isLoading } = useDeleteProductCart();
 
   const { user } = useUser();
 
   const queryClient = useQueryClient();
   const handleSelectProduct = (product) => {
+    if (isUpdating) return;
+
     const isSelected = selectedProducts.some((p) => p.id === product.id);
     if (isSelected) {
       setSelectedProducts((prev) => prev.filter((p) => p.id !== product.id));
@@ -324,6 +325,9 @@ const CartProduct = ({ product, selectedProducts, setSelectedProducts }) => {
         'selectedProducts',
         JSON.stringify(selectedProducts),
       );
+
+      // Update the selectedProducts state
+      setSelectedProducts(selectedProducts);
     }
   };
 

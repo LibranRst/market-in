@@ -1,6 +1,4 @@
 import { DropdownMenuLabel } from '@radix-ui/react-dropdown-menu';
-import { Link } from 'react-router-dom';
-import { formatCurrency } from '../../../utils/helpers';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,165 +8,244 @@ import {
 
 import { GrNotification } from 'react-icons/gr';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
-import supabase from '../../../services/supabase';
+import {
+  CheckCircledIcon,
+  ClockIcon,
+  CrossCircledIcon,
+} from '@radix-ui/react-icons';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useNotifications } from '../../../hooks/orders/useOrders';
 import Spinner from '../loading/Spinner';
-import { Button } from '../Button';
-import { toast } from 'sonner';
+import { useUser } from '../../../hooks/auth/useUser';
 
 const Notification = () => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
+  const { user } = useUser();
+  const [open, setOpen] = useState(false);
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['notifications'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('notifications')
-        .select(
-          '*, order:orders(id, status, quantity,totalPrice, product:products(id, name, image_url, price)), customer:sender_id(*), seller:receiver_id(*)',
-        )
-        .or(
-          `receiver_id.eq.${(await supabase.auth.getUser()).data.user.id},sender_id.eq.${(await supabase.auth.getUser()).data.user.id}`,
-        )
-        .eq('order.status', 'PENDING');
-      if (error) throw new Error(error.message);
-
-      return data;
-    },
+  const { notifications, isLoading } = useNotifications({
+    as: 'all',
   });
 
-  useEffect(() => {
-    const subscription = supabase
-      .channel('public:notifications')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'notifications' },
-        () => {
-          queryClient.invalidateQueries({ queryKey: ['notifications'] });
-        },
-      )
-      .subscribe();
+  const customerNotifications = notifications?.filter(
+    (notification) =>
+      notification.customer_id === user.id && !notification.read_customer,
+  );
 
-    return () => subscription.unsubscribe();
-  }, [queryClient]);
+  const sellerNotifications = notifications?.filter(
+    (notification) =>
+      notification?.seller_id === user?.id && !notification.read_seller,
+  );
+
+  const totalNotifications =
+    customerNotifications?.length + sellerNotifications?.length;
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger className="rounded-xl p-2 transition-colors hover:bg-accent">
         <div className="relative">
           <GrNotification size={20} />
-          {data?.length > 0 && (
+          {totalNotifications > 0 && (
             <span
               className={`absolute -right-3 -top-2 h-4 w-4 rounded-full bg-destructive text-xs font-semibold text-destructive-foreground`}
             >
-              {data?.length}
+              {totalNotifications}
             </span>
           )}
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="mr-2">
+      <DropdownMenuContent className="mr-2 w-[20rem]">
         <DropdownMenuLabel className="flex items-center justify-between p-2">
-          <p>Notifications</p>
+          <p className="text-lg font-semibold">Notifications</p>
           {/* <Link to="/cart" className={cn(buttonVariants({ size: 'sm' }))}>
             View Cart
           </Link> */}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <div className="max-h-[calc(68px*6)] overflow-auto">
-          {!data?.length && !isLoading && (
-            <div className="w-[35rem] p-2">No products in cart.</div>
-          )}
-          {isLoading ? (
-            <div className="w-[35rem] p-2">
-              <Spinner className="h-10 w-10" />
-            </div>
-          ) : (
-            data?.map(
-              ({ order, customer }) =>
-                order?.status === 'PENDING' && (
-                  <OrdersItem
-                    key={order.id}
-                    order={order}
-                    customer={customer}
-                  />
-                ),
-            )
-          )}
+        <div className="max-h-[calc(68px*7)] overflow-auto p-2">
+          <div className="flex flex-col gap-2 pb-2">
+            <Purchases
+              notifications={customerNotifications}
+              isLoadingNotifications={isLoading}
+            />
+            <Sales
+              notifications={sellerNotifications}
+              isLoadingNotifications={isLoading}
+            />
+            {/* <div className="flex flex-col gap-2">
+              <h1 className="font-semibold">For You</h1>
+              <div className="flex flex-col gap-2">
+                {!data?.length && !isLoading && (
+                  <div className="w-[35rem] p-2">
+                    There is no notifications yet.
+                  </div>
+                )}
+                {isLoading ? (
+                  <div className="w-[35rem] p-2">
+                    <Spinner className="h-10 w-10" />
+                  </div>
+                ) : (
+                  data?.map(({ order, customer, seller }) =>
+                    customer?.id === user?.id ? (
+                      <CustomerOrder
+                        key={order?.id}
+                        order={order}
+                        seller={seller}
+                      />
+                    ) : (
+                      <SellerOrder
+                        key={order?.id}
+                        order={order}
+                        customer={customer}
+                      />
+                    ),
+                  )
+                )}
+              </div>
+            </div> */}
+          </div>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 };
 
-const OrdersItem = ({ order, customer }) => {
-  const { mutate: confirm, isPending } = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase
-        .from('orders')
-        .update({ status: 'SUCCESS' })
-        .eq('id', order.id);
+const Purchases = ({ notifications, isLoadingNotifications }) => {
+  const [canceledNotifications, setCanceledNotifications] = useState(0);
+  const [successNotifications, setSuccessNotifications] = useState(0);
+  const [pendingNotifications, setPendingNotifications] = useState(0);
 
-      if (error) throw new Error(error.message);
+  useEffect(() => {
+    const canceledCount = notifications?.filter(
+      (notification) => notification.order.status === 'CANCELED',
+    ).length;
+    const successCount = notifications?.filter(
+      (notification) => notification.order.status === 'SUCCESS',
+    ).length;
+    const pendingCount = notifications?.filter(
+      (notification) => notification.order.status === 'PENDING',
+    ).length;
+    setCanceledNotifications(canceledCount);
+    setSuccessNotifications(successCount);
+    setPendingNotifications(pendingCount);
+  }, [notifications]);
 
-      return data;
+  const ordersStatus = [
+    {
+      status: 'PENDING',
+      label: 'Waiting for confirmation',
+      count: pendingNotifications,
+      to: 'status=PENDING',
+      Icon: <ClockIcon />,
     },
-    onSuccess: () => {
-      toast('Order Confirmed.');
+    {
+      status: 'SUCCESS',
+      label: 'Purchased',
+      count: successNotifications,
+      to: 'status=SUCCESS',
+      Icon: <CheckCircledIcon />,
     },
-    onError: (err) => {
-      toast('Error', {
-        description: err.message,
-      });
+    {
+      status: 'CANCELED',
+      label: 'Canceled',
+      count: canceledNotifications,
+      to: 'status=CANCELED',
+      Icon: <CrossCircledIcon />,
     },
-  });
-  const handleConfirm = () => {
-    confirm();
-  };
+  ];
+
   return (
-    <div
-      // to={`/orders/${order.id}`}
-      className="group flex w-[35rem] cursor-pointer flex-row items-center gap-2 rounded-xl px-2 py-1.5 transition-colors hover:bg-accent"
-    >
-      <img
-        src={order?.product.image_url}
-        alt={order?.product.name}
-        className="h-20 w-20 rounded-xl object-cover"
-      />
-      <div className="flex w-full flex-row justify-between">
-        <div className="flex w-full flex-col gap-1.5">
-          <div className="flex justify-between">
-            <p className=" text-base font-semibold">
-              <span className="w-[250px] truncate">{customer?.name}</span>
-              <span className="font-normal"> Wants to buy your product.</span>
-            </p>
-            <p>{formatCurrency(order?.totalPrice)}</p>
-          </div>
-          <div className="flex justify-between">
-            <p className="text-sm font-normal text-card-foreground/70">
-              {order?.product.name}
-            </p>
-            <p className="text-sm font-normal text-primary">
-              {order?.status === 'PENDING'
-                ? 'Waiting for confirmation'
-                : 'Delivered'}
-            </p>
-          </div>
-          <div className="flex justify-between">
-            <p className="text-sm font-normal text-card-foreground/70">
-              Qty: {order.quantity}
-            </p>
-            <div className="flex flex-row gap-2">
-              <Button size="sm" variant="outline">
-                Cancel
-              </Button>
-              <Button size="sm" onClick={handleConfirm} disabled={isPending}>
-                Confirm
-              </Button>
-            </div>
-          </div>
-        </div>
-        <div className="flex flex-col items-end"></div>
+    <div className="flex flex-col gap-2">
+      <h1 className="font-medium">Purchases</h1>
+      <div className="grid grid-cols-3 gap-2 text-xs">
+        {ordersStatus.map(({ status, count, to, Icon, label }) => (
+          <Link
+            key={status}
+            to={`/orders?transactions=purchases&${to}`}
+            className="relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border py-3 text-center transition-colors hover:bg-accent"
+          >
+            {Icon} <p>{label}</p>
+            {count > 0 && (
+              <span
+                className={`absolute right-1 top-1 h-4 ${count > 99 ? 'w-fit' : 'w-4'} rounded-full ${status !== 'SUCCESS' ? 'bg-destructive text-destructive-foreground' : 'bg-primary text-primary-foreground'} text-xs `}
+              >
+                {count}
+                {isLoadingNotifications && <Spinner className="h-4 w-4" />}
+              </span>
+            )}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const Sales = ({ notifications, isLoadingNotifications }) => {
+  const [canceledNotifications, setCanceledNotifications] = useState(0);
+  const [successNotifications, setSuccessNotifications] = useState(0);
+  const [pendingNotifications, setPendingNotifications] = useState(0);
+
+  useEffect(() => {
+    const canceledCount = notifications?.filter(
+      (notification) => notification.order.status === 'CANCELED',
+    ).length;
+    const successCount = notifications?.filter(
+      (notification) => notification.order.status === 'SUCCESS',
+    ).length;
+    const pendingCount = notifications?.filter(
+      (notification) => notification.order.status === 'PENDING',
+    ).length;
+    setCanceledNotifications(canceledCount);
+    setSuccessNotifications(successCount);
+    setPendingNotifications(pendingCount);
+  }, [notifications]);
+
+  const ordersStatus = [
+    {
+      status: 'PENDING',
+      label: 'Need confirmation',
+      count: pendingNotifications,
+      to: 'status=PENDING',
+      Icon: <ClockIcon />,
+    },
+    {
+      status: 'SUCCESS',
+      label: 'Sold',
+      count: successNotifications,
+      to: 'status=SUCCESS',
+      Icon: <CheckCircledIcon />,
+    },
+    {
+      status: 'CANCELED',
+      label: 'Canceled',
+      count: canceledNotifications,
+      to: 'status=CANCELED',
+      Icon: <CrossCircledIcon />,
+    },
+  ];
+
+  return (
+    <div className="flex flex-col gap-2">
+      <h1 className="font-medium">Sales</h1>
+      <div className="relative grid grid-cols-3 gap-2 text-xs">
+        {ordersStatus.map(({ status, count, to, Icon, label }) => (
+          <Link
+            key={status}
+            to={`/orders?transactions=sales&${to}`}
+            className="relative flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border py-3 text-center transition-colors hover:bg-accent"
+          >
+            {Icon} <p>{label}</p>
+            {count > 0 && (
+              <span
+                className={`absolute right-1 top-1 h-4 ${count > 99 ? 'w-fit' : 'w-4'} rounded-full ${status !== 'SUCCESS' ? 'bg-destructive text-destructive-foreground' : 'bg-primary text-primary-foreground'} items-center text-xs font-semibold`}
+              >
+                {count}
+                {isLoadingNotifications && <Spinner className="h-4 w-4" />}
+              </span>
+            )}
+          </Link>
+        ))}
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
-import UpdateUserDataForm from './UpdateUserData-form';
-import UpdatePasswordForm from './UpdatePassword-form';
+import UpdateUserDataForm from '../account/Updateuserdata-form';
+import UpdatePasswordForm from '../account/Updatepassword-form';
 import CenteredContainer from '../../components/ui/layout/Centered-container';
 import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
-import UpdateEmailForm from './Updateemail-form';
+import UpdateEmailForm from '../account/UpdateEmail-form';
 
 const SettingsPage = () => {
   return (

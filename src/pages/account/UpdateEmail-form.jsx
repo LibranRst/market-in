@@ -47,7 +47,7 @@ const UpdateEmailForm = () => {
   };
 
   return (
-    <Card>
+    <Card className="w-full">
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardHeader>
           <CardTitle>Change Email</CardTitle>

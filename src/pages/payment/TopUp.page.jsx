@@ -23,11 +23,11 @@ const TopUp = () => {
 
   const queryClient = useQueryClient();
 
-  const currentBalance = user?.user_metadata?.balance;
+  const currentBalance = user?.balance;
   const { mutate: topup, isPending } = useMutation({
     mutationFn: ({ balance }) => topupApi({ balance, currentBalance }),
-    onSuccess: ({ user }) => {
-      const balance = user?.user_metadata?.balance;
+    onSuccess: () => {
+      const balance = user?.balance;
       toast(`Top up ${formatCurrency(amount)} Successfully.`, {
         description: `Your new balance is ${formatCurrency(balance)}.`,
       });
@@ -78,7 +78,7 @@ const TopUp = () => {
                   <label>{formatCurrency(price.price)}</label>
                   <input
                     type="checkbox"
-                    id={`category-`}
+                    id={`category`}
                     className={`absolute left-0  h-full w-full cursor-pointer opacity-0`}
                     checked={amount === price.price}
                     value={price.price}

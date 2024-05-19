@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import PopoverCustom from '../Popover-custom';
-import { Label } from '../Label';
 
-const CategorySelect = ({ categories, control }) => {
+const CategorySelect = ({ categories, control, error }) => {
   const [previewCategories, setPreviewCategories] = useState([]);
 
   const handlePreviewCategories = (category) => {
@@ -16,34 +15,32 @@ const CategorySelect = ({ categories, control }) => {
 
   return (
     <div className="grid grid-cols-5 gap-4">
-      <Label htmlFor="category" className="m-2 text-right">
-        Categories
-      </Label>
       <div className="col-span-4 space-y-1">
         <PopoverCustom
           title="Select Categories"
           description="Categories for your products."
+          className={error ? 'border-red-500' : ''}
         >
           <div className="flex flex-wrap gap-1">
             {categories?.map((category) => (
               <Controller
-                key={category.$id}
+                key={category.id}
                 control={control}
-                name={`categories.${category.$id}`}
+                name={`categories.${category.id}`}
                 render={({ field }) => {
                   return (
                     <div
-                      className={`relative rounded-md border border-input transition-all active:scale-90 ${field.value ? 'bg-primary  text-primary-foreground' : 'bg-transparent hover:bg-accent'} cursor-pointer px-1 py-1 text-sm `}
+                      className={`relative rounded-xl border border-input transition-all active:scale-90 ${field.value ? 'bg-primary  text-primary-foreground' : 'bg-transparent hover:bg-accent'} cursor-pointer px-1 py-1 text-sm `}
                     >
-                      <label htmlFor={`category-${category.$id}`}>
-                        {category.category}
+                      <label htmlFor={`category-${category.id}`}>
+                        {category.name}
                       </label>
                       <input
                         type="checkbox"
-                        id={`category-${category.$id}`}
+                        id={`category-${category.id}`}
                         className={`absolute left-0  h-full w-full cursor-pointer opacity-0`}
                         checked={field.value || false}
-                        onClick={() => handlePreviewCategories(category.category)}
+                        onClick={() => handlePreviewCategories(category.name)}
                         {...field}
                       />
                     </div>

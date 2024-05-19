@@ -11,7 +11,6 @@ export const signup = async ({ name, username, email, password }) => {
         avatar: '',
         avatar_filename: '',
         bio: '',
-        balance: 0,
       },
     },
   });
@@ -42,7 +41,7 @@ export const getCurrentUser = async () => {
 
   const { data: profileData, error: profileError } = await supabase
     .from('profiles')
-    .select('carts(*, products(*, profiles(*)))')
+    .select('carts(*, products(*, profiles(*))), balance')
     .eq('id', authData?.user.id)
     .single();
 

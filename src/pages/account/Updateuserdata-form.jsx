@@ -43,7 +43,7 @@ const UpdateUserDataForm = () => {
   };
 
   return (
-    <Card>
+    <Card className="w-full">
       <form onSubmit={handleSubmit(onSubmit)}>
         <CardHeader>
           <CardTitle>User Settings</CardTitle>
