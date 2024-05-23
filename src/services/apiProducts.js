@@ -1,9 +1,19 @@
 import supabase, { SUPABASE_URL } from './supabase';
 
-export const getProducts = async () => {
-  const { data, error } = await supabase
-    .from('products')
-    .select('*, profiles(*), carts(*)');
+export const getProducts = async ({ searchQuery, categories }) => {
+  let query = supabase.from('products').select('*, profiles(*), carts(*)');
+
+  if (searchQuery) {
+    query = query
+      .ilike('name', `%${searchQuery}%`)
+      .ilike('description', `%${searchQuery}%`);
+  }
+
+  if (categories) {
+    query = query.contains('categories', categories);
+  }
+
+  const { data, error } = await query.order('created_at', { ascending: false });
 
   if (error) throw new Error(error.message);
 
@@ -21,11 +31,12 @@ export const getProduct = async (id) => {
 
   return data;
 };
-export const getUserProducts = async (userId) => {
+export const getUserProducts = async ({ id, productId }) => {
   const { data, error } = await supabase
     .from('products')
-    .select('*')
-    .eq('user_id', userId);
+    .select('*, profiles(*), carts(*)')
+    .eq('user_id', id)
+    .neq('id', productId);
 
   if (error) throw new Error(error.message);
 
@@ -74,7 +85,7 @@ export const addProduct = async ({
   description,
   price,
   stock,
-  category,
+  categories,
   imageFile: productImage,
   user_id,
 }) => {
@@ -93,7 +104,7 @@ export const addProduct = async ({
       description,
       price,
       stock,
-      category,
+      categories,
       image_url: `${SUPABASE_URL}/storage/v1/object/public/products/${fileName}`,
       image_filename: fileName,
       isActive: true,
@@ -111,7 +122,7 @@ export const updateProduct = async ({
   description,
   price,
   stock,
-  category,
+  categories,
   imageFile,
   imageUrl,
   imageFileName,
@@ -148,7 +159,7 @@ export const updateProduct = async ({
       description,
       price,
       stock,
-      category,
+      categories,
       ...image,
       isActive: true,
       // user_id,

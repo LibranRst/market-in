@@ -22,7 +22,9 @@ import { formatCurrency } from '../../utils/helpers';
 const ProfilePage = () => {
   const { updateUser, isUpdating } = useUpdateUser();
   const { user, isLoading } = useUser();
-  const { products, isLoading: isProductsLoading } = useUserProducts();
+  const { products, isLoading: isProductsLoading } = useUserProducts({
+    id: user?.$id,
+  });
 
   const [avatar, setAvatar] = useState(null); // console.log(avatar);
 

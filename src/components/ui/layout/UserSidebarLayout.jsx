@@ -20,7 +20,7 @@ const UserSidebarLayout = () => {
   const { user, isLoading } = useUser();
   const { updateUser, isUpdating } = useUpdateUser();
 
-  const [accordionValue, setAccordionValue] = useState();
+  const [accordionValue, setAccordionValue] = useState('account');
 
   const [avatar, setAvatar] = useState(null); // console.log(avatar);
 

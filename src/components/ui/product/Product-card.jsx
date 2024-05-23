@@ -32,7 +32,7 @@ const ProductCard = memo(({ product }) => {
   const { updateCartProduct, isLoading: isCartUpdateLoading } =
     useUpdateCartProduct();
 
-  const [isInCart, setIsInCart] = useState(product?.carts.length > 0);
+  const [isInCart, setIsInCart] = useState(product?.carts?.length > 0);
 
   // const isInCart = product?.cart.length > 0;
 

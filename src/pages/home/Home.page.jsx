@@ -1,5 +1,6 @@
-import Spinner from '../../components/ui/loading/Spinner';
 import ProductCard from '../../components/ui/product/Product-Card';
+import FilterAccordion from '../../components/ui/product/Product-FilterAccordion';
+import { Skeleton } from '../../components/ui/skeleton';
 import { useProducts } from '../../hooks/products/useProducts';
 
 const HomePage = () => {
@@ -7,8 +8,8 @@ const HomePage = () => {
     <div className="flex w-full gap-5">
       <div className="flex w-[20%] flex-col gap-2">
         <h2 className="font-medium">Filter</h2>
-        <div className="rounded-xl border bg-card p-2">
-          <h2>Categories</h2>
+        <div className="rounded-xl border bg-card px-2">
+          <FilterAccordion />
         </div>
       </div>
       <div className="flex w-[80%] flex-col gap-2">
@@ -24,21 +25,29 @@ const ProductsList = () => {
 
   return (
     <div className="grid grid-cols-4 gap-5">
-      {isLoading ? (
-        <Spinner className="h-10 w-10" />
-      ) : (
-        products?.map((product) => (
-          <ProductCard
-            key={product?.id}
-            product={product}
-            isFetching={isFetching}
-          >
-            <ProductCard.Seller sellerLink="/profile">
-              {product.profiles.username}
-            </ProductCard.Seller>
-          </ProductCard>
-        ))
-      )}
+      {isLoading
+        ? Array.from({ length: 8 }).map((_, index) => (
+            <Skeleton className="h-[360px] w-full rounded-xl" key={index}>
+              <Skeleton className="h-[13.688rem] w-full" />
+              <div className="relative h-[140px] p-2">
+                <Skeleton className="h-[24px] w-[70%]" />
+                <Skeleton className="mt-2 h-[28px] w-[50%]" />
+                <Skeleton className="mt-2 h-[28px] w-[20%]" />
+                <Skeleton className="absolute bottom-2 right-2 h-[24px] w-[20%]" />
+              </div>
+            </Skeleton>
+          ))
+        : products?.map((product) => (
+            <ProductCard
+              key={product?.id}
+              product={product}
+              isFetching={isFetching}
+            >
+              <ProductCard.Seller sellerLink="/profile">
+                {product.profiles.username}
+              </ProductCard.Seller>
+            </ProductCard>
+          ))}
     </div>
   );
 };

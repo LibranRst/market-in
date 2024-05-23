@@ -5,31 +5,65 @@ import {
   getUserProducts,
 } from '../../services/apiProducts';
 import { useUser } from '../auth/useUser';
+import { useSearchParams } from 'react-router-dom';
+import supabase from '../../services/supabase';
 
 export const useProducts = () => {
+  const [searchParams] = useSearchParams();
+
+  const searchQuery = searchParams.get('q');
+  const filterByCategories = searchParams.get('categories')?.toLowerCase();
+
+  const categories = filterByCategories?.split(',') || [];
+
   const {
     isLoading,
     isFetching,
     data: products,
     error,
   } = useQuery({
-    queryKey: ['products'],
-    queryFn: getProducts,
+    queryKey: ['products', { searchQuery, categories }],
+    queryFn: () => getProducts({ searchQuery, categories }),
     gcTime: 0,
   });
 
   return { isLoading, isFetching, products, error };
 };
 
-export const useUserProducts = () => {
-  const { user } = useUser();
+export const useRelatedProducts = ({ categories, productId }) => {
+  const fetchRelatedProducts = async () => {
+    let query = supabase.from('products').select('*, profiles(*), carts(*)');
+
+    if (categories)
+      query = query.contains('categories', categories).neq('id', productId);
+
+    const { data, error } = await query;
+
+    if (error) throw new Error(error.message);
+
+    return data;
+  };
+
   const {
     isLoading,
     data: products,
     error,
   } = useQuery({
-    queryKey: ['products', user?.id],
-    queryFn: () => getUserProducts(user?.id),
+    queryKey: ['relatedProducts', { categories, productId }],
+    queryFn: fetchRelatedProducts,
+  });
+
+  return { isLoading, products, error };
+};
+
+export const useUserProducts = ({ id, productId }) => {
+  const {
+    isLoading,
+    data: products,
+    error,
+  } = useQuery({
+    queryKey: ['userProducts', { id, productId }],
+    queryFn: () => getUserProducts({ id, productId }),
   });
 
   return { isLoading, products, error };
