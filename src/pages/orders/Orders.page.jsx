@@ -1,57 +1,27 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { FaShop } from 'react-icons/fa6';
 import { useSearchParams } from 'react-router-dom';
-import { toast } from 'sonner';
 import { Button } from '../../components/ui/Button';
+import StarRating, { Star } from '../../components/ui/StarRating';
 import Spinner from '../../components/ui/loading/Spinner';
+import { useCancelOrder } from '../../hooks/orders/useCancelOrder';
+import { useConfirmOrder } from '../../hooks/orders/useConfirmOrder';
 import { useOrders } from '../../hooks/orders/useOrders';
-import supabase from '../../services/supabase';
+import { useReadOrder } from '../../hooks/orders/useReadOrder';
+import { useReviewOrder } from '../../hooks/orders/useReviewOrder';
 import { formatCurrency } from '../../utils/helpers';
-import { useEffect } from 'react';
 
 const Orders = () => {
   const { orders, isLoadingOrders } = useOrders();
+  const { markAsRead, isPending } = useReadOrder();
   const [searchParams] = useSearchParams();
 
   const params = searchParams.get('transactions') || 'purchases';
 
-  const queryClient = useQueryClient();
-  const { mutate: markAsRead } = useMutation({
-    mutationFn: async () => {
-      const readAs =
-        params === 'purchases'
-          ? { read_customer: true }
-          : { read_seller: true };
-
-      const { data, error } = await supabase
-        .from('notifications')
-        .update(readAs)
-        .eq(
-          params === 'purchases' ? 'customer_id' : 'seller_id',
-          (await supabase.auth.getUser()).data.user.id,
-        )
-        .neq('status', 'PENDING');
-
-      if (error) throw new Error(error.message);
-
-      return data;
-    },
-
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['notifications'],
-      });
-    },
-    onError: (err) => {
-      toast('Error', {
-        description: err.message,
-      });
-    },
-  });
-
   useEffect(() => {
+    if (isPending) return;
     markAsRead();
-  }, [params, markAsRead, orders]);
+  }, [params, markAsRead, orders, isPending]);
 
   return (
     <div className="flex flex-col gap-3">
@@ -72,22 +42,68 @@ const Orders = () => {
           key={order.id}
           className="flex flex-col gap-1 rounded-xl border p-3"
         >
-          <div className="flex flex-row items-center gap-2">
-            <div className=" flex flex-row items-center gap-2">
-              <FaShop />
-              <h2 className="font-medium">{order?.seller.name}</h2>
+          <div className="flex flex-row items-center justify-between">
+            <div className="flex flex-row items-center gap-2">
+              <div className=" flex flex-row items-center gap-2">
+                <FaShop />
+                <h2 className="font-medium">{order?.seller.name}</h2>
+              </div>
+              <h3
+                className={`rounded-xl bg-accent px-2 text-xs ${order?.status === 'PENDING' && 'bg-destructive text-destructive-foreground'} ${order?.status === 'SUCCESS' && 'bg-success text-success-foreground'} ${order?.status === 'CANCELED' && 'bg-accent text-accent-foreground'}`}
+              >
+                {order.status}
+              </h3>
+              <p className="text-xs">{order.id}</p>
             </div>
-            <h3
-              className={`rounded-xl bg-accent px-2 text-xs ${order?.status === 'PENDING' && 'bg-destructive text-destructive-foreground'} ${order?.status === 'SUCCESS' && 'bg-success text-success-foreground'} ${order?.status === 'CANCELED' && 'bg-accent text-accent-foreground'}`}
-            >
-              {order.status}
-            </h3>
-            <p className="text-xs">{order.id}</p>
+            {order?.status === 'SUCCESS' && (
+              <Review review={order?.review} order={order} params={params} />
+            )}
           </div>
           {params === 'sales' && <SellerOrder order={order} />}
           {params === 'purchases' && <BuyerOrder order={order} />}
         </div>
       ))}
+    </div>
+  );
+};
+
+const Review = ({ review, order, params }) => {
+  const { addReview, isPending } = useReviewOrder();
+
+  return (
+    <div
+      className={`flex items-center gap-1 rounded-full ${review?.length > 0 && 'border'} px-1 py-0.5 drop-shadow-md`}
+    >
+      <span className="rounded-xl bg-primary px-2 text-sm  font-normal text-primary-foreground ">
+        {review?.length > 0
+          ? params === 'purchases'
+            ? 'Reviewed'
+            : 'Review'
+          : 'Not Reviewed'}
+      </span>
+      {review?.length > 0 ? (
+        <div className="flex flex-row items-center">
+          <span className="transition">{review[0]?.rating}</span>
+          <Star size={20} color="#ff8f07" full={true} />
+        </div>
+      ) : isPending ? (
+        <Spinner className="h-5 w-5" />
+      ) : params === 'purchases' ? (
+        <StarRating
+          size={20}
+          color="#ff8f07"
+          maxRating={5}
+          defaultRating={review[0]?.rating}
+          onProductRate={(rating) =>
+            addReview({
+              rating,
+              product_id: order?.product_id,
+              order_id: order?.id,
+              user_id: order?.customer_id,
+            })
+          }
+        />
+      ) : null}
     </div>
   );
 };
@@ -121,32 +137,7 @@ const FilterButtons = ({ filterField, options }) => {
 };
 
 const BuyerOrder = ({ order }) => {
-  const queryClient = useQueryClient();
-  const { mutate: cancel, isPending } = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase
-        .from('orders')
-        .update({ status: 'CANCELED' })
-        .eq('id', order?.id)
-        .select('*')
-        .single();
-
-      if (error) throw new Error(error.message);
-
-      return data;
-    },
-    onSuccess: () => {
-      toast('Order Canceled.');
-      queryClient.invalidateQueries({
-        queryKey: ['user'],
-      });
-    },
-    onError: (err) => {
-      toast('Error', {
-        description: err.message,
-      });
-    },
-  });
+  const { cancel, isPending } = useCancelOrder();
 
   return (
     <>
@@ -182,7 +173,11 @@ const BuyerOrder = ({ order }) => {
       </div>
       {order.status === 'PENDING' && (
         <div className="mt-5 flex justify-end gap-2">
-          <Button variant="outline" onClick={cancel} disabled={isPending}>
+          <Button
+            variant="outline"
+            onClick={() => cancel({ id: order?.id })}
+            disabled={isPending}
+          >
             Cancel {isPending && <Spinner className="ml-1 h-4 w-4" />}
           </Button>
         </div>
@@ -192,60 +187,8 @@ const BuyerOrder = ({ order }) => {
 };
 
 const SellerOrder = ({ order }) => {
-  const queryClient = useQueryClient();
-  const { mutate: confirm, isPending } = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase
-        .from('orders')
-        .update({ status: 'SUCCESS' })
-        .eq('id', order?.id)
-        .select('*')
-        .single();
-
-      if (error) throw new Error(error.message);
-
-      return data;
-    },
-    onSuccess: () => {
-      toast('Order Confirmed.');
-      queryClient.invalidateQueries({
-        queryKey: ['user'],
-      });
-    },
-    onError: (err) => {
-      toast('Error', {
-        description: err.message,
-      });
-    },
-  });
-
-  const { mutate: cancel, isPending: cancelPending } = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabase
-        .from('orders')
-        .update({ status: 'CANCELED' })
-        .eq('id', order?.id)
-        .select('*')
-        .single();
-
-      console.log(data);
-
-      if (error) throw new Error(error.message);
-
-      return data;
-    },
-    onSuccess: () => {
-      toast('Order Cancelled.');
-      queryClient.invalidateQueries({
-        queryKey: ['user'],
-      });
-    },
-    onError: (err) => {
-      toast('Error', {
-        description: err.message,
-      });
-    },
-  });
+  const { confirm, isPending: isConfirming } = useConfirmOrder();
+  const { cancel, isPending: isCancelling } = useCancelOrder();
 
   return (
     <>
@@ -282,11 +225,18 @@ const SellerOrder = ({ order }) => {
       </div>
       {order.status === 'PENDING' && (
         <div className="mt-5 flex justify-end gap-2">
-          <Button variant="outline" onClick={cancel} disabled={cancelPending}>
-            Cancel {cancelPending && <Spinner className="ml-1 h-4 w-4" />}
+          <Button
+            variant="outline"
+            onClick={() => cancel({ id: order?.id })}
+            disabled={isCancelling}
+          >
+            Cancel {isCancelling && <Spinner className="ml-1 h-4 w-4" />}
           </Button>
-          <Button onClick={confirm} disabled={isPending}>
-            Confirm {cancelPending && <Spinner className="ml-1 h-4 w-4" />}
+          <Button
+            onClick={() => confirm({ id: order?.id })}
+            disabled={isConfirming}
+          >
+            Confirm {isConfirming && <Spinner className="ml-1 h-4 w-4" />}
           </Button>
         </div>
       )}

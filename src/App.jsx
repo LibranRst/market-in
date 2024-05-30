@@ -1,5 +1,3 @@
-// import ProtectedRoute from './ui/authentication/ProtectedRoute';
-
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from './components/ui/authentication/Protected-route';
 import AuthLayout from './components/ui/layout/AuthLayout';
@@ -17,13 +15,14 @@ import TopUp from './pages/payment/TopUp.page';
 import AddEditProduct from './pages/product/AddEditProduct.page';
 import ProductPage from './pages/product/Product.page';
 import ProfilePage from './pages/profile/Profile.page';
+import SellerProfilePage from './pages/profile/SellerProfile.page';
 
 function App() {
   return (
     <Routes>
       <Route element={<RootLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="/profile/:id" element={<ProfilePage />} />
+        <Route path="/profile/:id" element={<SellerProfilePage />} />
         <Route path="/product" element={<Navigate to="/" />} />
         <Route path="/product/:id" element={<ProductPage />} />
         <Route element={<ProtectedRoute />}>

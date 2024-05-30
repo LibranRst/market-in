@@ -1,13 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
-import { updateProduct as updateProductApi } from '../../services/apiProducts';
-import { useUser } from '../auth/useUser';
 import { toast } from 'sonner';
+import productsApi from '../../services/api/productsApi';
 
 export const useUpdateProduct = (id) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { user } = useUser();
 
   const { mutate: updateProduct, isPending: isUpdating } = useMutation({
     mutationFn: ({
@@ -20,7 +18,7 @@ export const useUpdateProduct = (id) => {
       imageUrl,
       imageFileName,
     }) =>
-      updateProductApi({
+      productsApi.update({
         name,
         description,
         price,
@@ -30,7 +28,6 @@ export const useUpdateProduct = (id) => {
         imageUrl,
         imageFileName,
         id,
-        user_id: user?.id,
       }),
     onSuccess: () => {
       toast('Product updated', {

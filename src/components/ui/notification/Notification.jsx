@@ -15,9 +15,9 @@ import {
 } from '@radix-ui/react-icons';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useNotifications } from '../../../hooks/orders/useOrders';
 import Spinner from '../loading/Spinner';
 import { useUser } from '../../../hooks/auth/useUser';
+import { useNotifications } from '../../../hooks/orders/useNotifications';
 
 const Notification = () => {
   // const queryClient = useQueryClient();

@@ -25,6 +25,7 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
 
   const handleAddToCart = () => {
     setError('');
+    if (product?.stock <= 0) return;
 
     if (!isProductFetching) {
       // const maxQuantity = product?.stock - product?.carts[0]?.quantity;
@@ -130,6 +131,7 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
           onBlur={() => {
             if (quantity <= 0) {
               setQuantity(1);
+              setError('');
             }
           }}
           setError={setError}
@@ -146,17 +148,27 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
       <div className="flex w-full items-center gap-1">
         <Button
           className={`${isInCart ? 'w-[calc(100%-2.25rem)]' : 'w-full'}`}
-          disabled={isAdding || isDeleting || isProductLoading || isUpdating}
+          disabled={
+            isAdding ||
+            isDeleting ||
+            isProductLoading ||
+            isUpdating ||
+            product?.stock <= 0
+          }
           onClick={handleAddToCart}
         >
-          {isInCart ? '+ Cart' : 'Add To Cart'}
+          {isInCart
+            ? '+ Cart'
+            : product?.stock <= 0
+              ? 'Out of Stock'
+              : 'Add to Cart'}
           {/* {isAdding && <Spinner className={'h-5 w-5'} />} */}
         </Button>
         {isInCart && (
           <Button
             size="icon"
             variant="destructive"
-            className='shrink-0'
+            className="shrink-0"
             disabled={isAdding || isDeleting || isProductLoading || isUpdating}
             onClick={handleRemoveFromCart}
           >

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCurrentUser } from '../../services/apiAuth';
+import authApi from '../../services/api/authApi';
 
 // export const useUser = () => {
 //   const [isSessionExist, setIsSessionExist] = useState(false);
@@ -37,7 +37,7 @@ import { getCurrentUser } from '../../services/apiAuth';
 export const useUser = () => {
   const { isLoading, data: user } = useQuery({
     queryKey: ['user'],
-    queryFn: getCurrentUser,
+    queryFn: authApi.getCurrentUser,
   });
 
   const cartProducts = user?.carts

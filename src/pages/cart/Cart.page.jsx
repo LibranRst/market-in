@@ -1,4 +1,6 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '../../components/ui/Button';
 import {
   Card,
@@ -10,41 +12,23 @@ import {
 import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
 import { Separator } from '../../components/ui/Separator';
 import QuantityInput from '../../components/ui/cart/QuantityInput';
-import { useUpdateCartProduct } from '../../hooks/cart/useUpdateCartProduct';
-import { useCartProducts } from '../../hooks/products/useProducts';
-import { formatCurrency } from '../../utils/helpers';
-import { useDeleteProductCart } from '../../hooks/cart/useDeleteProductCart';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Spinner from '../../components/ui/loading/Spinner';
 import { useUser } from '../../hooks/auth/useUser';
-import { checkout } from '../../services/apiPayment';
-import { toast } from 'sonner';
+import { useCartProducts } from '../../hooks/cart/useCartProducts';
+import { useDeleteProductCart } from '../../hooks/cart/useDeleteProductCart';
+import { useUpdateCartProduct } from '../../hooks/cart/useUpdateCartProduct';
+import { useCheckout } from '../../hooks/payment/useCheckout';
+import { formatCurrency } from '../../utils/helpers';
+import { Skeleton } from '../../components/ui/skeleton';
 
 const CartPage = () => {
-  const [selectedProducts, setSelectedProducts] = useState(() => {
-    const storedSelectedProducts = localStorage.getItem('selectedProducts');
-    return storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];
-  });
+  const { checkout, isPending } = useCheckout();
   const { cartProducts: products, isLoading } = useCartProducts({
     list: 'all',
   });
-  const { user } = useUser();
-
-  const queryClient = useQueryClient();
-
-  const { mutate: checkoutMutation, isPending } = useMutation({
-    mutationFn: checkout,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['user'],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['cartProducts', user?.id],
-      });
-    },
-    onError: (err) => {
-      toast(err.message);
-    },
+  const [selectedProducts, setSelectedProducts] = useState(() => {
+    const storedSelectedProducts = localStorage.getItem('selectedProducts');
+    return storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];
   });
 
   const cartProducts = products
@@ -69,7 +53,7 @@ const CartPage = () => {
     if (selectedProducts.length === 0) {
       return;
     }
-    checkoutMutation(
+    checkout(
       {
         // price: totalPrice,
         carts: selectedProducts,
@@ -82,10 +66,6 @@ const CartPage = () => {
       },
     );
   };
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="flex flex-col gap-5">
@@ -105,7 +85,7 @@ const CartPage = () => {
             </CardHeader>
             <Separator />
             <CardContent className="flex flex-col gap-5 p-4">
-              {cartProducts.length === 0 && <div>Your cart is empty.</div>}
+              {cartProducts?.length === 0 && <div>Your cart is empty.</div>}
               {cartProducts?.map((product) => (
                 <CartProduct
                   key={product?.id}
@@ -114,6 +94,24 @@ const CartPage = () => {
                   setSelectedProducts={setSelectedProducts}
                 />
               ))}
+              {isLoading &&
+                Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="h-20">
+                    <div className="flex flex-row items-center gap-2 pl-6">
+                      <Skeleton className="h-20 w-20 shrink-0" />
+                      <div className="flex w-full flex-col gap-2">
+                        <div className="flex h-5 justify-between ">
+                          <Skeleton className="w-20" />
+                          <Skeleton className="w-40" />
+                        </div>
+                        <div className="flex h-8 justify-between">
+                          <Skeleton className="w-20" />
+                          <Skeleton className="w-20" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
             </CardContent>
           </Card>
           {/* {cartProducts?.map((productsSeller) => (

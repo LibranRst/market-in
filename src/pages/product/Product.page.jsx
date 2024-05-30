@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { FaStar } from 'react-icons/fa';
 
 // Component Imports
-import { Button, buttonVariants } from '../../components/ui/Button';
+import { buttonVariants } from '../../components/ui/Button';
 import {
   Card,
   CardContent,
@@ -69,7 +69,7 @@ const ProductPage = () => {
 
         {/* Product Skeleton */}
         <div className="grid w-full grid-cols-12 gap-10">
-          <Skeleton className="sticky top-[7.688rem] col-span-4 h-[375px] w-[375px]" />
+          <Skeleton className="sticky top-[7.688rem] col-span-4 h-[375px] w-full max-w-[375px]" />
 
           <div className="col-span-5 flex flex-col gap-10 py-2">
             <div className="flex flex-col gap-3">
@@ -129,10 +129,10 @@ const ProductPage = () => {
                 Stock:
                 <span
                   className={
-                    product?.stock === 0 ? 'text-destructive' : 'text-blue-500'
+                    product?.stock <= 0 ? 'text-destructive' : 'text-blue-500'
                   }
                 >
-                  {product?.stock || 'Sold out'}
+                  {product?.stock <= 0 ? 'Sold out' : product?.stock}
                 </span>
               </p>
             </div>
@@ -185,7 +185,12 @@ const ProductPage = () => {
                   <FaStar size={15} className="text-yellow-400" /> 5.0
                 </span>
               </h2>
-              <Button>visit store</Button>
+              <Link
+                className={buttonVariants({ variant: 'default' })}
+                to={`/profile/${product?.profiles.id}`}
+              >
+                visit store
+              </Link>
             </div>
           </Card>
         </div>
@@ -229,7 +234,7 @@ const ProductPage = () => {
             No more products found from this seller.
           </p>
         )}
-        <div className="grid grid-cols-5 gap-5">
+        <div className="grid gap-5 md:grid-cols-4 lg:grid-cols-5">
           {isLoading ? (
             <Spinner className="h-10 w-10" />
           ) : (
@@ -249,7 +254,7 @@ const ProductPage = () => {
         {products?.length == 0 && (
           <p className="text-sm text-foreground/50">No products found.</p>
         )}
-        <div className="grid grid-cols-5 gap-5">
+        <div className="grid gap-5 md:grid-cols-4 lg:grid-cols-5">
           {isLoading ? (
             <Spinner className="h-10 w-10" />
           ) : (

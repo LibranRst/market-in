@@ -1,10 +1,10 @@
-import { toast } from 'sonner';
-import { forgotPassword as forgotPasswordApi } from '../../services/apiAuth';
 import { useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import authApi from '../../services/api/authApi';
 
 export const useForgotPassword = () => {
   const { mutate: forgotPassword, isPending: isLoading } = useMutation({
-    mutationFn: forgotPasswordApi,
+    mutationFn: authApi.forgotPassword,
     onSuccess: () => {
       toast('Check your email', {
         description:

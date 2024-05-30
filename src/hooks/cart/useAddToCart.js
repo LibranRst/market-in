@@ -1,15 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { addProductToCart } from '../../services/apiProducts';
-import { useUser } from '../auth/useUser';
 import { toast } from 'sonner';
+import cartApi from '../../services/api/cartApi';
 
 export const useAddToCart = () => {
   const queryClient = useQueryClient();
-  const { user } = useUser();
 
   const { mutate: addToCart, isPending: isLoading } = useMutation({
-    mutationFn: ({ product_id, quantity }) =>
-      addProductToCart({ user_id: user?.id, product_id, quantity }),
+    mutationFn: cartApi.add,
     onSuccess: (data) => {
       toast('Product added to Cart.');
       queryClient.invalidateQueries({

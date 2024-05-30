@@ -1,25 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useUser } from '../auth/useUser';
-import { addProduct as addProductApi } from '../../services/apiProducts';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import productsApi from '../../services/api/productsApi';
 
 export const useAddProduct = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { user } = useUser();
 
   const { mutate: addProduct, isPending: isAdding } = useMutation({
-    mutationFn: ({ name, description, price, categories, imageFile, stock }) =>
-      addProductApi({
-        name,
-        description,
-        price,
-        stock,
-        categories,
-        imageFile,
-        user_id: user?.id,
-      }),
+    mutationFn: productsApi.add,
     onSuccess: () => {
       toast('Product added', {
         description: 'The product has been added successfully',

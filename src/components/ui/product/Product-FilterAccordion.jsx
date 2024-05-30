@@ -34,7 +34,7 @@ const FilterAccordion = () => {
         <AccordionContent className="flex flex-wrap gap-2">
           {isLoading ? (
             Array.from({ length: 6 }).map((_, index) => (
-              <div className="p-2 w-[100px]" key={index}>
+              <div className="w-[100px] p-2" key={index}>
                 <Skeleton className="h-[16px]" />
               </div>
             ))
@@ -81,7 +81,7 @@ const FilterButtons = ({ accordionField, options }) => {
       {options?.map((option) => (
         <button
           key={option.value}
-          className={`rounded-xl px-2 py-1 text-left text-xs transition  active:scale-90 ${currentValue.includes(option.value) ? 'hover:text-primabg-primary-foreground bg-primary text-primary-foreground hover:bg-primary' : 'text-card-foreground hover:bg-accent hover:text-accent-foreground'}  `}
+          className={`rounded-xl border px-2 py-1 text-left text-xs transition  active:scale-90 ${currentValue.includes(option.value) ? 'hover:text-primabg-primary-foreground bg-primary text-primary-foreground hover:bg-primary' : 'text-card-foreground hover:bg-accent hover:text-accent-foreground'}  `}
           onClick={() => handleClick(option.value)}
         >
           {option.label}

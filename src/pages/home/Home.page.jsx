@@ -24,7 +24,7 @@ const ProductsList = () => {
   const { products, isLoading, isFetching } = useProducts();
 
   return (
-    <div className="grid grid-cols-4 gap-5">
+    <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-4">
       {isLoading
         ? Array.from({ length: 8 }).map((_, index) => (
             <Skeleton className="h-[360px] w-full rounded-xl" key={index}>
@@ -51,5 +51,4 @@ const ProductsList = () => {
     </div>
   );
 };
-
 export default HomePage;

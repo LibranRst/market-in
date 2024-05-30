@@ -60,7 +60,7 @@ const UserDropdown = ({ user }) => {
               <IoPersonOutline size={16} />
             </DropdownMenuItem>
           </Link>
-          <Link to="/account">
+          <Link to="/account?settings=user-settings">
             <DropdownMenuItem className="flex justify-between">
               <p>Settings</p>
               <IoSettingsOutline size={16} />

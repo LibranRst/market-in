@@ -1,8 +1,6 @@
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '../../components/ui/Button';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { topup as topupApi } from '../../services/apiPayment';
-import CenteredContainer from '../../components/ui/layout/Centered-container';
 import {
   Card,
   CardContent,
@@ -12,38 +10,32 @@ import {
   CardTitle,
 } from '../../components/ui/Card';
 import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
-import { formatCurrency } from '../../utils/helpers';
-import { toast } from 'sonner';
+import CenteredContainer from '../../components/ui/layout/Centered-container';
 import Spinner from '../../components/ui/loading/Spinner';
 import { useUser } from '../../hooks/auth/useUser';
+import { useTopUp } from '../../hooks/payment/useTopUp';
+import { formatCurrency } from '../../utils/helpers';
 
 const TopUp = () => {
   const { user } = useUser();
   const [amount, setAmount] = useState(0);
 
-  const queryClient = useQueryClient();
-
+  const { topup, isPending } = useTopUp();
   const currentBalance = user?.balance;
-  const { mutate: topup, isPending } = useMutation({
-    mutationFn: ({ balance }) => topupApi({ balance, currentBalance }),
-    onSuccess: () => {
-      const balance = user?.balance;
-      toast(`Top up ${formatCurrency(amount)} Successfully.`, {
-        description: `Your new balance is ${formatCurrency(balance)}.`,
-      });
-      queryClient.invalidateQueries({ queryKey: ['user'] });
-    },
-    onError: (err) => {
-      console.log(err.message);
-    },
-  });
 
   const onClick = () => {
     if (amount === 0) {
       toast('Please select an amount to top up');
       return;
     }
-    topup({ balance: amount });
+    topup(
+      { balance: amount, currentBalance },
+      {
+        onSuccess: () => {
+          toast(`Top up ${formatCurrency(amount)} Successfully.`);
+        },
+      },
+    );
   };
 
   const priceList = [

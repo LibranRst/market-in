@@ -1,12 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-  getCartProducts,
-  getProducts,
-  getUserProducts,
-} from '../../services/apiProducts';
-import { useUser } from '../auth/useUser';
 import { useSearchParams } from 'react-router-dom';
-import supabase from '../../services/supabase';
+import productsApi from '../../services/api/productsApi';
 
 export const useProducts = () => {
   const [searchParams] = useSearchParams();
@@ -23,7 +17,7 @@ export const useProducts = () => {
     error,
   } = useQuery({
     queryKey: ['products', { searchQuery, categories }],
-    queryFn: () => getProducts({ searchQuery, categories }),
+    queryFn: () => productsApi.getProducts({ searchQuery, categories }),
     gcTime: 0,
   });
 
@@ -31,26 +25,13 @@ export const useProducts = () => {
 };
 
 export const useRelatedProducts = ({ categories, productId }) => {
-  const fetchRelatedProducts = async () => {
-    let query = supabase.from('products').select('*, profiles(*), carts(*)');
-
-    if (categories)
-      query = query.contains('categories', categories).neq('id', productId);
-
-    const { data, error } = await query;
-
-    if (error) throw new Error(error.message);
-
-    return data;
-  };
-
   const {
     isLoading,
     data: products,
     error,
   } = useQuery({
     queryKey: ['relatedProducts', { categories, productId }],
-    queryFn: fetchRelatedProducts,
+    queryFn: () => productsApi.getRelatedProducts({ categories, productId }),
   });
 
   return { isLoading, products, error };
@@ -63,24 +44,8 @@ export const useUserProducts = ({ id, productId }) => {
     error,
   } = useQuery({
     queryKey: ['userProducts', { id, productId }],
-    queryFn: () => getUserProducts({ id, productId }),
+    queryFn: () => productsApi.getUserProducts({ id, productId }),
   });
 
   return { isLoading, products, error };
-};
-
-export const useCartProducts = ({ list = 'all' }) => {
-  const { user } = useUser();
-
-  const {
-    data: cartProducts,
-    isLoading,
-    isFetching,
-  } = useQuery({
-    queryKey: ['cartProducts', user?.id, list],
-    queryFn: () => getCartProducts({ userId: user?.id, list }),
-    gcTime: 0,
-  });
-
-  return { cartProducts, isLoading, isFetching };
 };

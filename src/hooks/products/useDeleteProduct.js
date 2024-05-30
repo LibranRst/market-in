@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteProduct as deleteProductById } from '../../services/apiProducts';
 import { toast } from 'sonner';
+import productsApi from '../../services/api/productsApi';
 
 const useDeleteProduct = () => {
   const queryClient = useQueryClient();
@@ -10,7 +10,7 @@ const useDeleteProduct = () => {
     isPending: isDeleting,
     error,
   } = useMutation({
-    mutationFn: deleteProductById,
+    mutationFn: productsApi.delete,
     onSuccess: () => {
       toast('Product deleted', {
         description: 'The product has been deleted successfully',

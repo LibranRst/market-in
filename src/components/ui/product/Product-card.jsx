@@ -2,7 +2,7 @@ import { FaStar } from 'react-icons/fa';
 import { FaShop } from 'react-icons/fa6';
 import { MdAddShoppingCart, MdPlusOne } from 'react-icons/md';
 
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useUser } from '../../../hooks/auth/useUser';
 import { useAddToCart } from '../../../hooks/cart/useAddToCart';
@@ -16,16 +16,10 @@ import {
   TooltipTrigger,
 } from '../Tooltip';
 import { toast } from 'sonner';
+import { useCalculateReviews } from '../../../hooks/reviews/useCalculateReviews';
 
 const ProductCard = memo(({ product }) => {
-  const {
-    image_url: imgSrc,
-    name,
-    price,
-    rating = 0,
-    children,
-    id: id,
-  } = product;
+  const { image_url: imgSrc, name, price, reviews, id: id } = product;
 
   const { user, isLoading: isUserLoading, isFetching } = useUser();
   const { addToCart, isLoading: isAdding } = useAddToCart();
@@ -72,9 +66,11 @@ const ProductCard = memo(({ product }) => {
     });
   };
 
-  // useEffect(() => {
-  //   setIsInCart(product?.cart.length > 0);
-  // }, [product?.cart]);
+  const { calculateRating, rating } = useCalculateReviews();
+
+  useEffect(() => {
+    calculateRating(reviews);
+  }, [reviews, calculateRating]);
 
   return (
     <TooltipProvider>
@@ -84,7 +80,7 @@ const ProductCard = memo(({ product }) => {
             <img
               src={imgSrc}
               alt={name}
-              className="h-full max-h-[13.688rem] w-full cursor-pointe object-cover"
+              className="cursor-pointe h-full max-h-[13.688rem] w-full object-cover"
             />
           </Link>
           <div className="relative flex h-[140px] flex-col gap-[2px] p-2">
@@ -99,7 +95,6 @@ const ProductCard = memo(({ product }) => {
             <p className="mb-1 text-lg font-semibold">
               {formatCurrency(price)}
             </p>
-            {children}
             <div className="flex items-center gap-1">
               <FaStar size={15} className="text-yellow-400" />
               <span className="text-sm">{rating}</span>

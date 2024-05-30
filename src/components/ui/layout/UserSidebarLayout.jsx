@@ -20,12 +20,16 @@ const UserSidebarLayout = () => {
   const { user, isLoading } = useUser();
   const { updateUser, isUpdating } = useUpdateUser();
 
-  const [accordionValue, setAccordionValue] = useState('account');
+  const { pathname } = useLocation();
+  const currentPath = pathname.split('/')[1];
+
+  const [accordionValue, setAccordionValue] = useState(currentPath);
 
   const [avatar, setAvatar] = useState(null); // console.log(avatar);
 
-  const { pathname } = useLocation();
-  const currentPath = pathname.split('/')[1];
+  useEffect(() => {
+    setAccordionValue(currentPath);
+  }, [currentPath, setAccordionValue]);
 
   useEffect(() => {
     if (avatar) {
@@ -40,7 +44,7 @@ const UserSidebarLayout = () => {
         <div className="sticky top-[6rem] flex h-full w-72 shrink-0 flex-col gap-3">
           <div className="flex w-full flex-row items-center gap-2 rounded-xl border p-3">
             <Avatar
-              type="user"
+              type="profile"
               className={'h-20 w-20'}
               onChange={(e) => setAvatar(e.target.files[0])}
             >

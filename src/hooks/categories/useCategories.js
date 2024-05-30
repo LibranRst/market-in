@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getCategories } from '../../services/apiCategories';
+import categoriesApi from '../../services/api/categoriesApi';
 
 const useCategories = () => {
   const {
@@ -8,7 +8,7 @@ const useCategories = () => {
     error,
   } = useQuery({
     queryKey: ['categories'],
-    queryFn: getCategories,
+    queryFn: categoriesApi.get,
   });
 
   return {

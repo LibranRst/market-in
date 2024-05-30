@@ -1,8 +1,11 @@
 import { GoSearch } from 'react-icons/go';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 const NavSearch = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -12,6 +15,7 @@ const NavSearch = () => {
     if (search) {
       searchParams.set('q', search);
       setSearchParams(searchParams);
+      if (pathname !== '/') navigate(`/?q=${search}`, { replace: true });
     } else {
       searchParams.delete('q');
       setSearchParams(searchParams);

@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useUpdateUser } from '../../hooks/auth/useUpdateUser';
-// import Modal from '../../ui/modals/Modal';
-// import { FaTrash } from 'react-icons/fa';
-// import Confirmation from '../../ui/modals/Confimation';
 
 import { useUser } from '../../hooks/auth/useUser';
 
@@ -16,17 +13,23 @@ import Spinner from '../../components/ui/loading/Spinner';
 import ProductUserCard from '../../components/ui/profile/Profile-ProductCard';
 import { useUserProducts } from '../../hooks/products/useProducts';
 import { formatCurrency } from '../../utils/helpers';
-
-// import { Form, FormInput } from '@/components/ui/form';
+import { Star } from '../../components/ui/StarRating';
+import { useCalculateReviews } from '../../hooks/reviews/useCalculateReviews';
 
 const ProfilePage = () => {
   const { updateUser, isUpdating } = useUpdateUser();
   const { user, isLoading } = useUser();
   const { products, isLoading: isProductsLoading } = useUserProducts({
-    id: user?.$id,
+    id: user?.id,
   });
 
   const [avatar, setAvatar] = useState(null); // console.log(avatar);
+
+  const { calculateRating, rating } = useCalculateReviews();
+
+  useEffect(() => {
+    calculateRating(products?.flatMap((product) => product.reviews));
+  }, [calculateRating, products]);
 
   useEffect(() => {
     if (avatar) {
@@ -88,9 +91,19 @@ const ProfilePage = () => {
         <div className="flex justify-between">
           <h1 className="text-lg font-semibold">My Products</h1>
           {/* <AddProductDialog /> */}
-          <Link className={buttonVariants({ size: 'sm' })} to="/product/create">
-            Add Product
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              className={buttonVariants({ size: 'sm' })}
+              to="/product/create"
+            >
+              Add Product
+            </Link>
+            <Separator orientation="vertical" className="h-6" />
+            <div className="flex items-center">
+              {rating}
+              <Star size={20} color="#ff8f07" full={true} />
+            </div>
+          </div>
         </div>
         <hr />
         <div className="relative grid grid-cols-2 gap-2 overflow-auto">

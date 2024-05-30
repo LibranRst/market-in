@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
-import { getProduct } from '../../services/apiProducts';
+import productsApi from '../../services/api/productsApi';
 
 export const useProduct = () => {
   const { id } = useParams();
@@ -12,7 +12,7 @@ export const useProduct = () => {
     isFetching,
   } = useQuery({
     queryKey: ['product', id],
-    queryFn: () => getProduct(id),
+    queryFn: () => productsApi.getProduct({ id }),
     gcTime: 0,
   });
 
