@@ -1,0 +1,266 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --background-gradient: 135deg, #f5f7fa 0%, #c3cfe2 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent-foreground-webkit: white;
+    --success: 122.5 39.2% 49.8%;
+    --success-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --separator: 210 22% 86%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --background-gradient: 135deg, hsl(240, 10%, 3.9%), hsl(240, 10%, 3.9%);
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --accent-foreground-webkit: white;
+    --success: 122.5 35% 45%;
+    --success-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --separator: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply h-screen bg-background font-poppins text-foreground;
+  }
+}
+
+/* For WebKit-based browsers (Chrome, Safari, Opera) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--accent) inset !important; /* Set the background color to match the theme's background */
+  -webkit-text-fill-color: var(
+    --foreground
+  ) !important; /* Set the text color to match the theme's foreground */
+  transition: background-color 5000s ease-in-out 0s; /* Add a transition for smoother color change */
+}
+
+/* For Firefox */
+input:-moz-autofill,
+input:-moz-autofill:hover,
+input:-moz-autofill:focus,
+input:-moz-autofill:active {
+  -moz-box-shadow: 0 0 0 30px var(--accent) inset !important; /* Set the background color to match the theme's background */
+  color: var(
+    --foreground
+  ) !important; /* Set the text color to match the theme's foreground */
+  transition: background-color 5000s ease-in-out 0s; /* Add a transition for smoother color change */
+}
+
+/* For modern browsers */
+input:-internal-autofill-selected,
+input:-internal-autofill-selected:hover,
+input:-internal-autofill-selected:focus,
+input:-internal-autofill-selected:active {
+  background-color: var(
+    --background
+  ) !important; /* Set the background color to match the theme's background */
+  color: var(
+    --foreground
+  ) !important; /* Set the text color to match the theme's foreground */
+  transition: background-color 5000s ease-in-out 0s; /* Add a transition for smoother color change */
+}
+
+/* PRODUCT DESCRIPTION STYLING */
+.page-description h1 {
+  @apply text-2xl;
+}
+.page-description h2 {
+  @apply text-xl;
+}
+
+.page-description p,
+.page-description li {
+  @apply text-lg;
+}
+
+.page-description strong {
+  @apply font-semibold !important;
+}
+
+.page-description li {
+  @apply list-item mb-4;
+  text-align: -webkit-match-parent;
+  unicode-bidi: isolate;
+  margin-bottom: 1rem;
+}
+
+.page-description ul {
+  @apply list-disc pl-6;
+}
+
+.page-description em {
+  @apply italic;
+}
+.page-description code {
+  @apply font-mono bg-accent px-1 rounded;
+}
+.page-description u {
+  @apply underline decoration-primary decoration-2;
+}
+
+.ql-bubble .ql-editor h1 {
+  @apply text-2xl;
+}
+.ql-bubble .ql-editor h2 {
+  @apply text-xl;
+}
+
+.ql-bubble .ql-editor p,
+.ql-bubble .ql-editor li {
+  @apply text-lg !important;
+}
+
+.ql-bubble .ql-editor strong {
+  @apply font-semibold !important;
+}
+.ql-bubble .ql-editor em {
+  @apply italic;
+}
+.ql-bubble .ql-editor code {
+  @apply font-mono bg-accent px-1 rounded;
+}
+.ql-bubble .ql-editor u {
+  @apply underline decoration-primary decoration-2;
+}
+
+.ql-editor ol,
+.ql-editor ul {
+  @apply pl-0;
+}
+
+.ql-editor ul {
+  @apply list-disc pl-6;
+}
+
+.ql-editor ol li:not(.ql-direction-rtl),
+.ql-editor ul li:not(.ql-direction-rtl) {
+  @apply mb-4 list-item pl-0;
+  text-align: -webkit-match-parent;
+  unicode-bidi: isolate;
+}
+
+.ql-container {
+  @apply font-poppins text-lg;
+}
+
+.quill > .ql-container > .ql-editor {
+  @apply p-0;
+}
+.quill > .ql-container > .ql-editor.ql-blank::before {
+  @apply left-0 text-muted-foreground;
+}
+
+.ql-bubble .ql-tooltip {
+  @apply bg-accent text-accent-foreground drop-shadow-sm border-border border rounded-xl w-fit !important;
+}
+
+.ql-bubble .ql-tooltip .ql-toolbar {
+  @apply flex flex-row !important;
+}
+
+.ql-bubble .ql-tooltip:not(.ql-flip) .ql-tooltip-arrow {
+  @apply top-[-6px];
+  border-bottom: 6px solid hsl(var(--accent));
+}
+
+.ql-bubble .ql-stroke {
+  @apply stroke-accent-foreground
+}
+
+.ql-bubble .ql-fill, .ql-bubble .ql-stroke .ql-fill {
+  @apply fill-accent-foreground
+}
+
+.ql-bubble .ql-toolbar .ql-formats {
+  @apply flex flex-row w-fit gap-1 !important;
+}
+.ql-bubble .ql-toolbar .ql-formats button {
+  @apply w-7 h-7 flex items-center rounded-md transition-colors !important;
+}
+
+.ql-bubble .ql-toolbar button:hover, .ql-bubble .ql-toolbar .ql-active {
+  @apply bg-accent-foreground/20 !important;
+}
+
+.ql-bubble .ql-toolbar button:active {
+  @apply scale-95;
+}
+
+@keyframes appear {
+  0% {
+    opacity: 0;
+    transform: scale(.8) translateY(-20px);
+  } 100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes exit {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  } 99% {
+    opacity: 0;
+    transform: scale(.8) translateY(-20px);
+  } 100% {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+.ql-tooltip:not(.ql-hidden) {
+  animation: appear .2s ease forwards;
+}
+
+.ql-hidden {
+  display: block !important;
+  animation: exit .2s ease forwards;
+}
