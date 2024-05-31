@@ -4,17 +4,21 @@ import { buttonVariants } from '../Button';
 import Spinner from '../loading/Spinner';
 import ProductsCart from '../product/Products-Cart';
 
-const NavAuth = ({ isLoading }) => {
+const NavAuth = ({ isLoading, isAuthenticated }) => {
   return (
     <>
-      <div className="flex items-center gap-1">
-        {isLoading ? (
-          <Spinner padding={2} className="h-4 w-4" />
-        ) : (
-          <ProductsCart />
-        )}
-      </div>
-      <div className="h-[20px] rounded-lg bg-gray-200 p-[1px]" />
+      {isAuthenticated && (
+        <>
+          <div className="flex items-center gap-1">
+            {isLoading ? (
+              <Spinner padding={2} className="h-4 w-4" />
+            ) : (
+              <ProductsCart />
+            )}
+          </div>
+          <div className="h-[20px] rounded-lg bg-gray-200 p-[1px]" />
+        </>
+      )}
       {isLoading ? (
         <Spinner padding={2} className="h-4 w-4" />
       ) : (

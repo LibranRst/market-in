@@ -1,5 +1,5 @@
 // React Imports
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 // Third-Party Imports
@@ -27,25 +27,26 @@ import { useTruncatedElement } from '../../hooks/useTruncatedElement';
 
 // Utility Imports
 import Avatar from '../../components/ui/Avatar';
+import StarRating from '../../components/ui/StarRating';
 import { Skeleton } from '../../components/ui/skeleton';
 import {
   useRelatedProducts,
   useUserProducts,
 } from '../../hooks/products/useProducts';
+import { useCalculateReviews } from '../../hooks/reviews/useCalculateReviews';
 import { cn } from '../../lib/utils';
 import { formatCurrency } from '../../utils/helpers';
 
 const ProductPage = () => {
   const { product, isLoading, isFetching } = useProduct();
-  const { products, isLoading: productsLoading } = useRelatedProducts({
+  const { products } = useRelatedProducts({
     categories: product?.categories,
     productId: product?.id,
   });
-  const { products: userProducts, isLoading: userProductsLoading } =
-    useUserProducts({
-      id: product?.profiles?.id,
-      productId: product?.id,
-    });
+  const { products: userProducts } = useUserProducts({
+    id: product?.profiles?.id,
+    productId: product?.id,
+  });
 
   const { user } = useUser();
 
@@ -54,6 +55,11 @@ const ProductPage = () => {
     ref,
     data: product,
   });
+
+  const { calculateRating, rating } = useCalculateReviews();
+  useEffect(() => {
+    calculateRating(product?.reviews);
+  }, [calculateRating, product?.reviews]);
 
   const isSeller = user?.id === product?.profiles?.id;
 
@@ -139,6 +145,19 @@ const ProductPage = () => {
             <p className="text-2xl font-normal">
               {formatCurrency(product?.price)}
             </p>
+            <div className="flex items-center gap-1  text-lg">
+              {rating}
+              <StarRating
+                maxRating={5}
+                defaultRating={rating}
+                full={rating}
+                readOnly={true}
+              />
+              |{' '}
+              <span className='text-sm text-foreground/70'>
+                Sold {product?.reviews ? product?.reviews?.length : 0}
+              </span>
+            </div>
           </div>
           <div className="flex flex-col gap-2">
             <div className="relative flex flex-col gap-5 text-lg">

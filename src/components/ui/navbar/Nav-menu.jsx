@@ -10,7 +10,7 @@ const NavMenu = () => {
       {isAuthenticated ? (
         <NavUser user={user} isLoading={isLoading} />
       ) : (
-        <NavAuth isLoading={isLoading} />
+        <NavAuth isLoading={isLoading} isAuthenticated={isAuthenticated} />
       )}
     </div>
   );

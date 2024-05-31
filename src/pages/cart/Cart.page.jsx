@@ -20,8 +20,10 @@ import { useUpdateCartProduct } from '../../hooks/cart/useUpdateCartProduct';
 import { useCheckout } from '../../hooks/payment/useCheckout';
 import { formatCurrency } from '../../utils/helpers';
 import { Skeleton } from '../../components/ui/skeleton';
+import { useNavigate } from 'react-router-dom';
 
 const CartPage = () => {
+  const { user } = useUser();
   const { checkout, isPending } = useCheckout();
   const { cartProducts: products, isLoading } = useCartProducts({
     list: 'all',
@@ -30,6 +32,8 @@ const CartPage = () => {
     const storedSelectedProducts = localStorage.getItem('selectedProducts');
     return storedSelectedProducts ? JSON.parse(storedSelectedProducts) : [];
   });
+
+  const navigate = useNavigate();
 
   const cartProducts = products
     ?.map((cartProduct) => ({
@@ -51,6 +55,16 @@ const CartPage = () => {
 
   const handleCheckout = () => {
     if (selectedProducts.length === 0) {
+      return;
+    }
+    if (user?.balance < totalPrice) {
+      toast('Insufficient balance', {
+        description: 'Please add money to your wallet.',
+        action: {
+          label: 'Top Up',
+          onClick: () => navigate('/top-up'),
+        },
+      });
       return;
     }
     checkout(
@@ -161,7 +175,7 @@ const CartPage = () => {
                 variant="default"
                 size="default"
                 className="w-full"
-                disabled={isPending}
+                disabled={isPending || selectedProducts.length === 0}
                 onClick={handleCheckout}
               >
                 Buy {isPending && <Spinner className={'ml-1 h-4 w-4'} />}

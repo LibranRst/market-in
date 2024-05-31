@@ -1,5 +1,11 @@
-import { FaFacebook, FaInstagram, FaTwitter } from 'react-icons/fa6';
-import NavTitle from '../navbar/Nav-title';
+import {
+  FaFacebook,
+  FaInstagram,
+  FaLinkedin,
+  FaTwitter,
+} from 'react-icons/fa6';
+import { Link } from 'react-router-dom';
+import Logo from '../Logo';
 
 const Footer = () => {
   return (
@@ -8,29 +14,29 @@ const Footer = () => {
         <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
           <div>
             <h3 className="mb-5">
-              <NavTitle>marketIn.</NavTitle>
+              <Logo />
             </h3>
             <p className="text-sm text-gray-500">
-              marketIn is a cutting-edge e-commerce platform designed to revolutionize
-              the online shopping experience. Our website offers a vast and
-              diverse range of products, catering to the ever-evolving needs of
-              modern consumers.
+              marketIn is a cutting-edge e-commerce platform designed to
+              revolutionize the online shopping experience. Our website offers a
+              vast and diverse range of products, catering to the ever-evolving
+              needs of modern consumers.
             </p>
           </div>
           <div>
             <h3 className="mb-5 text-lg font-semibold">Quick Links</h3>
             <ul className="text-sm text-gray-500">
-              <li className="mb-2">
-                <a href="#">Home</a>
+              <li className="mb-2 transition-colors hover:text-primary">
+                <Link to="/">Home</Link>
               </li>
-              <li className="mb-2">
-                <a href="#">About</a>
+              <li className="mb-2 transition-colors hover:text-primary">
+                <Link to="/profile">Profile</Link>
               </li>
-              <li className="mb-2">
-                <a href="#">Services</a>
+              <li className="mb-2 transition-colors hover:text-primary">
+                <Link to="/account">Account</Link>
               </li>
-              <li className="mb-2">
-                <a href="#">Contact</a>
+              <li className="mb-2 transition-colors hover:text-primary">
+                <Link to="/orders">Orders</Link>
               </li>
             </ul>
           </div>
@@ -42,15 +48,30 @@ const Footer = () => {
               Phone: 0851 - 6176 - 0847
             </p>
             <div className="mt-5 flex space-x-4">
-              <a href="#" className="text-gray-500 hover:text-gray-900">
+              <Link
+                to="https://www.facebook.com/HyuzinKyle"
+                className="text-gray-500 transition-colors hover:text-primary"
+              >
                 <FaFacebook />
-              </a>
-              <a href="#" className="text-gray-500 hover:text-gray-900">
+              </Link>
+              <Link
+                to="https://x.com/librandev_"
+                className="text-gray-500 transition-colors hover:text-primary"
+              >
                 <FaTwitter />
-              </a>
-              <a href="#" className="text-gray-500 hover:text-gray-900">
+              </Link>
+              <Link
+                to="https://www.instagram.com/libranrst/"
+                className="text-gray-500 transition-colors hover:text-primary"
+              >
                 <FaInstagram />
-              </a>
+              </Link>
+              <Link
+                to="https://www.linkedin.com/in/m-libran-restu-wibawa-1a0505273/"
+                className="text-gray-500 transition-colors hover:text-primary"
+              >
+                <FaLinkedin />
+              </Link>
             </div>
           </div>
         </div>

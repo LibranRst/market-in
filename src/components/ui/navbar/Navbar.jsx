@@ -1,14 +1,14 @@
+import Logo from '../Logo';
 import NavMenu from './Nav-menu';
 import NavSearch from './Nav-search';
-import NavTitle from './Nav-title';
 
 const Navbar = () => {
   return (
     <nav
-      className={`sticky top-0 flex justify-center bg-background/85 backdrop-blur-md px-2 h-14 transition-all z-30 border-b `}
+      className={`sticky top-0 z-30 flex h-14 justify-center border-b bg-background/85 px-2 backdrop-blur-md transition-all `}
     >
       <div className="flex w-full max-w-[1200px] items-center justify-between">
-        <NavTitle>marketIn.</NavTitle>
+        <Logo />
         <NavSearch />
         <NavMenu />
       </div>

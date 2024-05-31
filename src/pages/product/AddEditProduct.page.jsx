@@ -308,6 +308,14 @@ const ProductForm = ({ product, isProductLoading, mode }) => {
                     setValue('price', newQuantity);
                   },
                 })}
+                onKeyDown={(e) => {
+                  if (e.key === 'e') {
+                    e.preventDefault();
+                  }
+                  if (e.key === '.') {
+                    e.preventDefault();
+                  }
+                }}
               />
             </div>
           </div>
