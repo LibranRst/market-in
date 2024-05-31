@@ -4,7 +4,7 @@ import { useAddToCart } from '../../../hooks/cart/useAddToCart';
 import { useDeleteProduct } from '../../../hooks/products/useDeleteProduct';
 import { useCalculateReviews } from '../../../hooks/reviews/useCalculateReviews';
 import { toast } from 'sonner';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { formatCurrency } from '../../../utils/helpers';
 import { Star } from '../StarRating';
 import { Separator } from '../Separator';
@@ -18,23 +18,37 @@ import { cn } from '../../../lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '../Popover';
 import { TrashIcon } from '@radix-ui/react-icons';
 import Spinner from '../loading/Spinner';
+import { useUser } from '../../../hooks/auth/useUser';
 
 const ProfileProductCard = ({ product, seller = false }) => {
   const [open, setOpen] = useState(false);
   const [isInCart, setIsInCart] = useState(product?.carts?.length > 0);
 
+  const { isAuthenticated } = useUser();
   const { updateCartProduct, isLoading: isCartUpdateLoading } =
     useUpdateCartProduct();
   const { addToCart, isLoading: isAdding } = useAddToCart();
   const { deleteProduct, isDeleting } = useDeleteProduct();
   const { calculateRating, rating } = useCalculateReviews();
 
+  const navigate = useNavigate();
+
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      navigate('/signin');
+      toast('Please login to add products to your cart');
+      return;
+    }
     addToCart({ product_id: product.id, quantity: 1 });
     setIsInCart(true);
   };
 
   const handleUpdateCart = () => {
+    if (!isAuthenticated) {
+      navigate('/signin');
+      toast('Please login to add products to your cart');
+      return;
+    }
     const cartItem = product?.carts[0];
 
     if (!cartItem) return;
