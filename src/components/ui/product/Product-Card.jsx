@@ -17,6 +17,7 @@ import {
 } from '../Tooltip';
 import { toast } from 'sonner';
 import { useCalculateReviews } from '../../../hooks/reviews/useCalculateReviews';
+import { Skeleton } from '../skeleton';
 
 const ProductCard = memo(({ product }) => {
   const { image_url: imgSrc, name, price, reviews, id: id } = product;
@@ -31,13 +32,12 @@ const ProductCard = memo(({ product }) => {
   const { updateCartProduct, isLoading: isCartUpdateLoading } =
     useUpdateCartProduct();
 
+  const { calculateRating, rating } = useCalculateReviews();
   const [isInCart, setIsInCart] = useState(product?.carts?.length > 0);
-
-  // const isInCart = product?.cart.length > 0;
+  const [isLoaded, setIsLoaded] = useState(false);
+  const navigate = useNavigate();
 
   const isSeller = user?.id === product?.profiles.id;
-
-  const navigate = useNavigate();
 
   const handleAddToCart = () => {
     if (!isAuthenticated) {
@@ -50,13 +50,9 @@ const ProductCard = memo(({ product }) => {
   };
 
   const handleUpdateCart = () => {
-    // Check if the user is fetching data
     if (isFetching) return;
 
-    // Get the first cart item for the current product
     const cartItem = product?.carts[0];
-
-    // If there is no cart item, return
     if (!cartItem) return;
 
     // Calculate the maximum quantity that can be added to the cart
@@ -78,8 +74,6 @@ const ProductCard = memo(({ product }) => {
     });
   };
 
-  const { calculateRating, rating } = useCalculateReviews();
-
   useEffect(() => {
     calculateRating(reviews);
   }, [reviews, calculateRating]);
@@ -89,10 +83,14 @@ const ProductCard = memo(({ product }) => {
       <Tooltip>
         <div className="overflow-hidden rounded-xl border-[1px] bg-card drop-shadow-sm">
           <Link to={`/product/${id}`}>
+            {isLoaded ? null : (
+              <Skeleton className="h-full max-h-[13.688rem] w-full" />
+            )}
             <img
               src={imgSrc}
               alt={name}
-              className="cursor-pointe h-full max-h-[13.688rem] w-full object-cover"
+              className={`cursor-pointer h-full max-h-[13.688rem] w-full object-cover ${isLoaded ? '' : 'hidden'}`}
+              onLoad={() => setIsLoaded(true)}
             />
           </Link>
           <div className="relative flex h-[140px] flex-col gap-[2px] p-2">
