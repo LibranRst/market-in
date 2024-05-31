@@ -27,7 +27,7 @@ const productsApi = {
   getProduct: async ({ id }) => {
     const { data, error } = await supabase
       .from('products')
-      .select('*, profiles(*), carts(*), reviews(*)')
+      .select('*, profiles(*), carts(*), reviews(*), orders(*)')
       .eq('id', id)
       .single();
 

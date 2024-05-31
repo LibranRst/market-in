@@ -26,8 +26,9 @@ import { useProduct } from '../../hooks/products/useProduct';
 import { useTruncatedElement } from '../../hooks/useTruncatedElement';
 
 // Utility Imports
+import { DotIcon } from '@radix-ui/react-icons';
 import Avatar from '../../components/ui/Avatar';
-import StarRating from '../../components/ui/StarRating';
+import { Star } from '../../components/ui/StarRating';
 import { Skeleton } from '../../components/ui/skeleton';
 import {
   useRelatedProducts,
@@ -145,17 +146,15 @@ const ProductPage = () => {
             <p className="text-2xl font-normal">
               {formatCurrency(product?.price)}
             </p>
-            <div className="flex items-center gap-1  text-lg">
+            <div className="flex items-center text-lg">
               {rating}
-              <StarRating
-                maxRating={5}
-                defaultRating={rating}
-                full={rating}
-                readOnly={true}
-              />
-              |{' '}
-              <span className='text-sm text-foreground/70'>
-                Sold {product?.reviews ? product?.reviews?.length : 0}
+              <Star full={true} size={20} color={'#ff8f07'} />
+              <span className="ml-1 text-sm text-foreground/70">
+                ({product?.reviews ? product?.reviews?.length : 0} rating)
+              </span>
+              <DotIcon className="ml-2" />
+              <span className="text-sm">
+                Sold {product?.orders ? product?.orders?.length : 0}
               </span>
             </div>
           </div>
