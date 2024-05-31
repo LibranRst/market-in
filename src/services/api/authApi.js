@@ -53,7 +53,7 @@ const authApi = {
 
   forgotPassword: async ({ email }) => {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: 'http://localhost:5173/reset-password',
+      redirectTo: 'https://market-in.netlify.app/reset-password',
     });
 
     if (error) throw new Error(error.message);
@@ -85,7 +85,7 @@ const authApi = {
     if (password) updateData = { ...updateData, password };
 
     const { data, error } = await supabase.auth.updateUser(updateData, {
-      emailRedirectTo: 'http://localhost:5173/settings',
+      emailRedirectTo: 'https://market-in.netlify.app/settings',
     });
 
     if (error) throw new Error(error.message);

@@ -86,12 +86,14 @@ const ProductCard = memo(({ product }) => {
             {isLoaded ? null : (
               <Skeleton className="h-full max-h-[13.688rem] w-full" />
             )}
-            <img
-              src={imgSrc}
-              alt={name}
-              className={`cursor-pointer h-full max-h-[13.688rem] w-full object-cover ${isLoaded ? '' : 'hidden'}`}
-              onLoad={() => setIsLoaded(true)}
-            />
+            <div className="h-[13.688rem] w-[13.688rem]">
+              <img
+                src={imgSrc}
+                alt={name}
+                className={`h-full w-full cursor-pointer object-cover ${isLoaded ? '' : 'hidden'}`}
+                onLoad={() => setIsLoaded(true)}
+              />
+            </div>
           </Link>
           <div className="relative flex h-[140px] flex-col gap-[2px] p-2">
             <TooltipTrigger className="text-left">
@@ -113,7 +115,15 @@ const ProductCard = memo(({ product }) => {
           <MdAddShoppingCart />
         </button> */}
             {!isSeller ? (
-              isInCart ? (
+              product?.stock <= 0 ? (
+                <Button
+                  variant="outline"
+                  disabled={true}
+                  className="absolute bottom-2 right-2 text-xs"
+                >
+                  Sold Out.
+                </Button>
+              ) : isInCart ? (
                 <Button
                   className="absolute bottom-2 right-2"
                   variant="default"

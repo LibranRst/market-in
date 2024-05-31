@@ -47,7 +47,7 @@ const SignInForm = () => {
 
   return (
     <FormAuth authType="login" onSubmit={handleSubmit(onSubmit)} isLoading={isLoading}>
-      <FormAuth.Title>LogIn</FormAuth.Title>
+      <FormAuth.Title>Log In</FormAuth.Title>
       <FormAuth.Inputs
         forms={forms}
         register={register}

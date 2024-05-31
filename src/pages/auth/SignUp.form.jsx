@@ -95,7 +95,7 @@ const SignUpForm = () => {
       onSubmit={handleSubmit(onSubmit)}
       isLoading={isLoading}
     >
-      <FormAuth.Title>SignUp</FormAuth.Title>
+      <FormAuth.Title>Sign Up</FormAuth.Title>
       <FormAuth.Inputs
         forms={forms}
         register={register}

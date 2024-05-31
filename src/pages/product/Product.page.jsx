@@ -132,7 +132,7 @@ const ProductPage = () => {
                 ))}
               </div>
               |
-              <p className="flex gap-1">
+              <p className="flex gap-1 shrink-0">
                 Stock:
                 <span
                   className={
@@ -205,9 +205,9 @@ const ProductPage = () => {
               </h2>
               <Link
                 className={buttonVariants({ variant: 'default' })}
-                to={`/profile/${product?.profiles.id}`}
+                to={isSeller ? '/profile' : `/profile/${product?.profiles.id}`}
               >
-                visit store
+                {isSeller ? 'View Profile' : 'Visit Store'}
               </Link>
             </div>
           </Card>

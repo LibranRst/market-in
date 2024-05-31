@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Avatar from '../../components/ui/Avatar';
 import DynamicBreadcrumb from '../../components/ui/Dynamic-breadcrumb';
 import { Star } from '../../components/ui/StarRating';
@@ -10,25 +10,28 @@ import ProfileProductCard from '../../components/ui/profile/Profile-ProductCard'
 import { useUserProducts } from '../../hooks/products/useProducts';
 import { useCalculateReviews } from '../../hooks/reviews/useCalculateReviews';
 import profilesApi from '../../services/api/profilesApi';
+import { useUser } from '../../hooks/auth/useUser';
 
 const SellerProfilePage = () => {
+  const { user: currentUser } = useUser();
   const { id } = useParams();
   const { products, isLoading: isProductsLoading } = useUserProducts({
     id: id,
   });
-
   const { data: user, isLoading } = useQuery({
     queryKey: ['seller', id],
     queryFn: () => profilesApi.getProfile(id),
   });
-
   const { calculateRating, rating } = useCalculateReviews();
+  const navigate = useNavigate();
 
   useEffect(() => {
     calculateRating(products?.flatMap((product) => product.reviews));
   }, [calculateRating, products]);
 
-  console.log(rating);
+  if (currentUser?.id === id) {
+    navigate('/profile');
+  }
 
   return (
     <CenteredContainer className="gap-4">

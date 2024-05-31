@@ -193,7 +193,7 @@ const CartCheckbox = ({ checked, onChange }) => {
     <div className="flex">
       <div
         className={`flex h-4 w-4 cursor-pointer items-center justify-center rounded-xl border transition duration-75 active:scale-90 ${
-          checked ? 'bg-primary' : 'bg-accent'
+          checked ? 'bg-primary' : 'bg-foreground/20'
         }`}
         onClick={onChange}
       >

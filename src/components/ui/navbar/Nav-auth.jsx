@@ -29,7 +29,7 @@ const NavAuth = ({ isLoading, isAuthenticated }) => {
             'border-[1px] border-popover-foreground bg-popover-foreground hover:bg-popover hover:text-popover-foreground',
           )}
         >
-          SignIn
+          Sign In
         </Link>
       )}
     </>
