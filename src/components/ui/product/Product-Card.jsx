@@ -3,7 +3,7 @@ import { FaShop } from 'react-icons/fa6';
 import { MdAddShoppingCart, MdPlusOne } from 'react-icons/md';
 
 import { memo, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../../hooks/auth/useUser';
 import { useAddToCart } from '../../../hooks/cart/useAddToCart';
 import { useUpdateCartProduct } from '../../../hooks/cart/useUpdateCartProduct';
@@ -21,7 +21,12 @@ import { useCalculateReviews } from '../../../hooks/reviews/useCalculateReviews'
 const ProductCard = memo(({ product }) => {
   const { image_url: imgSrc, name, price, reviews, id: id } = product;
 
-  const { user, isLoading: isUserLoading, isFetching } = useUser();
+  const {
+    user,
+    isLoading: isUserLoading,
+    isFetching,
+    isAuthenticated,
+  } = useUser();
   const { addToCart, isLoading: isAdding } = useAddToCart();
   const { updateCartProduct, isLoading: isCartUpdateLoading } =
     useUpdateCartProduct();
@@ -32,7 +37,14 @@ const ProductCard = memo(({ product }) => {
 
   const isSeller = user?.id === product?.profiles.id;
 
+  const navigate = useNavigate();
+
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      navigate('/signin');
+      toast('Please login to add products to your cart');
+      return;
+    }
     addToCart({ product_id: product.id, quantity: 1 });
     setIsInCart(true);
   };

@@ -10,8 +10,12 @@ import { Button } from '../Button';
 import { Card } from '../Card';
 import { Separator } from '../Separator';
 import QuantityInput from '../cart/QuantityInput';
+import { useUser } from '../../../hooks/auth/useUser';
+import { useNavigate } from 'react-router-dom';
 
 const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
+  const { isAuthenticated } = useUser();
+
   const [quantity, setQuantity] = useState(1);
   const [cartQuantity, setCartQuantity] = useState(product?.carts[0]?.quantity);
   const [error, setError] = useState('');
@@ -23,7 +27,15 @@ const ShoppingCart = ({ product, isProductLoading, isProductFetching }) => {
   const { deleteProductCart, isLoading: isDeleting } = useDeleteProductCart();
   const { updateCartProduct, isLoading: isUpdating } = useUpdateCartProduct();
 
+  const navigate = useNavigate();
+
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      navigate('/signin');
+      toast('Please login to add products to your cart');
+      return;
+    }
+    
     setError('');
     if (product?.stock <= 0) return;
 
