@@ -18,6 +18,9 @@ const useDeleteProduct = () => {
       queryClient.invalidateQueries({
         queryKey: ['products'],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['userProducts'],
+      });
     },
     onError: (err) => {
       toast('Error', {

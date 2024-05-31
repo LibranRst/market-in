@@ -166,7 +166,7 @@ const ProfileProductCard = ({ product, seller = false }) => {
                       disabled={isDeleting}
                       onClick={() =>
                         deleteProduct({
-                          productId: product.id,
+                          id: product.id,
                         })
                       }
                     >

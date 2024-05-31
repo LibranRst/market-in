@@ -29,7 +29,7 @@ const ProductsList = () => {
 
   return (
     <div className="grid gap-5 md:grid-cols-3 lg:grid-cols-4">
-      {isLoading ? (
+      {isLoading || isFetching ? (
         Array.from({ length: 8 }).map((_, index) => (
           <Skeleton className="h-[360px] w-full rounded-xl" key={index}>
             <Skeleton className="h-[13.688rem] w-full" />

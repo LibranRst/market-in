@@ -16,6 +16,9 @@ export const useAddProduct = () => {
       queryClient.invalidateQueries({
         queryKey: ['products'],
       });
+      queryClient.invalidateQueries({
+        queryKey: ['userProducts'],
+      });
       navigate('/');
     },
     onError: (err) => {
