@@ -85,7 +85,7 @@ const authApi = {
     if (password) updateData = { ...updateData, password };
 
     const { data, error } = await supabase.auth.updateUser(updateData, {
-      emailRedirectTo: 'https://market-in.netlify.app/settings',
+      emailRedirectTo: 'https://market-in.netlify.app/account?settings=change-email',
     });
 
     if (error) throw new Error(error.message);
