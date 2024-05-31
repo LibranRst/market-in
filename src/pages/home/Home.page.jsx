@@ -46,7 +46,6 @@ const ProductsList = () => {
           <ProductCard
             key={product?.id}
             product={product}
-            isFetching={isFetching}
           >
             <ProductCard.Seller sellerLink="/profile">
               {product.profiles.username}
